@@ -7,6 +7,10 @@ export async function loginWithEmail({ email, password}: LoginFormData) {
         password,
     })
 
-    if(error) throw new Error(error.message)
-        return data
+    if (error) {
+    console.error('Error detallado de Supabase:', error.message, error.status)
+    throw new Error(error.message)
+  }
+
+  return data
 }

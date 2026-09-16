@@ -6,6 +6,7 @@ import { DashboardLayout } from './layouts/DashboardLayaout'
 
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
+import { ProjectsPage } from './pages/ProyectPage'
 
 function App() {
   return (
@@ -17,11 +18,12 @@ function App() {
           <Route
             element={
               <ProtectedRoute>
-                <DashboardLayout breadcrumb="Inicio" />
+                <DashboardLayout />
               </ProtectedRoute>
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/proyectos" element={<ProjectsPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
