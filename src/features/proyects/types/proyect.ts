@@ -4,8 +4,9 @@ export interface Proyecto {
   id: string
   nombre: string
   emprendedor: string
+  municipio: string
+  sector: string
   etapa: string
-  centro: string
   fechaRegistro: string
   estado: ProyectStatus
 }

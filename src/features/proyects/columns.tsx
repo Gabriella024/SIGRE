@@ -37,6 +37,20 @@ export const proyectoColumns: ColumnDef<Proyecto>[] = [
     cell: ({ row }) => <span className="text-slate-600">{row.original.emprendedor}</span>,
   },
   {
+    accessorKey: 'municipio',
+    header: ({ column }) => <SortableHeader label="Municipio" column={column} />,
+    cell: ({ row }) => (
+      <span className="text-slate-500">{row.original.municipio}</span>
+    ),
+  },
+  {
+    accessorKey: 'sector',
+    header: ({ column }) => <SortableHeader label="Sector" column={column} />,
+    cell: ({ row }) => (
+      <span className="text-slate-600">{row.original.sector}</span>
+    ),
+  },
+  {
     accessorKey: 'etapa',
     header: 'Etapa',
     cell: ({ row }) => (
@@ -44,11 +58,6 @@ export const proyectoColumns: ColumnDef<Proyecto>[] = [
         {row.original.etapa}
       </span>
     ),
-  },
-  {
-    accessorKey: 'centro',
-    header: 'Centro',
-    cell: ({ row }) => <span className="text-slate-500">{row.original.centro}</span>,
   },
   {
     accessorKey: 'fechaRegistro',
