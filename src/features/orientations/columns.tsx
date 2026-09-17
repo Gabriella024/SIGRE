@@ -2,12 +2,12 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { Proyecto } from './types/proyect'
+import type { Orientacion } from './types/orientations'
 
-const estadoStyles: Record<Proyecto['estado'], string> = {
-  Activo: 'bg-green-100 text-green-700',
-  Inactivo: 'bg-slate-100 text-slate-500',
-  Finalizado: 'bg-blue-100 text-blue-700',
+const estadoStyles: Record<Orientacion['estado'], string> = {
+  Programada: 'bg-green-100 text-green-700',
+  Finalizada: 'bg-slate-100 text-slate-500',
+  "En Proceso": 'bg-blue-100 text-blue-700',
 }
 
 function SortableHeader({ label, column }: { label: string; column: any }) {
@@ -23,48 +23,50 @@ function SortableHeader({ label, column }: { label: string; column: any }) {
   )
 }
 
-export const proyectoColumns: ColumnDef<Proyecto>[] = [
+export const orientationColumn: ColumnDef<Orientacion>[] = [
   {
     accessorKey: 'nombre',
-    header: ({ column }) => <SortableHeader label="Proyecto" column={column} />,
+    header: ({ column }) => <SortableHeader label="Jornada" column={column} />,
     cell: ({ row }) => (
       <span className="font-medium text-slate-900">{row.original.nombre}</span>
     ),
   },
   {
-    accessorKey: 'emprendedor',
-    header: ({ column }) => <SortableHeader label="Emprendedor" column={column} />,
-    cell: ({ row }) => <span className="text-slate-600">{row.original.emprendedor}</span>,
-  },
-  {
-    accessorKey: 'municipio',
-    header: ({ column }) => <SortableHeader label="Municipio" column={column} />,
+    accessorKey: 'fechayhora',
+    header: ({ column }) => <SortableHeader label="Fecha y Hora" column={column} />,
     cell: ({ row }) => (
-      <span className="text-slate-500">{row.original.municipio}</span>
-    ),
-  },
-  {
-    accessorKey: 'sector',
-    header: ({ column }) => <SortableHeader label="Sector" column={column} />,
-    cell: ({ row }) => (
-      <span className="text-slate-600">{row.original.sector}</span>
-    ),
-  },
-  {
-    accessorKey: 'etapa',
-    header: 'Etapa',
-    cell: ({ row }) => (
-      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
-        {row.original.etapa}
+      <span className="text-slate-500">
+        {new Date(row.original.fechayhora).toLocaleString('es-CO', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        })}
       </span>
     ),
   },
   {
-    accessorKey: 'fechaRegistro',
-    header: ({ column }) => <SortableHeader label="Fecha Inicio" column={column} />,
+    accessorKey: 'modalidad',
+    header: ({ column }) => <SortableHeader label="Modalidad" column={column} />,
     cell: ({ row }) => (
-      <span className="text-slate-500">
-        {new Date(row.original.fechaRegistro).toLocaleDateString()}
+      <span className="text-slate-500">{row.original.modalidad}</span>
+    ),
+  },
+  {
+    accessorKey: 'lugarylink',
+    header: ({ column }) => <SortableHeader label="Lugar y Link" column={column} />,
+    cell: ({ row }) => (
+      <span className="text-slate-600">{row.original.lugarylink}</span>
+    ),
+  },
+  {
+    accessorKey: 'cupo',
+    header: 'Cupo',
+    cell: ({ row }) => (
+      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+        {row.original.cupo}
       </span>
     ),
   },
