@@ -20,14 +20,14 @@ export function ProjectsFilters() {
           <option>Pitch</option>
         </select>
         <select className="rounded-md border px-3 py-2 text-sm text-slate-600">
-          <option>Centro SENA</option>
+          <option>Municipio</option>
         </select>
       </div>
 
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <Input placeholder="Proyecto, nombre, documento o municipio..." className="pl-9" />
+          <Input placeholder="Buscar por nombre, documento o correo..." className="pl-9" />
         </div>
         <Button variant="outline" className="gap-2">
           <Download className="h-4 w-4" />

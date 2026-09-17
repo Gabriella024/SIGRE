@@ -47,12 +47,12 @@ export const enmprendedorColumns: ColumnDef<Emprendedor>[] = [
   },
   {
     accessorKey: 'municipio',
-    header: 'Municipio',
+    header: ({column}) => <SortableHeader label="Municipio" column={column}/>,
     cell: ({ row }) => <span className="text-slate-500">{row.original.municipio}</span>
   },
   {
     accessorKey: 'centro',
-    header: 'Centro',
+    header: ({column}) => <SortableHeader label="Centro" column={column}/>,
     cell: ({ row }) => <span className="text-slate-500">{row.original.centro}</span>
   },
   {

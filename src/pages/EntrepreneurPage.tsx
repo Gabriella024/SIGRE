@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/ui/data-table";
 import { enmprendedorColumns } from "@/features/entrepreneurs/columns";
 import { EntrepreneurMock } from "@/features/entrepreneurs/mocks/EntrepreneursMocks";
-import { EntrepreneursFilters } from "@/entrepreneurs/EntrepreneursFilters";
+import { EntrepreneursFilters } from "@/components/entrepreneurs/EntrepreneursFilters";
 
 export function EntrepreneurPage() {
   return (

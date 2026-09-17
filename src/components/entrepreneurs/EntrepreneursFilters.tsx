@@ -13,24 +13,24 @@ export function EntrepreneursFilters() {
 					<option>Suspendido</option>
 				</select>
 				<select className="rounded-md border px-3 py-2 text-sm text-slate-600">
-					<option>Centro SENA</option>
+					<option>Municipio</option>
 				</select>
 			</div>
 
 			<div className="flex items-center gap-3">
-				<div className="relative flex-1">
-					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"/>
-					<input placeholder="Nombre, documento o correo..."/>
-				</div>
-				<Button variant={"outline"} className="gap-2">
-					<Download className="h-4 w-4"/>
-					Exportar
-				</Button>
-				<Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-					<Plus className="h-4 w-4"/>
-					Nuevo Emprendedor
-				</Button>
-			</div>
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Input placeholder="Buscar por proyecto, nombre, documento o municipio..." className="pl-9" />
+        </div>
+        <Button variant="outline" className="gap-2">
+          <Download className="h-4 w-4" />
+          Exportar
+        </Button>
+        <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
+          <Plus className="h-4 w-4" />
+          Nuevo Miniperfil
+        </Button>
+      </div>
 		</div>
 	)
 }
