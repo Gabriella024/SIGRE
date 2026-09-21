@@ -11,6 +11,7 @@ import { DashboardLayout } from './layouts/DashboardLayaout'
 import { EntrepreneurPage } from './pages/EntrepreneurPage'
 import { OrientationPage } from './pages/OrientationPage'
 import { UserPage } from './pages/User'
+import { PitchPage } from './pages/PitchPage'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path='/emprendedores' element={<EntrepreneurPage />}></Route>
             <Route path='/orientaciones' element={<OrientationPage />}></Route>
             <Route path='/usuarios' element={<UserPage />}></Route>
+            <Route path='/pitch' element={<PitchPage />}></Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
