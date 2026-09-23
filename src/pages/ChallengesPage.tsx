@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 
 import { DataTable } from '@/components/ui/data-table'
 import { retosMock } from '@/features/challenges/mocks/ChallengesMocks'
-import { retoColumns } from '@/features/challenges/columns'
+import { challengeColumns } from '@/features/challenges/columns'
 import { ChallengesFilters } from '@/components/challenges/ChallengesFilters'
 
 export function ChallengesPage() {
@@ -26,7 +26,7 @@ export function ChallengesPage() {
           Panel de métricas generales de R1, R2 y R3 (pendiente de diseño)
         </div>
       ) : (
-        <DataTable columns={retoColumns} data={retosFiltrados} pageSize={8} />
+        <DataTable columns={challengeColumns} data={retosFiltrados} pageSize={8} />
       )}
     </div>
   )

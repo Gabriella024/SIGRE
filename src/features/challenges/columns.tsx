@@ -1,4 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
 import { MoreVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Reto } from './types/Challenge'
@@ -10,27 +12,40 @@ const estadoStyles: Record<Reto['estado'], string> = {
   Cancelado: 'bg-red-100 text-red-700',
 }
 
-export const retoColumns: ColumnDef<Reto>[] = [
+function SortableHeader({ label, column }: { label: string; column: any }) {
+  return (
+    <Button
+      variant="ghost"
+      className="-m1-3 h-8 gap-1 text-xs uppercase text-slate-400 hover:text-slate-600"
+      onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+    >
+      {label}
+      <ArrowUpDown className="h-3 w-3"></ArrowUpDown>
+    </Button>
+  )
+}
+
+export const challengeColumns: ColumnDef<Reto>[] = [
   {
     accessorKey: 'codigo',
-    header: 'CÓDIGO',
+    header: ({column}) => <SortableHeader label="Código" column={column}></SortableHeader>,
     cell: ({ row }) => (
       <span className="font-medium text-slate-900">{row.original.codigo}</span>
     ),
   },
   {
     accessorKey: 'nivel',
-    header: 'RETO',
+    header: 'Reto',
     cell: ({ row }) => <span className="text-slate-600">{row.original.nivel}</span>,
   },
   {
     accessorKey: 'sesion',
-    header: 'SESIÓN',
+    header: ({column}) => <SortableHeader label="Sesión" column={column}></SortableHeader>,
     cell: ({ row }) => <span className="text-slate-600">{row.original.sesion}</span>,
   },
   {
     accessorKey: 'fechaHora',
-    header: 'FECHA Y HORA',
+    header: 'Fecha y Hora',
     cell: ({ row }) => {
       const fecha = new Date(row.original.fechaHora)
       const fechaStr = fecha.toLocaleDateString('es-CO')
@@ -40,17 +55,17 @@ export const retoColumns: ColumnDef<Reto>[] = [
   },
   {
     accessorKey: 'modalidad',
-    header: 'MODALIDAD',
+    header:({column}) => <SortableHeader label="Modalidad" column={column}></SortableHeader>,
     cell: ({ row }) => <span className="text-slate-500">{row.original.modalidad}</span>,
   },
   {
     accessorKey: 'cupo',
-    header: 'CUPO',
+    header: 'Cupo',
     cell: ({ row }) => <span className="text-slate-500">{row.original.cupo}</span>,
   },
   {
     accessorKey: 'estado',
-    header: 'ESTADO',
+    header: ({column}) => <SortableHeader label="Estado" column={column}></SortableHeader>,
     cell: ({ row }) => (
       <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', estadoStyles[row.original.estado])}>
         {row.original.estado}
