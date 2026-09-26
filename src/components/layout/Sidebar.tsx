@@ -24,7 +24,7 @@ const mainNav = [
   { to: '/orientacion-masiva', label: 'Orientación masiva', icon: Send },
   { to: '/retos', label: 'Retos', icon: Target },
   { to: '/pitch', label: 'Pitch', icon: Presentation },
-  { to: '/evaluacion', label: 'Evaluación', icon: ClipboardCheck },
+  { to: '/evaluaciones', label: 'Evaluación', icon: ClipboardCheck },
   { to: '/evaluadores', label: 'Evaluadores', icon: UserCheck },
   { to: '/informes', label: 'Informes', icon: FileText },
 ]

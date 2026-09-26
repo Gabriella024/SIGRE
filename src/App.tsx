@@ -14,6 +14,7 @@ import { UserPage } from './pages/User'
 import { PitchPage } from './pages/PitchPage'
 import { EvaluatorPage } from './pages/EvaluatorsPage'
 import { ChallengesPage } from './pages/ChallengesPage'
+import { EvaluationsPage } from './pages/EvaluationsPage'
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path='/pitch' element={<PitchPage />}></Route>
             <Route path='/evaluadores' element={<EvaluatorPage />}></Route>
             <Route path='/retos' element={<ChallengesPage />}></Route>
+            <Route path='/evaluaciones' element={<EvaluationsPage />}></Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />

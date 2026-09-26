@@ -1,0 +1,50 @@
+import type { Evaluacion } from "../types/evaluacion";
+
+export const evaluacionesMock: Evaluacion [] = [
+  {
+    id: '1',
+    codigoPitch: 'P-2024-003',
+    codigoProyecto: 'P-2024-003',
+    proyecto: 'Turismo Sostenible Caribe',
+    emprendedor: 'Valentina Cure',
+    fechaPitch: '2026-07-16T02:00:00',
+    estado: 'Pendiente',
+  },
+  {
+    id: '2',
+    codigoPitch: 'P-2024-003',
+    codigoProyecto: 'P-2024-003',
+    proyecto: 'Turismo Sostenible Caribe',
+    emprendedor: 'Valentina Cure',
+    fechaPitch: '2026-07-16T02:00:00',
+    estado: 'Pendiente',
+  },
+  {
+    id: '3',
+    codigoPitch: 'P-2024-003',
+    codigoProyecto: 'P-2024-003',
+    proyecto: 'Turismo Sostenible Caribe',
+    emprendedor: 'Valentina Cure',
+    fechaPitch: '2026-07-16T02:00:00',
+    estado: 'Pendiente',
+  },
+  {
+    id: '4',
+    codigoPitch: 'P-2024-003',
+    codigoProyecto: 'P-2024-003',
+    proyecto: 'Turismo Sostenible Caribe',
+    emprendedor: 'Valentina Cure',
+    fechaPitch: '2026-07-16T02:00:00',
+    estado: 'Completado',
+    puntaje: 86,
+  },
+  {
+    id: '5',
+    codigoPitch: 'P-2024-003',
+    codigoProyecto: 'P-2024-003',
+    proyecto: 'Turismo Sostenible Caribe',
+    emprendedor: 'Valentina Cure',
+    fechaPitch: '2026-07-16T02:00:00',
+    estado: 'Pendiente',
+  },
+]
