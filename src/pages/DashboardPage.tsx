@@ -8,14 +8,18 @@ import { statsData } from '@/features/dashboard/mocks/dashboardMocks'
 
 export function DashboardPage() {
   const { user } = useAuth()
+  const rawName = user?.email?.split('@')[0] ?? 'Usuario';
+  const formattedName = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">
-          Hola {user?.email?.split('@')[0] ?? 'Usuario'}
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+          Hola {formattedName}
         </h1>
-        <p className="text-sm text-slate-500">¡Bienvenido al sistema de la ruta emprendedora!</p>
+        <p className="text-sm md:text-base font-normal text-slate-500">
+          ¡Bienvenido al sistema de la ruta emprendedora!
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
