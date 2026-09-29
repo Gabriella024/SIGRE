@@ -2,7 +2,7 @@ import { Users, Calendar, Target, FileBadge } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { StatCard } from '@/components/dashboard/StatCard'
 import { ProjectsChart } from '@/components/dashboard/ProjectsChart'
-import { FunnelPanel } from '@/components/dashboard/FunnelPanel'
+import { FunnelCard } from '@/components/dashboard/FunnelPanel'
 import { AttentionTable } from '@/components/dashboard/AttentionTable'
 import { statsData } from '@/features/dashboard/mocks/dashboardMocks'
 
@@ -57,7 +57,7 @@ export function DashboardPage() {
         <div className="lg:col-span-2">
           <ProjectsChart />
         </div>
-        <FunnelPanel />
+        <FunnelCard />
       </div>
 
       <AttentionTable />

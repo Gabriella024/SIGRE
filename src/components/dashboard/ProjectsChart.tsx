@@ -10,7 +10,7 @@ import { proyectosPorMes } from '@/features/dashboard/mocks/dashboardMocks'
 
 export function ProjectsChart() {
   return (
-    <div className="rounded-lg border bg-white p-5 shadow-sm">
+    <div className="rounded-2xl bg-white p-6 shadow-sm border border-slate-100">
       <h3 className="font-semibold text-slate-900">Proyectos Registrados por Mes</h3>
       <p className="text-xs text-slate-400">Año 2026 · Regional Atlántico</p>
 

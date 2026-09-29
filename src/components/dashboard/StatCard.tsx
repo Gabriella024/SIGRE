@@ -1,46 +1,83 @@
-import type { LucideIcon } from "lucide-react";
-import { ArrowUp, ArrowDown, Minus } from "lucide-react";
-import { cn } from '@/lib/utils'
+import { Minus, TrendingDown, type LucideIcon, TrendingUp } from 'lucide-react'
 
-type StatCardProps = {
+interface StatCardProps {
   title: string
   value: number | string
   icon: LucideIcon
   accentColor: 'blue' | 'green' | 'orange' | 'red'
-  trend?: { direction: 'up' | 'down' | 'flat'; label: string }
+  trend: {
+    direction: 'up' | 'down' | 'flat'
+    label: string
+  }
 }
 
-const accentMap = {
-  blue: 'border-1-blue-500 text-blue-500 bg-blue-50',
-  green: 'border-1-green-500 text-green-500 bg-green-50',
-  orange: 'border-1-orange-500 text-orange-500 bg-orang-50',
-  red: 'border-1-red-500 text-red-500 bg-red-50',
+const colorStyles = {
+  blue: {
+    borderLeft: 'border-l-blue-500',
+    iconBg: 'bg-blue-100/80 text-blue-600',
+  },
+  green: {
+    borderLeft: 'border-l-emerald-500',
+    iconBg: 'bg-emerald-100/80 text-emerald-600',
+  },
+  orange: {
+    borderLeft: 'border-l-amber-500',
+    iconBg: 'bg-amber-100/80 text-amber-600',
+  },
+  red: {
+    borderLeft: 'border-l-rose-500',
+    iconBg: 'bg-rose-100/80 text-rose-600',
+  },
 }
 
-export function StatCard({ title, value, icon: Icon, accentColor, trend }: StatCardProps) {
+export function StatCard({
+  title,
+  value,
+  icon: Icon,
+  accentColor,
+  trend,
+}: StatCardProps) {
+  const styles = colorStyles[accentColor]
+
   return (
-    <div className={cn('rounded-lg border-l-4 bg-white p-4 shadow-sm', accentMap[accentColor])}>
-      <div className="flex items-start justify-between">
-        <p className="text-sm text-slate-500">{title}</p>
-        <div className={cn('rounded-md p-1.5', accentMap[accentColor])}>
-          <Icon className="h-4 w-4" />
+    <div
+      className={`relative overflow-hidden rounded-2xl bg-white p-5 shadow-sm border border-slate-100 border-l-[5px] ${styles.borderLeft} flex flex-col justify-between transition-all hover:shadow-md`}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-semibold text-slate-700">{title}</span>
+        <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${styles.iconBg}`}>
+          <Icon className="h-4 w-4 stroke-[2.2]" />
         </div>
       </div>
-      <p className="mt-2 text-3x1 font-bold text-slate-900">{value}</p>
-      {trend && (
-        <p className={cn(
-          'mt-1 flex items-center gap-1 text-xs font-medium',
-          trend.direction === 'up' && 'text-green-600',
-          trend.direction === 'down' && 'text-red-500',
-          trend.direction === 'flat' && 'text-slate-400'
-        )}>
-          {trend.direction === 'up' && <ArrowUp className="h-3 w-3" />}
-          {trend.direction === 'down' && <ArrowDown className="h-3 w-3" />}
-          {trend.direction === 'flat' && <Minus className="h-3 w-3" />}
-          {trend.label}
-        </p>
-      )}
 
+      <div className="mt-4 space-y-1.5">
+        <div className="text-3xl font-bold tracking-tight text-slate-900">
+          {value}
+        </div>
+
+        <div className="flex items-center gap-1.5 text-xs font-medium">
+          {trend.direction === 'up' && (
+            <>
+              <TrendingUp className="h-3.5 w-3.5 text-emerald-600 stroke-[2.5]" />
+              <span className="text-emerald-600 font-semibold">{trend.label}</span>
+            </>
+          )}
+
+          {trend.direction === 'down' && (
+            <>
+              <TrendingDown className="h-3.5 w-3.5 text-rose-500 stroke-[2.5]" />
+              <span className="text-rose-500 font-semibold">{trend.label}</span>
+            </>
+          )}
+
+          {trend.direction === 'flat' && (
+            <>
+              <Minus className="h-3.5 w-3.5 text-amber-500 stroke-[2.5]" />
+              <span className="text-slate-500 font-normal">{trend.label}</span>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
