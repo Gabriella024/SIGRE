@@ -1,0 +1,13 @@
+# Dependencias y builds de Vite/React
+node_modules/
+dist/
+.git/
+public/
+
+# Logs y temporales
+*.log
+package-lock.json
+
+# Archivos de Supabase no esenciales para IA
+supabase/.temp/
+supabase/.branches/
