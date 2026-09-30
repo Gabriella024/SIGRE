@@ -1,36 +1,66 @@
-import { Search, Download, Plus } from "lucide-react";
+import { Download, Plus, Grip } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { FiltersBar, type FilterConfig } from "../ui/filtersBar";
+
+type Filters = {
+  estado: string
+  municipio: string
+}
+
+const initialFilters: Filters = { estado: '', municipio: '' }
 
 export function EntrepreneursFilters() {
-	return (
-		<div className="space-y-3">
-			<div className="flex flex-wrap gap-3">
-				<select className="rounded-md border px-3 py-2 text-sm text-slate-600">
-					<option>Todos los estados</option>
-					<option>Activo</option>
-					<option>Inactivo</option>
-					<option>Suspendido</option>
-				</select>
-				<select className="rounded-md border px-3 py-2 text-sm text-slate-600">
-					<option>Municipio</option>
-				</select>
-			</div>
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filters, setFilters] = useState<Filters>(initialFilters)
 
-			<div className="flex items-center gap-3">
-				<div className="relative flex-1">
-					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-					<Input placeholder="Buscar por proyecto, nombre, documento o municipio..." className="pl-9" />
-				</div>
-				<Button variant="outline" className="gap-2">
-					<Download className="h-4 w-4" />
-					Exportar
-				</Button>
-				<Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-					<Plus className="h-4 w-4" />
-					Nuevo Emprendedor
-				</Button>
-			</div>
-		</div>
-	)
+  const setFilter = (key: keyof Filters) => (value: string) =>
+    setFilters((prev) => ({ ...prev, [key]: value }))
+
+  const filterConfig: FilterConfig[] = [
+    {
+      key: 'estado',
+      label: 'Estado',
+      value: filters.estado,
+      placeholder: 'Todos los estados',
+      onChange: setFilter('estado'),
+      options: [
+        { value: 'activo', label: 'Activo' },
+        { value: 'inactivo', label: 'Inactivo' },
+        { value: 'suspendido', label: 'Suspendido' },
+      ],
+    },
+    {
+      key: 'municipio',
+      label: 'Municipio',
+      value: filters.municipio,
+      placeholder: 'Todos los municipios',
+      onChange: setFilter('municipio'),
+      options: [],
+    },
+  ]
+
+  return (
+    <FiltersBar
+      searchTerm={searchTerm}
+      onSearchChange={setSearchTerm}
+      searchPlaceholder="Buscar por nombre, documento o correo..."
+      filters={filterConfig}
+      onClearFilters={() => setFilters(initialFilters)}
+      actions={
+        <>
+          <Grip className='h-4 w-4' />
+
+          <Button variant="outline" className="gap-2">
+            <Download className="h-4 w-4" />
+            Exportar
+          </Button>
+          <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
+            <Plus className="h-4 w-4" />
+            Nuevo Pitch
+          </Button>
+        </>
+      }
+    />
+  )
 }

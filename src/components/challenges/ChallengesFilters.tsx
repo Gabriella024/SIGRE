@@ -1,43 +1,75 @@
-import { Search, Download } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
 
 type ChallengesFiltersProps = {
   activeTab: string
   onTabChange: (value: string) => void
 }
 
-export function ChallengesFilters  ({activeTab, onTabChange}: ChallengesFiltersProps ) {
-	return (
-		<div className="space-y-3">
-				<Tabs value={activeTab} onValueChange={onTabChange}>
-          <TabsList>
-            <TabsTrigger value="metricas">Métricas</TabsTrigger>
-            <TabsTrigger value="R1">R1</TabsTrigger>
-            <TabsTrigger value="R2">R2</TabsTrigger>
-            <TabsTrigger value="R3">R3</TabsTrigger>
-          </TabsList>
-        </Tabs>
+type Filters = {
+  estado: string
+}
+
+const initialFilters: Filters = { estado: '' }
+
+export function ChallengesFilters({ activeTab, onTabChange }: ChallengesFiltersProps) {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filters, setFilters] = useState<Filters>(initialFilters)
+
+  const setFilter = (key: keyof Filters) => (value: string) =>
+    setFilters((prev) => ({ ...prev, [key]: value }))
+
+  const filterConfig: FilterConfig[] = [
+    {
+      key: 'estado',
+      label: 'Estado',
+      value: filters.estado,
+      placeholder: 'Todos los estados',
+      onChange: setFilter('estado'),
+      options: [
+        { value: 'programado', label: 'Programado' },
+        { value: 'en curso', label: 'En curso' },
+        { value: 'finalizado', label: 'Finalizado' },
+        { value: 'cancelado', label: 'Cancelado' },
+      ],
+    }
+  ]
+  return (
+    <>
+
+      <Tabs value={activeTab} onValueChange={onTabChange}>
+        <TabsList>
+          <TabsTrigger value="metricas">Métricas</TabsTrigger>
+          <TabsTrigger value="R1">R1</TabsTrigger>
+          <TabsTrigger value="R2">R2</TabsTrigger>
+          <TabsTrigger value="R3">R3</TabsTrigger>
+        </TabsList>
+      </Tabs>
+      <FiltersBar
+
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Buscar por código o sesión..."
+        filters={filterConfig}
+        onClearFilters={() => setFilters(initialFilters)}
+        actions={
+          <>
 
 
-			<div className="flex items-center gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <Input placeholder="Buscar por código, sesión o modalidad..." className="pl-9" />
-        </div>
-        <select className="rounded-md border px-3 py-2 text-sm text-slate-600">
-          <option>Todos los estados</option>
-          <option>Programado</option>
-          <option>En curso</option>
-          <option>Finalizado</option>
-          <option>Cancelado</option>
-        </select>
-        <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-          <Download className="h-4 w-4" />
-          Exportar
-        </Button>
-      </div>
-		</div>
-	)
+            <Button variant="outline" className="gap-2">
+              <Download className="h-4 w-4" />
+              Exportar
+            </Button>
+            <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
+              <Plus className="h-4 w-4" />
+              Nuevo Reto
+            </Button>
+          </>
+        }
+      />
+    </>
+  )
 }

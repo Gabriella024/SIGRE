@@ -1,43 +1,78 @@
-import { Search, Download, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { Download, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
+
+type Filters = {
+  estado: string
+  municipio: string
+  etapa: string
+}
+
+const initialFilters: Filters = { estado: '', municipio: '', etapa: '' }
 
 export function ProjectsFilters() {
-  return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap gap-3">
-        <select className="rounded-md border px-3 py-2 text-sm text-slate-600">
-          <option>Todos los estados</option>
-          <option>Activo</option>
-          <option>Inactivo</option>
-          <option>Finalizado</option>
-        </select>
-        <select className="rounded-md border px-3 py-2 text-sm text-slate-600">
-          <option>Todas las etapas</option>
-          <option>Registro</option>
-          <option>Orientación</option>
-          <option>Retos</option>
-          <option>Pitch</option>
-        </select>
-        <select className="rounded-md border px-3 py-2 text-sm text-slate-600">
-          <option>Municipio</option>
-        </select>
-      </div>
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filters, setFilters] = useState<Filters>(initialFilters)
 
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <Input placeholder="Buscar por nombre, documento o correo..." className="pl-9" />
-        </div>
-        <Button variant="outline" className="gap-2">
-          <Download className="h-4 w-4" />
-          Exportar
-        </Button>
-        <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-          <Plus className="h-4 w-4" />
-          Nuevo Miniperfil
-        </Button>
-      </div>
-    </div>
+  const setFilter = (key: keyof Filters) => (value: string) =>
+    setFilters((prev) => ({ ...prev, [key]: value }))
+
+  const filterConfig: FilterConfig[] = [
+    {
+      key: 'estado',
+      label: 'Estado',
+      value: filters.estado,
+      placeholder: 'Todos los estados',
+      onChange: setFilter('estado'),
+      options: [
+        { value: 'activo', label: 'Activo' },
+        { value: 'inactivo', label: 'Inactivo' },
+        { value: 'finalizado', label: 'Finalizado' },
+      ],
+    },
+    {
+      key: 'municipio',
+      label: 'Municipio',
+      value: filters.municipio,
+      placeholder: 'Todos los municipios',
+      onChange: setFilter('municipio'),
+      options: [],
+    },
+    {
+      key: 'etapa',
+      label: 'Etapa',
+      value: filters.etapa,
+      placeholder: 'Todas las etapas',
+      onChange: setFilter('etapa'),
+      options: [
+        { value: 'registro', label: 'Registro' },
+        { value: 'orientacion', label: 'Orientación' },
+        { value: 'retos', label: 'Retos' },
+        { value: 'pitch', label: 'Pitch' },
+      ],
+    },
+  ]
+
+  return (
+    <FiltersBar
+      searchTerm={searchTerm}
+      onSearchChange={setSearchTerm}
+      searchPlaceholder="Buscar por proyecto, emprendedor o sector... "
+      filters={filterConfig}
+      onClearFilters={() => setFilters(initialFilters)}
+      actions={
+        <>
+          <Button variant="outline" className="gap-2">
+            <Download className="h-4 w-4" />
+            Exportar
+          </Button>
+          <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
+            <Plus className="h-4 w-4" />
+            Nuevo Miniperfil
+          </Button>
+        </>
+      }
+    />
   )
 }

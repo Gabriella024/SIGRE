@@ -1,4 +1,4 @@
-export type PitchStatus = 'Programado'| 'Cerrado'| 'En evaluación'
+export type PitchStatus = 'programado'| 'cerrado'| 'en evaluación'
 
 export type PitchStages = 'R4' | 'R6'
 

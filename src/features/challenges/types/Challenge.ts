@@ -1,4 +1,4 @@
-export type EstadoReto = 'Programado' | 'En curso' | 'Finalizado' | 'Cancelado'
+export type EstadoReto = 'programado' | 'en curso' | 'finalizado' | 'cancelado'
 export type NivelReto = 'R1' | 'R2' | 'R3'
 export type ModalidadReto = 'Presencial' | 'Virtual'
 
