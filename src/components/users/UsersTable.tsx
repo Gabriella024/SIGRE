@@ -1,70 +1,187 @@
-import { MoreVertical } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import type { User } from '@/features/users/types/users'
 
-const estadoStyles: Record<User['estado'], string> = {
-  Activo: 'bg-green-100 text-green-700',
-  Inactivo: 'bg-slate-100 text-slate-500',
-  Suspendido: 'bg-blue-100 text-gray-700',
+import { 
+  Pencil, 
+  Trash2, 
+  ChevronLeft, 
+  ChevronRight 
+} from 'lucide-react';
+import type { 
+  UserMock, 
+  UserRol, 
+  UserStatus
+} from '../../features/users/types/users';
+
+import {
+  ROLE_STYLES, 
+  STATUS_STYLES 
+} from '../../features/users/types/users';
+
+interface UsersDataTableProps {
+  data: UserMock[];
+  onEdit?: (user: UserMock) => void;
+  onDelete?: (userId: string) => void;
 }
 
-const rolStyles: Record<User['rol'], string> = {
-  Administrador: 'bg-lime-100 text-lime-700',
-  Coordinador: 'bg-cyan-100 text-cyan-700',
-  Orientador: 'bg-slate-200 text-slate-500',
-  Evaluador: 'bg-mauve-100 text-mauve-700',
-  Emprendedor: 'bg-taupe-200 text-taupe-600'
-}
+// Helper para extraer las iniciales a partir del nombre completo (ej: "Pedro Antonio Salas" -> "PS")
+const getInitials = (name: string): string => {
+  if (!name) return '';
+  const words = name.trim().split(/\s+/);
+  if (words.length === 1) return words[0].substring(0, 2).toUpperCase();
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+};
 
-export function ProjectsTable({ usuarios }: { usuarios: User[] }) {
+export const UsersDataTable: React.FC<UsersDataTableProps> = ({ data, onEdit, onDelete }) => {
+  const [currentPage, setCurrentPage] = useState(2);
+  const totalPages = 6;
+
   return (
-    <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b text-left text-xs uppercase text-slate-400">
-            <th className="px-4 py-3 font-medium">Nombre</th>
-            <th className="px-4 py-3 font-medium">Correo</th>
-            <th className="px-4 py-3 font-medium">Rol/es</th>
-            <th className="px-4 py-3 font-medium">Estado</th>
-            <th className="px-4 py-3 font-medium">Último acceso</th>
-            <th className="px-4 py-3"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y">
-          {usuarios.length === 0 ? (
-            <tr>
-              <td colSpan={7} className="px-4 py-6 text-center text-slate-400">
-                No hay usuarios registrados registrados.
-              </td>
+    <div className="w-full bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          {/* Encabezado */}
+          <thead>
+            <tr className="border-b border-gray-100 bg-gray-50/50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th className="py-3 px-4 w-12 text-center">Icono</th>
+              <th className="py-3 px-4">Nombre</th>
+              <th className="py-3 px-4">Correo</th>
+              <th className="py-3 px-4">Roles</th>
+              <th className="py-3 px-4">Estado</th>
+              <th className="py-3 px-4">Último Acceso</th>
+              <th className="py-3 px-4">Fecha de Creación</th>
+              <th className="py-3 px-4 text-center">Acciones</th>
             </tr>
-          ) : (
-            usuarios.map((p) => (
-              <tr key={p.id} className="hover:bg-slate-50">
-                <td className="px-4 py-3 font-medium text-slate-900">{p.nombre}</td>
-                <td className="px-4 py-3 text-slate-600">{p.correo}</td>
-                <td className="px-4 py-3">
-                  <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', rolStyles[p.rol])}>
-                    {p.rol}
-                  </span>
+          </thead>
+
+          {/* Cuerpo */}
+          <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
+            {data.map((user) => (
+              <tr key={user.id} className="hover:bg-gray-50/60 transition-colors">
+                {/* 1. Icono (Iniciales calculadas automáticamente) */}
+                <td className="py-3 px-4">
+                  <div className="w-9 h-9 rounded-full bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center border border-purple-200">
+                    {getInitials(user.nombre)}
+                  </div>
                 </td>
-                <td className="px-4 py-3 text-slate-500">
-                  {new Date(p.ultimoAcceso).toLocaleDateString()}
+
+                {/* 2. Nombre */}
+                <td className="py-3 px-4 font-medium text-gray-900">{user.nombre}</td>
+
+                {/* 3. Correo */}
+                <td className="py-3 px-4 text-gray-500">{user.correo}</td>
+
+                {/* 4. Roles */}
+                <td className="py-3 px-4">
+                  <div className="flex flex-wrap gap-1.5">
+                    {user.rol.map((r) => {
+                      const style = ROLE_STYLES[r];
+                      return (
+                        <span
+                          key={r}
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
+                        >
+                          {r}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </td>
-                <td className="px-4 py-3">
-                  <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', estadoStyles[p.estado])}>
-                    {p.estado}
-                  </span>
+
+                {/* 5. Estado */}
+                <td className="py-3 px-4">
+                  {(() => {
+                    const style = STATUS_STYLES[user.estado];
+                    return (
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border}`}
+                      >
+                        {style.label}
+                      </span>
+                    );
+                  })()}
                 </td>
-                <td className="px-4 py-3 text-right">
-                  <button className="rounded p-1 hover:bg-slate-100">
-                    <MoreVertical className="h-4 w-4 text-slate-400" />
-                  </button>
+
+                {/* 6. Último Acceso */}
+                <td className="py-3 px-4 text-gray-500">{user.ultimoAcceso}</td>
+
+                {/* 7. Fecha de Creación */}
+                <td className="py-3 px-4 text-gray-500">{user.CreadoEn}</td>
+
+                {/* Acciones */}
+                <td className="py-3 px-4">
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => onEdit?.(user)}
+                      className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Editar"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onDelete?.(user.id)}
+                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Eliminar"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Paginación con Números y Flechas */}
+      <div className="flex items-center justify-center gap-1 py-4 border-t border-gray-100 bg-white">
+        {/* Botón Flecha Izquierda */}
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="p-2 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:hover:text-gray-400 rounded-lg transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        {/* Números de página */}
+        {[1, 2, 3].map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
+              currentPage === page
+                ? 'border border-purple-300 text-purple-700 bg-purple-50/50 shadow-sm'
+                : 'text-gray-500 hover:bg-gray-50'
+            }`}
+          >
+            {page < 10 ? `0${page}` : page}
+          </button>
+        ))}
+
+        <span className="px-1 text-gray-400 text-xs">...</span>
+
+        {[4, 5, 6].map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
+              currentPage === page
+                ? 'border border-purple-300 text-purple-700 bg-purple-50/50 shadow-sm'
+                : 'text-gray-500 hover:bg-gray-50'
+            }`}
+          >
+            {page < 10 ? `0${page}` : page}
+          </button>
+        ))}
+
+        {/* Botón Flecha Derecha */}
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="p-2 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:hover:text-gray-400 rounded-lg transition-colors"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};

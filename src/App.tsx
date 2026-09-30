@@ -10,7 +10,7 @@ import { DashboardPage } from './pages/DashboardPage'
 import { DashboardLayout } from './layouts/DashboardLayaout'
 import { EntrepreneurPage } from './pages/EntrepreneurPage'
 import { OrientationPage } from './pages/OrientationPage'
-import { UserPage } from './pages/User'
+import { UsersPage } from './pages/User'
 import { PitchPage } from './pages/PitchPage'
 import { EvaluatorPage } from './pages/EvaluatorsPage'
 import { ChallengesPage } from './pages/ChallengesPage'
@@ -34,7 +34,7 @@ function App() {
             <Route path="/proyectos" element={<ProjectsPage />} />
             <Route path='/emprendedores' element={<EntrepreneurPage />}></Route>
             <Route path='/orientaciones' element={<OrientationPage />}></Route>
-            <Route path='/usuarios' element={<UserPage />}></Route>
+            <Route path='/usuarios' element={<UsersPage />}></Route>
             <Route path='/pitch' element={<PitchPage />}></Route>
             <Route path='/evaluadores' element={<EvaluatorPage />}></Route>
             <Route path='/retos' element={<ChallengesPage />}></Route>
