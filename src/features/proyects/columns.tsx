@@ -1,93 +1,79 @@
-import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreVertical } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import type { Proyecto } from './types/proyect'
 
-const estadoStyles: Record<Proyecto['estado'], string> = {
-  Activo: 'bg-green-100 text-green-700',
-  Inactivo: 'bg-slate-100 text-slate-500',
-  Finalizado: 'bg-blue-100 text-blue-700',
-}
+import type { Column } from "@/components/ui/table/types";
+import type { Project, ProjectStage, ProjectStatus } from "./types/proyect";
 
-function SortableHeader({ label, column }: { label: string; column: any }) {
+
+function EtapaBadge({ etapa }: { etapa: ProjectStage }) {
+  const stageStyles: Record<ProjectStage, string> = {
+    Retos: "bg-amber-100 text-amber-900 border-amber-200",
+    Orientación: "bg-sky-100 text-sky-900 border-sky-200",
+    Pitch: "bg-purple-100 text-purple-900 border-purple-200",
+    Registro: "bg-slate-100 text-slate-800 border-slate-200",
+  };
+
   return (
-    <Button
-      variant="ghost"
-      className="-ml-3 h-8 gap-1 text-xs uppercase text-slate-400 hover:text-slate-600"
-      onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+    <span
+      className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium ${stageStyles[etapa]}`}
     >
-      {label}
-      <ArrowUpDown className="h-3 w-3" />
-    </Button>
-  )
+      {etapa}
+    </span>
+  );
 }
 
-export const proyectoColumns: ColumnDef<Proyecto>[] = [
+
+function EstadoBadge({ estado }: { estado: ProjectStatus }) {
+  const styles: Record<ProjectStatus, string> = {
+    Activo: "bg-emerald-100 text-emerald-700",
+    Finalizado: "bg-indigo-100 text-indigo-700",
+    Inactivo: "bg-rose-100 text-rose-800",
+  };
+
+  return (
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[estado]}`}>
+      {estado}
+    </span>
+  );
+}
+
+export const PROJECT_COLUMNS: Column<Project>[] = [
   {
-    accessorKey: 'nombre',
-    header: ({ column }) => <SortableHeader label="Proyecto" column={column} />,
-    cell: ({ row }) => (
-      <span className="font-medium text-slate-900">{row.original.nombre}</span>
+    key: "nombre",
+    label: "PROYECTO",
+    sortable: true,
+    render: (row) => (
+      <span className="font-semibold text-slate-900">{row.nombre}</span>
     ),
   },
   {
-    accessorKey: 'emprendedor',
-    header: ({ column }) => <SortableHeader label="Emprendedor" column={column} />,
-    cell: ({ row }) => <span className="text-slate-600">{row.original.emprendedor}</span>,
+    key: "emprendedor",
+    label: "EMPRENDEDOR",
+    sortable: true,
   },
   {
-    accessorKey: 'municipio',
-    header: ({ column }) => <SortableHeader label="Municipio" column={column} />,
-    cell: ({ row }) => (
-      <span className="text-slate-500">{row.original.municipio}</span>
-    ),
+    key: "municipio",
+    label: "MUNICIPIO",
+    sortable: true,
   },
   {
-    accessorKey: 'sector',
-    header: ({ column }) => <SortableHeader label="Sector" column={column} />,
-    cell: ({ row }) => (
-      <span className="text-slate-600">{row.original.sector}</span>
-    ),
+    key: "sector",
+    label: "SECTOR",
+    sortable: true,
   },
   {
-    accessorKey: 'etapa',
-    header: 'Etapa',
-    cell: ({ row }) => (
-      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
-        {row.original.etapa}
-      </span>
-    ),
+    key: "etapa",
+    label: "ETAPA",
+    sortable: false, 
+    render: (row) => <EtapaBadge etapa={row.etapa} />,
   },
   {
-    accessorKey: 'fechaRegistro',
-    header: ({ column }) => <SortableHeader label="Fecha de Registro" column={column} />,
-    cell: ({ row }) => (
-      <span className="text-slate-500">
-        {new Date(row.original.fechaRegistro).toLocaleDateString()}
-      </span>
-    ),
+    key: "fechaRegistro",
+    label: "FECHA DE REGISTRO",
+    sortable: true,
   },
   {
-    accessorKey: 'estado',
-    header: 'Estado',
-    cell: ({ row }) => (
-      <span
-        className={cn(
-          'rounded-full px-2.5 py-0.5 text-xs font-medium',
-          estadoStyles[row.original.estado]
-        )}
-      >
-        {row.original.estado}
-      </span>
-    ),
+    key: "estado",
+    label: "ESTADO",
+    sortable: false,
+    render: (row) => <EstadoBadge estado={row.estado} />,
   },
-  {
-    id: 'acciones',
-    cell: () => (
-      <button className="rounded p-1 hover:bg-slate-100">
-        <MoreVertical className="h-4 w-4 text-slate-400" />
-      </button>
-    ),
-  },
-]
+];

@@ -1,17 +1,31 @@
-import { DataTable } from '@/components/ui/data-table'
-import { proyectoColumns } from '@/features/proyects/columns'
-import { ProyectMock } from '@/features/proyects/mocks/ProyectMocks'
-import { ProjectsFilters } from '@/components/proyects/ProjectsFilters'
+// pages/ProjectsPage.tsx
+import React from "react";
+import { MOCK_PROJECTS } from "@/features/proyects/mocks/ProyectMocks";
+import ProjectsTable from "@/components/proyects/ProjectsTable";
+import type { Project } from "@/features/proyects/types/proyect";
+import { ProjectsFilters } from "@/components/proyects/ProjectsFilters";
 
-export function ProjectsPage() {
+
+export default function ProjectsPage() {
+  const handleEdit = (project: Project) => {
+    console.log("Editar proyecto:", project.nombre);
+  };
+
+  const handleDelete = (project: Project) => {
+    console.log("Eliminar proyecto:", project.nombre);
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Gestión de Proyectos</h1>
-      </div>
-
-      <ProjectsFilters />
-      <DataTable columns={proyectoColumns} data={ProyectMock} pageSize={5} />
+    <div className="p-6 space-y-4">
+      <h1 className="text-2xl font-bold text-slate-800">Proyectos</h1>
+      
+      <ProjectsFilters/>
+      
+      <ProjectsTable
+        data={MOCK_PROJECTS}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
-  )
+  );
 }

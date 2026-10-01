@@ -77,7 +77,7 @@ export function ProjectsFilters() {
           </Button>
           <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
             <Plus className="h-4 w-4" />
-            Nuevo Miniperfil
+            Nuevo Proyecto
           </Button>
         </>
       }
