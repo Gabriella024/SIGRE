@@ -1,57 +1,41 @@
-import { MoreVertical } from "lucide-react";
-import { cn } from '@/lib/utils'
-import type { Evaluador } from "@/features/evaluators/types/evaluators";
+import React, { useEffect, useState } from "react";
+import MinimalTable from "@/components/ui/table/MinimalTable";
+import type { Evaluator } from "@/features/evaluators/types/evaluators";
+import { EVALUATOR_COLUMNS } from "@/features/evaluators/columns";
 
-const estadoStyles: Record<Evaluador['estado'], string> = {
-  Activo: 'bg-green-100 text-green-700',
-  Inactivo: 'bg-slate-100 text-slate-500',
+export interface EvaluatorTableProps {
+  data: Evaluator[];
+  onEdit?: (evaluator: Evaluator) => void;
+  onDelete?: (evaluator: Evaluator) => void;
 }
 
-export function EntrepreneursTable({ emprendedor }: { emprendedor: Evaluador[] }) {
+export function EvaluatorsTable({ data, onEdit, onDelete }: EvaluatorTableProps) {
+  const [dynamicPageSize, setDynamicPageSize] = useState(8);
+  
+    useEffect(() => {
+      const calculatePageSize = () => {
+        const windowHeight = window.innerHeight;
+        if (windowHeight > 1000) {
+          setDynamicPageSize(12);
+        } else if (windowHeight > 800) {
+          setDynamicPageSize(8);
+        } else {
+          setDynamicPageSize(5);
+        }
+      };
+  
+      calculatePageSize();
+      window.addEventListener("resize", calculatePageSize);
+      return () => window.removeEventListener("resize", calculatePageSize);
+    }, []);
+
   return (
-    <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b text-left text-xs uppercase text-slate-400">
-            <th className="px-4 py-3 font-medium">Documento</th>
-            <th className="px-4 py-3 font-medium">Nombre</th>
-            <th className="px-4 py-3 font-medium">Especialidad</th>
-            <th className="px-4 py-3 font-medium">Entidad</th>
-            <th className="px-4 py-3 font-medium">Teléfono</th>
-            <th className="px-4 py-3 font-medium">Estado</th>
-            <th className="px-4 py-3 font-medium"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y">
-          {emprendedor.length === 0 ? (
-            <tr>
-              <td colSpan={7} className="px-4 py-6 text-center text-slate-400">
-                No hay evaluadores registrados.
-              </td>
-            </tr>
-          ) : (
-            emprendedor.map((p) => (
-              <tr key={p.id} className="hover:bg-slate-50">
-                <td className="px-4 py-3 font-medium text-slate-900">{p.documento}</td>
-                <td className="px-4 py-3 text-slate-600">{p.nombre}</td>
-                <td className="px-4 py-3 text-slate-600">{p.especialidad}</td>
-                <td className="px-4 py-3 text-slate-600">{p.entidad}</td>
-                <td className="px-4 py-3 text-slate-600">{p.telefono}</td>
-                <td className="px-4 py-3">
-                  <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', estadoStyles[p.estado])}>
-                    {p.estado}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <button className="rounded p-1 hover:bg-slate-100">
-                    <MoreVertical className="h-4 w-4 text-slate-400" />
-                  </button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+    <MinimalTable<Evaluator>
+          data={data}
+          columns={EVALUATOR_COLUMNS}
+          pageSize={dynamicPageSize}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
   )
 }

@@ -1,6 +1,6 @@
 export type EvaluatorStatus = 'Activo' | 'Inactivo'
 
-export interface Evaluador {
+export interface Evaluator {
     id: string
     documento: string
     nombre: string

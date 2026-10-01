@@ -1,6 +1,6 @@
-import type { Evaluador } from "../types/evaluators"
+import type { Evaluator } from "../types/evaluators"
 
-export const EvaluatorMocks: Evaluador[] = [
+export const MOCK_EVALUATORS: Evaluator[] = [
     {
         id: '1',
         documento: '1004256332',
