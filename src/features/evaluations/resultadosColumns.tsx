@@ -1,63 +1,59 @@
-import type { ColumnDef } from '@tanstack/react-table'
-import { MoreVertical } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { AvatarGroup } from '@/components/evaluations/AvatarGroup'
+import type { Column } from "@/components/ui/table/types"
+import type { EvaluationResults, ConsolidatedResult } from "./types/resultado"
 import { ScoreBar } from '@/components/evaluations/ScoreBar'
-import type { ResultadoEvaluacion } from './types/resultado'
+import { AvatarGroup } from '@/components/evaluations/AvatarGroup'
 
-const badgeStyles: Record<ResultadoEvaluacion['resultado'], string> = {
-  Completado: 'bg-green-100 text-green-700',
-  Rechazado: 'bg-red-100 text-red-600',
-  'En revisión': 'bg-orange-100 text-orange-600',
+function EstadoBadge({ estado }: { estado: ConsolidatedResult }) {
+  const styles: Record<ConsolidatedResult, string> = {
+    Completado: "bg-emerald-100 text-emerald-700",
+    Rechazado: "bg-rose-100 text-rose-800",
+    'En revisión': "bg-yellow-100 text-yellow-700"
+  };
+
+  return (
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[estado]}`}>
+      {estado}
+    </span>
+  );
 }
 
-export const resultadosColumns: ColumnDef<ResultadoEvaluacion>[] = [
-  {
-    accessorKey: 'codigo',
-    header: 'CÓDIGO',
-    cell: ({ row }) => <span className="font-medium text-slate-900">{row.original.codigo}</span>,
-  },
-  {
-    accessorKey: 'proyecto',
-    header: 'PROYECTO',
-    cell: ({ row }) => <span className="text-slate-600">{row.original.proyecto}</span>,
-  },
-  {
-    accessorKey: 'fechaPitch',
-    header: 'FECHA PITCH',
-    cell: ({ row }) => (
-      <span className="text-slate-500">
-        {new Date(row.original.fechaPitch).toLocaleDateString('es-CO')}
-      </span>
+
+export const RESULT_COLUMNS: Column<EvaluationResults>[] = [
+ {
+    key: "codigo",
+    label: "CÓDIGO",
+    sortable: true,
+    render: (row) => (
+      <span className="font-semibold text-slate-900">{row.codigo}</span>
     ),
   },
   {
-    accessorKey: 'evaluadores',
-    header: 'EVALUADORES',
-    cell: ({ row }) => <AvatarGroup evaluadores={row.original.evaluadores} />,
+    key: "proyecto",
+    label: "PROYECTO",
+    sortable: true,
   },
   {
-    accessorKey: 'puntajePromedio',
-    header: 'PUNTAJE PROMEDIO',
-    cell: ({ row }) => (
-      <ScoreBar puntaje={row.original.puntajePromedio} resultado={row.original.resultado} />
-    ),
+    key: "fechaPitch",
+    label: "FECHA PITCH",
+    sortable: true,
   },
   {
-    accessorKey: 'resultado',
-    header: 'RESULTADO',
-    cell: ({ row }) => (
-      <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', badgeStyles[row.original.resultado])}>
-        {row.original.resultado}
-      </span>
-    ),
+    key: "evaluadores",
+    label: "EVALUADORES",
+    sortable: true,
+    render: (row) => <AvatarGroup evaluadores={row.evaluadores}/>
   },
   {
-    id: 'acciones',
-    cell: () => (
-      <button className="rounded p-1 hover:bg-slate-100">
-        <MoreVertical className="h-4 w-4 text-slate-400" />
-      </button>
-    ),
+    key: "puntajePromedio",
+    label: "PUNTAJE",
+    sortable: true,
+    render: (row) => <ScoreBar puntaje={row.puntajePromedio} resultado={row.resultado}/>
   },
+  {
+    key: "resultado",
+    label: "RESULTADO",
+    sortable: true,
+    render: (row) => <EstadoBadge estado={row.resultado} />,
+  },
+
 ]

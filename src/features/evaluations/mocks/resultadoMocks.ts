@@ -1,4 +1,4 @@
-import type { ResultadoEvaluacion } from '../types/resultado'
+import type { EvaluationResults } from '../types/resultado'
 
 const evaluadoresBase = [
   { iniciales: 'JR', color: 'bg-blue-500' },
@@ -6,7 +6,7 @@ const evaluadoresBase = [
   { iniciales: 'CG', color: 'bg-teal-500' },
 ]
 
-export const resultadosMock: ResultadoEvaluacion[] = [
+export const MOCK_RESULTS: EvaluationResults[] = [
   { id: '1', codigo: 'P-2024-001', proyecto: 'AgroTech Caribe SAS', fechaPitch: '2026-07-15', evaluadores: evaluadoresBase, puntajePromedio: 84, resultado: 'Completado' },
   { id: '2', codigo: 'P-2024-001', proyecto: 'AgroTech Caribe SAS', fechaPitch: '2026-07-15', evaluadores: evaluadoresBase, puntajePromedio: 84, resultado: 'Rechazado' },
   { id: '3', codigo: 'P-2024-001', proyecto: 'AgroTech Caribe SAS', fechaPitch: '2026-07-15', evaluadores: evaluadoresBase, puntajePromedio: 84, resultado: 'Completado' },
