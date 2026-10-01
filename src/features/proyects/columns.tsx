@@ -1,4 +1,3 @@
-
 import type { Column } from "@/components/ui/table/types";
 import type { Project, ProjectStage, ProjectStatus } from "./types/proyect";
 
@@ -13,7 +12,7 @@ function EtapaBadge({ etapa }: { etapa: ProjectStage }) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium ${stageStyles[etapa]}`}
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${stageStyles[etapa]}`}
     >
       {etapa}
     </span>

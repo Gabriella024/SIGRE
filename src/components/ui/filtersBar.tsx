@@ -67,18 +67,18 @@ export function FiltersBar({
   }, [open])
 
   return (
-    <div className="flex items-center justify-between gap-3">
-      <div className="relative w-full max-w-md">
+    <div className="flex w-full min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="relative w-full min-w-0 md:max-w-md">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={searchPlaceholder}
-          className="rounded-lg border-slate-200 bg-slate-50 pl-9"
+          className="w-full rounded-lg border-slate-200 bg-slate-50 pl-9"
         />
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         {filters.length > 0 && (
           <div ref={containerRef} className="relative">
             <Button
@@ -98,50 +98,57 @@ export function FiltersBar({
             </Button>
 
             {open && (
-              <div
-                role="dialog"
-                className="absolute right-0 top-full z-20 mt-2 w-64 space-y-3 rounded-xl border bg-white p-4 shadow-lg"
-              >
-                {filters.map((filter) => (
-                  <div key={filter.key} className="space-y-1">
-                    <label htmlFor={`filter-${filter.key}`} className="text-xs font-medium text-slate-500">
-                      {filter.label}
-                    </label>
-                    {filter.type === 'date' || filter.type === 'datetime' ? (
-                      <input
-                        id={`filter-${filter.key}`}
-                        type={filter.type === 'date' ? 'date' : 'datetime-local'}
-                        className={dateInputClass}
-                        value={filter.value}
-                        onChange={(e) => filter.onChange(e.target.value)}
-                      />
-                    ) : (
-                      <select
-                        id={`filter-${filter.key}`}
-                        className={selectClass}
-                        value={filter.value}
-                        onChange={(e) => filter.onChange(e.target.value)}
-                      >
-                        <option value="">{filter.placeholder ?? 'Todos'}</option>
-                        {(filter.options ?? []).map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                  </div>
-                ))}
-
-                <Button
-                  variant="ghost"
-                  className="w-full text-slate-600"
-                  onClick={onClearFilters}
-                  disabled={activeCount === 0}
+              <>
+                <div
+                  className="fixed inset-0 z-40 bg-slate-900/20 md:hidden"
+                  onClick={() => setOpen(false)}
+                  aria-hidden="true"
+                />
+                <div
+                  role="dialog"
+                  className="fixed left-1/2 top-1/2 z-50 max-h-[80vh] w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 space-y-3 overflow-y-auto rounded-xl border bg-white p-4 shadow-lg md:absolute md:left-auto md:right-0 md:top-full md:mt-2 md:max-h-none md:w-80 md:max-w-none md:translate-x-0 md:translate-y-0 md:overflow-visible"
                 >
-                  Limpiar filtros
-                </Button>
-              </div>
+                  {filters.map((filter) => (
+                    <div key={filter.key} className="w-full min-w-0 space-y-1">
+                      <label htmlFor={`filter-${filter.key}`} className="block truncate text-xs font-medium text-slate-500">
+                        {filter.label}
+                      </label>
+                      {filter.type === 'date' || filter.type === 'datetime' ? (
+                        <input
+                          id={`filter-${filter.key}`}
+                          type={filter.type === 'date' ? 'date' : 'datetime-local'}
+                          className={dateInputClass}
+                          value={filter.value}
+                          onChange={(e) => filter.onChange(e.target.value)}
+                        />
+                      ) : (
+                        <select
+                          id={`filter-${filter.key}`}
+                          className={selectClass}
+                          value={filter.value}
+                          onChange={(e) => filter.onChange(e.target.value)}
+                        >
+                          <option value="">{filter.placeholder ?? 'Todos'}</option>
+                          {(filter.options ?? []).map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  ))}
+
+                  <Button
+                    variant="ghost"
+                    className="w-full text-slate-600"
+                    onClick={onClearFilters}
+                    disabled={activeCount === 0}
+                  >
+                    Limpiar filtros
+                  </Button>
+                </div>
+              </>
             )}
           </div>
         )}
