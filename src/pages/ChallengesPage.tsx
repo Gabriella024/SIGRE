@@ -1,17 +1,25 @@
 import { useMemo, useState } from 'react'
 
-import { DataTable } from '@/components/ui/data-table'
-import { retosMock } from '@/features/challenges/mocks/ChallengesMocks'
-import { challengeColumns } from '@/features/challenges/columns'
+import { ChallengesTable } from '@/components/challenges/ChallengesTable'
+import { MOCK_CHALLENGES } from '@/features/challenges/mocks/ChallengesMocks'
 import { ChallengesFilters } from '@/components/challenges/ChallengesFilters'
+import type { Challenge } from '@/features/challenges/types/Challenge'
 
 export function ChallengesPage() {
   const [activeTab, setActiveTab] = useState('metricas')
 
   const retosFiltrados = useMemo(() => {
-    if (activeTab === 'metricas') return retosMock
-    return retosMock.filter((r) => r.nivel === activeTab)
+    if (activeTab === 'metricas') return MOCK_CHALLENGES
+    return MOCK_CHALLENGES.filter((r) => r.nivel === activeTab)
   }, [activeTab])
+
+  const handleEdit = (challenge: Challenge) => {
+    console.log("Editar proyecto:", challenge.codigo);
+  };
+
+  const handleDelete = (challenge: Challenge) => {
+    console.log("Eliminar proyecto:", challenge.codigo);
+  };
 
   return (
     <div className="space-y-6">
@@ -26,7 +34,11 @@ export function ChallengesPage() {
           Panel de métricas generales de R1, R2 y R3 (pendiente de diseño)
         </div>
       ) : (
-        <DataTable columns={challengeColumns} data={retosFiltrados} pageSize={8} />
+        <ChallengesTable
+          data={retosFiltrados}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       )}
     </div>
   )

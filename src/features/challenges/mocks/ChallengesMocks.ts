@@ -1,12 +1,12 @@
-import type { Reto } from "../types/Challenge"
+import type { Challenge } from "../types/Challenge"
 
-export const retosMock: Reto[] = [
+export const MOCK_CHALLENGES: Challenge[] = [
   {
     id: '1',
     codigo: '0000011',
     nivel: 'R1',
     sesion: 'Introducción primeros pasos - #01',
-    fechaHora: '2026-07-30T20:00:00',
+    fechayhora: '2026-02-14/ 8:00 AM',
     modalidad: 'Presencial',
     cupo: 30,
     estado: 'Programado',
@@ -16,7 +16,7 @@ export const retosMock: Reto[] = [
     codigo: '0000012',
     nivel: 'R1',
     sesion: 'Introducción primeros pasos - #02',
-    fechaHora: '2026-07-31T18:00:00',
+    fechayhora: '2026-02-14/ 8:00 AM',
     modalidad: 'Virtual',
     cupo: 40,
     estado: 'Programado',
@@ -26,7 +26,7 @@ export const retosMock: Reto[] = [
     codigo: '0000021',
     nivel: 'R2',
     sesion: 'Validación de idea de negocio - #01',
-    fechaHora: '2026-08-02T19:00:00',
+    fechayhora: '2026-02-14/ 8:00 AM',
     modalidad: 'Presencial',
     cupo: 25,
     estado: 'En curso',
@@ -36,7 +36,7 @@ export const retosMock: Reto[] = [
     codigo: '0000031',
     nivel: 'R3',
     sesion: 'Pitch final - #01',
-    fechaHora: '2026-08-10T16:00:00',
+    fechayhora: '2026-02-14/ 8:00 AM',
     modalidad: 'Presencial',
     cupo: 20,
     estado: 'Finalizado',
