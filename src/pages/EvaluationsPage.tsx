@@ -21,7 +21,7 @@ export function EvaluationsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-4">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Gestión de Evaluaciones</h1>
       </div>
