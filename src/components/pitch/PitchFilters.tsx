@@ -6,9 +6,10 @@ import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
 type Filters = {
   estado: string
   modalidad: string
+  fechaHoraAtencion: string
 }
 
-const initialFilters: Filters = { estado: '', modalidad: '' }
+const initialFilters: Filters = { estado: '', modalidad: '', fechaHoraAtencion: '' }
 
 export function PitchFilters() {
 
@@ -42,6 +43,13 @@ export function PitchFilters() {
         { value: 'cerrado', label: 'Cerrado' },
         { value: 'en evaluación', label: 'En evaluación' },
       ],
+    },
+    {
+      key: 'fechaHoraAtencion',
+      label: 'Fecha y Hora',
+      type: 'datetime',
+      value: filters.fechaHoraAtencion,
+      onChange: setFilter('fechaHoraAtencion'),
     },
   ]
 

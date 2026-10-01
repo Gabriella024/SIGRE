@@ -6,9 +6,11 @@ import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
 
 type Filters = {
   estado: string
+  fechaCreacion: string
+  fechaUltimoAcceso: string
 }
 
-const initialFilters: Filters = { estado: '' }
+const initialFilters: Filters = { estado: '', fechaCreacion: '', fechaUltimoAcceso: '' }
 
 export function UsersFilters() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -29,7 +31,21 @@ export function UsersFilters() {
         { value: 'inactivo', label: 'Inactivo' },
         { value: 'finalizado', label: 'Finalizado' },
       ],
-    }
+    },
+    {
+      key: 'fechaCreacion',
+      label: 'Fecha de Creación',
+      type: 'datetime',
+      value: filters.fechaCreacion,
+      onChange: setFilter('fechaCreacion'),
+    },
+    {
+      key: 'fechaUltimoAcceso',
+      label: 'Último acceso',
+      type: 'datetime',
+      value: filters.fechaUltimoAcceso,
+      onChange: setFilter('fechaUltimoAcceso'),
+    },
   ]
 
   return (

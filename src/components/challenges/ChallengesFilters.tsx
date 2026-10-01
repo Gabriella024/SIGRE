@@ -11,9 +11,10 @@ type ChallengesFiltersProps = {
 
 type Filters = {
   estado: string
+  fechaHoraAtencion: string
 }
 
-const initialFilters: Filters = { estado: '' }
+const initialFilters: Filters = { estado: '', fechaHoraAtencion: '' }
 
 export function ChallengesFilters({ activeTab, onTabChange }: ChallengesFiltersProps) {
   const [searchTerm, setSearchTerm] = useState('')
@@ -35,7 +36,14 @@ export function ChallengesFilters({ activeTab, onTabChange }: ChallengesFiltersP
         { value: 'finalizado', label: 'Finalizado' },
         { value: 'cancelado', label: 'Cancelado' },
       ],
-    }
+    },
+    {
+      key: 'fechaHoraAtencion',
+      label: 'Fecha y Hora',
+      type: 'datetime',
+      value: filters.fechaHoraAtencion,
+      onChange: setFilter('fechaHoraAtencion'),
+    },
   ]
   return (
     <>

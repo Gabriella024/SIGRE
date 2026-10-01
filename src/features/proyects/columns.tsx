@@ -61,7 +61,7 @@ export const proyectoColumns: ColumnDef<Proyecto>[] = [
   },
   {
     accessorKey: 'fechaRegistro',
-    header: ({ column }) => <SortableHeader label="Fecha Inicio" column={column} />,
+    header: ({ column }) => <SortableHeader label="Fecha de Registro" column={column} />,
     cell: ({ row }) => (
       <span className="text-slate-500">
         {new Date(row.original.fechaRegistro).toLocaleDateString()}

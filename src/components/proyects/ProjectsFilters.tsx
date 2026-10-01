@@ -7,9 +7,10 @@ type Filters = {
   estado: string
   municipio: string
   etapa: string
+  fechaRegistro: string
 }
 
-const initialFilters: Filters = { estado: '', municipio: '', etapa: '' }
+const initialFilters: Filters = { estado: '', municipio: '', etapa: '', fechaRegistro: '' }
 
 export function ProjectsFilters() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -52,6 +53,13 @@ export function ProjectsFilters() {
         { value: 'pitch', label: 'Pitch' },
       ],
     },
+    {
+      key: 'fechaRegistro',
+      label: 'Fecha de Registro',
+      type: 'date',
+      value: filters.fechaRegistro,
+      onChange: setFilter('fechaRegistro'),
+    }
   ]
 
   return (

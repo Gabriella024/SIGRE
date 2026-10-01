@@ -3,6 +3,8 @@ import { Search, SlidersHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+
+
 export type FilterOption = {
   value: string
   label: string
@@ -12,8 +14,9 @@ export type FilterConfig = {
   key: string
   label: string
   value: string
-  placeholder: string
-  options: FilterOption[]
+  placeholder?: string
+  options?: FilterOption[]
+  type?: 'select' | 'date' | 'datetime'
   onChange: (value: string) => void
 }
 
@@ -29,6 +32,11 @@ type FiltersBarProps = {
 const selectClass =
   'w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-lime-500'
 
+const dateInputClass =
+  'w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 [color-scheme:light] focus:bg-white focus:outline-none focus:ring-2 focus:ring-lime-500/20 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:hue-rotate-[100deg]'
+
+const isFilterActive = (filter: FilterConfig) => filter.value.trim() !== ''
+
 export function FiltersBar({
   searchTerm,
   onSearchChange,
@@ -40,7 +48,7 @@ export function FiltersBar({
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const activeCount = filters.filter((filter) => filter.value !== '').length
+  const activeCount = filters.filter(isFilterActive).length
 
   useEffect(() => {
     if (!open) return
@@ -99,19 +107,29 @@ export function FiltersBar({
                     <label htmlFor={`filter-${filter.key}`} className="text-xs font-medium text-slate-500">
                       {filter.label}
                     </label>
-                    <select
-                      id={`filter-${filter.key}`}
-                      className={selectClass}
-                      value={filter.value}
-                      onChange={(e) => filter.onChange(e.target.value)}
-                    >
-                      <option value="">{filter.placeholder}</option>
-                      {filter.options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                    {filter.type === 'date' || filter.type === 'datetime' ? (
+                      <input
+                        id={`filter-${filter.key}`}
+                        type={filter.type === 'date' ? 'date' : 'datetime-local'}
+                        className={dateInputClass}
+                        value={filter.value}
+                        onChange={(e) => filter.onChange(e.target.value)}
+                      />
+                    ) : (
+                      <select
+                        id={`filter-${filter.key}`}
+                        className={selectClass}
+                        value={filter.value}
+                        onChange={(e) => filter.onChange(e.target.value)}
+                      >
+                        <option value="">{filter.placeholder ?? 'Todos'}</option>
+                        {(filter.options ?? []).map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    )}
                   </div>
                 ))}
 

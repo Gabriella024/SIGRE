@@ -6,9 +6,10 @@ import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
 type Filters = {
   estado: string
   modalidad: string
+  fechaHoraAtencion: string
 }
 
-const initialFilters: Filters = { estado: '', modalidad: '' }
+const initialFilters: Filters = { estado: '', modalidad: '', fechaHoraAtencion: '' }
 
 export function OrientationsFilters() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -37,7 +38,14 @@ export function OrientationsFilters() {
       placeholder: 'Todos los municipios',
       onChange: setFilter('modalidad'),
       options: [],
-    }
+    },
+    {
+    key: 'fechaHoraAtencion',
+    label: 'Fecha y Hora',
+    type: 'datetime',
+    value: filters.fechaHoraAtencion,
+    onChange: setFilter('fechaHoraAtencion'),
+  },
   ]
 
   return (
