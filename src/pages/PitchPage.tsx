@@ -1,17 +1,28 @@
-import { DataTable } from "@/components/ui/data-table";
-import { PitchMock } from "@/features/pitch/mocks/PitchMocks";
-import { PitchFilters } from "@/components/pitch/PitchFilters";
-import { pitchColumn } from "@/features/pitch/columns";
+import React from "react"
+import { MOCK_PITCH } from "@/features/pitch/mocks/PitchMocks"
+import { PitchTable } from "@/components/pitch/PitchTable"
+import type { Pitch } from "@/features/pitch/types/pitch"
+import { PitchFilters } from "@/components/pitch/PitchFilters"
 
 export function PitchPage() {
+  const handleEdit = (pitch: Pitch) => {
+    console.log("Editar proyecto:", pitch.nombre);
+  };
+
+  const handleDelete = (pitch: Pitch) => {
+    console.log("Eliminar proyecto:", pitch.nombre);
+  };
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2x1 font-bold text-slate-900">Gestión de Orientaciones</h1>
-      </div>
+    <div className="p-6 space-y-4">
+      <h1 className="text-2xl font-bold text-slate-800">Gestión de Orientaciones</h1>
 
       <PitchFilters />
-      <DataTable columns={pitchColumn} data={PitchMock} pageSize={5} />
+
+      <PitchTable
+        data={MOCK_PITCH}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   )
 }    

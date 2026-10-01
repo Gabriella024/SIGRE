@@ -1,12 +1,12 @@
 import type { Pitch } from "../types/pitch";
 
-export const PitchMock: Pitch[] = [
+export const MOCK_PITCH: Pitch[] = [
   {
     id: '1',
     etapa: 'R6',
     nombre: 'Jornada de Pitch N°5',
     fechayhora: '2026-02-14/ 8:00 AM',
-    modalidad: 'Presencial',
+    modalidad: 'Virtual',
     lugarylink: 'Sede Coquimbo - Aula 102',
     estado: 'Programado'
   },
