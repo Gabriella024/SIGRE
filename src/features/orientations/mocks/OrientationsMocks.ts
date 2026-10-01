@@ -1,6 +1,6 @@
 import type { Orientacion } from "../types/orientations";
 
-export const OrientationMock: Orientacion[] = [
+export const MOCK_ORIENTATIONS: Orientacion[] = [
 
     {
         id: '1',

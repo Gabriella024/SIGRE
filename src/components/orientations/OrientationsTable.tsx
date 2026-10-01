@@ -1,61 +1,42 @@
-import { MoreVertical } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import React, { useEffect, useState } from "react";
+import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { Orientacion } from '@/features/orientations/types/orientations'
+import { ORIENTATION_COLUMNS } from "@/features/orientations/columns";
 
-const estadoStyles: Record<Orientacion['estado'], string> = {
-  Programada: 'bg-green-100 text-green-700',
-  Finalizada: 'bg-slate-100 text-slate-500',
-  "En Proceso": 'bg-blue-100 text-blue-700',
+export interface OrientationTableProps {
+  data: Orientacion[];
+  onEdit?: (orientation: Orientacion) => void;
+  onDelete?: (orientation: Orientacion) => void;
 }
 
-export function ProjectsTable({ orientacion }: { orientacion: Orientacion[] }) {
+export function OrientationTable({ data, onEdit, onDelete }: OrientationTableProps) {
+  const [dynamicPageSize, setDynamicPageSize] = useState(8);
+
+  useEffect(() => {
+    const calculatePageSize = () => {
+      const windowHeight = window.innerHeight;
+      if (windowHeight > 1000) {
+        setDynamicPageSize(12);
+      } else if (windowHeight > 800) {
+        setDynamicPageSize(8);
+      } else {
+        setDynamicPageSize(5);
+      }
+    };
+
+    calculatePageSize();
+    window.addEventListener("resize", calculatePageSize);
+    return () => window.removeEventListener("resize", calculatePageSize);
+  }, []);
+
   return (
-    <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b text-left text-xs uppercase text-slate-400">
-            <th className="px-4 py-3 font-medium">Jornada</th>
-            <th className="px-4 py-3 font-medium">Fecha/Hora</th>
-            <th className="px-4 py-3 font-medium">Modalidad</th>
-            <th className="px-4 py-3 font-medium">Lugar/Link</th>
-            <th className="px-4 py-3 font-medium">Cupo</th>
-            <th className="px-4 py-3 font-medium">Estado</th>
-            <th className="px-4 py-3"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y">
-          {orientacion.length === 0 ? (
-            <tr>
-              <td colSpan={7} className="px-4 py-6 text-center text-slate-400">
-                No hay orientaciones registradas.
-              </td>
-            </tr>
-          ) : (
-            orientacion.map((p) => (
-              <tr key={p.id} className="hover:bg-slate-50">
-                <td className="px-4 py-3 font-medium text-slate-900">{p.nombre}</td>
-                <td className="px-4 py-3 text-slate-500">
-                  {new Date(p.fechayhora).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-3 text-slate-500">{p.modalidad}</td>
-                <td className="px-4 py-3 text-slate-500">{p.lugarylink}</td>
-                <td className="px-4 py-3 text-slate-500">{p.cupo}</td>
-                
-                <td className="px-4 py-3">
-                  <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', estadoStyles[p.estado])}>
-                    {p.estado}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <button className="rounded p-1 hover:bg-slate-100">
-                    <MoreVertical className="h-4 w-4 text-slate-400" />
-                  </button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
-  )
+    <MinimalTable<Orientacion>
+      data={data}
+      columns={ORIENTATION_COLUMNS}
+      pageSize={dynamicPageSize}
+      onEdit={onEdit}
+      onDelete={onDelete}
+    />
+  );
+
 }

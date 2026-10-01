@@ -1,4 +1,3 @@
-// features/projects/types.ts
 export type ProjectStage = "Retos" | "Orientación" | "Pitch" | "Registro";
 export type ProjectStatus = "Activo" | "Finalizado" | "Inactivo";
 

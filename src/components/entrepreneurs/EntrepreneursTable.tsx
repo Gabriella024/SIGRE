@@ -3,13 +3,13 @@ import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { Entrepreneur } from "@/features/entrepreneurs/types/entrepreneur";
 import { ENTREPRENEUR_COLUMNS } from "@/features/entrepreneurs/columns";
 
-export interface ProjectsTableProps {
+export interface EntrepreneurTableProps {
   data: Entrepreneur[];
-  onEdit?: (project: Entrepreneur) => void;
-  onDelete?: (project: Entrepreneur) => void;
+  onEdit?: (entrepreneur: Entrepreneur) => void;
+  onDelete?: (entrepreneur: Entrepreneur) => void;
 }
 
-export function EntrepreneursTable({ data, onEdit, onDelete }: ProjectsTableProps) {
+export function EntrepreneursTable({ data, onEdit, onDelete }: EntrepreneurTableProps) {
   const [dynamicPageSize, setDynamicPageSize] = useState(8);
 
   useEffect(() => {

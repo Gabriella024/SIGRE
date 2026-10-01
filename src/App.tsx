@@ -4,8 +4,6 @@ import './App.css'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 
-
-// import { ProjectsPage } from './pages/ProyectPage'
 import {ProjectsPage} from './pages/ProyectPage'
 import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
