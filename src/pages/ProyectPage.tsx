@@ -6,7 +6,7 @@ import type { Project } from "@/features/proyects/types/proyect";
 import { ProjectsFilters } from "@/components/proyects/ProjectsFilters";
 
 
-export default function ProjectsPage() {
+export function ProjectsPage() {
   const handleEdit = (project: Project) => {
     console.log("Editar proyecto:", project.nombre);
   };
@@ -17,7 +17,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-800">Proyectos</h1>
+      <h1 className="text-2xl font-bold text-slate-800">Gestión de Proyectos</h1>
       
       <ProjectsFilters/>
       

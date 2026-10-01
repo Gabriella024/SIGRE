@@ -1,9 +1,9 @@
 export type EntrepreneurStatus = 'Activo' | 'Inactivo' | 'Suspendido'
 
-export interface Emprendedor {
+export interface Entrepreneur {
     id: string
-    nombre: string
     documento: string
+    nombre: string
     correo: string
     municipio: string
     centro: string

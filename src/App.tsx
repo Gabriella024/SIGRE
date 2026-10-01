@@ -4,11 +4,13 @@ import './App.css'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 
-import { ProjectsPage } from './pages/ProyectPage'
+
+// import { ProjectsPage } from './pages/ProyectPage'
+import {ProjectsPage} from './pages/ProyectPage'
 import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { DashboardLayout } from './layouts/DashboardLayaout'
-import { EntrepreneurPage } from './pages/EntrepreneurPage'
+import { EntrepreneursPage } from './pages/EntrepreneurPage'
 import { OrientationPage } from './pages/OrientationPage'
 import { UsersPage } from './pages/User'
 import { PitchPage } from './pages/PitchPage'
@@ -32,7 +34,7 @@ function App() {
           >
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/proyectos" element={<ProjectsPage />} />
-            <Route path='/emprendedores' element={<EntrepreneurPage />}></Route>
+            <Route path='/emprendedores' element={<EntrepreneursPage />}></Route>
             <Route path='/orientaciones' element={<OrientationPage />}></Route>
             <Route path='/usuarios' element={<UsersPage />}></Route>
             <Route path='/pitch' element={<PitchPage />}></Route>

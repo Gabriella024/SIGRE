@@ -1,17 +1,29 @@
-import { DataTable } from "@/components/ui/data-table";
-import { enmprendedorColumns } from "@/features/entrepreneurs/columns";
-import { EntrepreneurMock } from "@/features/entrepreneurs/mocks/EntrepreneursMocks";
-import { EntrepreneursFilters } from "@/components/entrepreneurs/EntrepreneursFilters";
+import React from "react"
+import { MOCK_ENTREPRENEURS } from "@/features/entrepreneurs/mocks/EntrepreneursMocks"
+import { EntrepreneursTable } from "@/components/entrepreneurs/EntrepreneursTable"
+import type { Entrepreneur } from "@/features/entrepreneurs/types/entrepreneur"
+import { EntrepreneursFilters } from "@/components/entrepreneurs/EntrepreneursFilters"
 
-export function EntrepreneurPage() {
+export function EntrepreneursPage() {
+  const handleEdit = (project: Entrepreneur) => {
+      console.log("Editar proyecto:", project.nombre);
+    };
+  
+    const handleDelete = (project: Entrepreneur) => {
+      console.log("Eliminar proyecto:", project.nombre);
+    };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2x1 font-bold text-slate-900">Gestión de Emprendedores</h1>
-      </div>
-
-      <EntrepreneursFilters />
-      <DataTable columns={enmprendedorColumns} data={EntrepreneurMock} pageSize={5} />
-    </div>
+    <div className="p-6 space-y-4">
+          <h1 className="text-2xl font-bold text-slate-800">Gestión de Emprendedores</h1>
+          
+          <EntrepreneursFilters/>
+          
+          <EntrepreneursTable
+            data={MOCK_ENTREPRENEURS}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </div>
   )
 }

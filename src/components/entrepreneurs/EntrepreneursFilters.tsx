@@ -1,7 +1,7 @@
-import { Download, Plus, Grip } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { FiltersBar, type FilterConfig } from "../ui/filtersBar";
+import { useState } from 'react'
+import { Download, Plus, Grip } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
 
 type Filters = {
   estado: string
