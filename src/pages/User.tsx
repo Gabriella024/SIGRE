@@ -1,5 +1,3 @@
-
-// src/pages/UsersPage.tsx
 import React from 'react'
 import { UsersTable } from '@/components/users/UsersTable'
 import { UsersFilters } from '@/components/users/UsersFilters'

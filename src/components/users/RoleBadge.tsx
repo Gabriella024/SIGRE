@@ -1,11 +1,11 @@
 import type { RolUsuario } from '@/features/users/types/users'
 
 const roleStyles: Record<RolUsuario, string> = {
-  Administrador: "bg-lime-100 text-lime-700",
+  Administrador: "bg-emerald-100 text-emerald-700",
   Coordinador: "bg-cyan-100 text-cyan-800",
   Evaluador: "bg-indigo-100 text-indigo-800",
-  Emprendedor: "bg-taupe-100 text-taupe-800",
-  Orientador: "bg-mauve-100 text-mauve-800",
+  Emprendedor: "bg-violet-100 text-violet-800",
+  Orientador: "bg-pink-100 text-pink-800",
 }
 
 export function RoleBadge({ rol }: { rol: RolUsuario }) {
