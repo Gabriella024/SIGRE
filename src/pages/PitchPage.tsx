@@ -14,7 +14,7 @@ export function PitchPage() {
   };
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-800">Gestión de Pitch</h1>
+      <h1 className="text-2xl font-bold text-slate-800">Gestión de Sustentación y Pitch</h1>
 
       <PitchFilters />
 

@@ -7,7 +7,7 @@ function EtapaBadge({ etapa }: { etapa: ProjectStage }) {
     Retos: "bg-amber-100 text-amber-900 border-amber-200",
     Orientación: "bg-sky-100 text-sky-900 border-sky-200",
     Pitch: "bg-purple-100 text-purple-900 border-purple-200",
-    Registro: "bg-slate-100 text-slate-800 border-slate-200",
+    Registro: "bg-pink-100 text-pink-800 border-pink-200",
   };
 
   return (
