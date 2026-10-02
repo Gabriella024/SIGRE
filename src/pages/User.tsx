@@ -1,23 +1,33 @@
-import { DataTable } from '@/components/ui/data-table'
+
+// src/pages/UsersPage.tsx
+import React from 'react'
+import { UsersTable } from '@/components/users/UsersTable'
 import { UsersFilters } from '@/components/users/UsersFilters'
-import { usuarioColumns } from '@/features/users/columns'
-import { usuariosMock } from '@/features/users/mocks/UserMocks'
+import { MOCK_USERS } from '@/features/users/mocks/UserMocks'
+import type { User } from '@/features/users/types/users'
 
 export function UsersPage() {
+  const handleEdit = (user: User) => {
+    console.log("Editar usuario:", user.nombre);
+  };
+
+  const handleDelete = (user: User) => {
+    console.log("Eliminar usuario:", user.nombre);
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Usuarios</h1>
+        <h1 className="text-2xl font-bold text-slate-900">Gestión de Usuarios</h1>
       </div>
-      
+
       <UsersFilters />
 
-      <DataTable
-        columns={usuarioColumns}
-        data={usuariosMock}
-        pageSize={5}
-        enableRowSelection
+      <UsersTable
+        data={MOCK_USERS}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     </div>
-  )
+  );
 }

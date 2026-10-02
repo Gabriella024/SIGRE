@@ -1,91 +1,65 @@
-import type { ColumnDef } from '@tanstack/react-table'
-import { Pencil, Trash2 } from 'lucide-react'
-import { Checkbox } from '@/components/ui/checkbox'
-
+import type { Column } from "@/components/ui/table/types";
 import { AvatarInitials } from '@/components/ui/avatar-initials'
-import { RoleBadge } from '@/components/users/RoleBadge'
-import { StatusBadge } from '@/components/users/StatusBadge'
-import type {User} from './types/users'
+import type { User, EstadoUsuario } from "./types/users";
+import { RoleBadge } from "@/components/users/RoleBadge";
 
-function formatFecha(fecha: string | null) {
-  if (!fecha) return '—'
-  return new Date(fecha).toLocaleDateString('es-CO')
+function EstadoBadge({ estado }: { estado: EstadoUsuario }) {
+  const styles: Record<EstadoUsuario, string> = {
+    Activo: "bg-emerald-100 text-emerald-700",
+    Inactivo: "bg-rose-100 text-rose-700",
+    Suspendido: "bg-gray-100 text-gray-800",
+  };
+
+  return (
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[estado]}`}>
+      {estado}
+    </span>
+  );
 }
 
-export const usuarioColumns: ColumnDef<User>[] = [
+export const USER_COLUMNS: Column<User>[] = [
   {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-      />
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'nombre',
-    header: 'NOMBRE',
-    cell: ({ row }) => (
+    key: "nombre",
+    label: "NOMBRE",
+    sortable: true,
+    render: (row) => (
       <div className="flex items-center gap-3">
-        <AvatarInitials nombre={row.original.nombre} />
-        <span className="font-medium text-slate-900">{row.original.nombre}</span>
+        <AvatarInitials nombre={row.nombre} />
+        <span className="font-medium text-slate-900">{row.nombre}</span>
       </div>
     ),
   },
   {
-    accessorKey: 'correo',
-    header: 'CORREO',
-    cell: ({ row }) => <span className="text-slate-500">{row.original.correo}</span>,
+    key: "correo",
+    label: "CORREO",
+    sortable: true,
   },
   {
-    accessorKey: 'roles',
-    header: 'ROL(ES)',
-    cell: ({ row }) => (
+    key: "roles",
+    label: "ROL(ES)",
+    sortable: false,
+    render: (row) => (
       <div className="flex flex-wrap gap-1.5">
-        {row.original.roles.map((rol) => (
-          <RoleBadge key={rol} rol={rol} />
+        {row.roles.map((rol) => (
+          <RoleBadge key={rol} rol={rol}/>
         ))}
       </div>
-    ),
+    )
   },
   {
-    accessorKey: 'estado',
-    header: 'ESTADO',
-    cell: ({ row }) => <StatusBadge estado={row.original.estado} />,
+    key: "estado",
+    label: "ESTADO",
+    sortable: false,
+    render: (row) => <EstadoBadge estado={row.estado} />,
   },
   {
-    accessorKey: 'ultimoAcceso',
-    header: 'ÚLTIMO ACCESO',
-    cell: ({ row }) => (
-      <span className="text-slate-500">{formatFecha(row.original.ultimoAcceso)}</span>
-    ),
+    key: "ultimoAcceso",
+    label: "ÚLTIMO ACCESO",
+    sortable: true,
   },
   {
-    accessorKey: 'fechaCreacion',
-    header: 'FECHA DE CREACIÓN',
-    cell: ({ row }) => (
-      <span className="text-slate-500">{formatFecha(row.original.fechaCreacion)}</span>
-    ),
-  },
-  {
-    id: 'acciones',
-    header: '',
-    cell: () => (
-      <div className="flex items-center gap-1">
-        <button className="rounded p-1.5 hover:bg-slate-100">
-          <Pencil className="h-4 w-4 text-slate-400" />
-        </button>
-        <button className="rounded p-1.5 hover:bg-red-50">
-          <Trash2 className="h-4 w-4 text-red-400" />
-        </button>
-      </div>
-    ),
+    key: "fechaCreacion",
+    label: "FECHA DE CREACIÓN",
+    sortable: true,
   },
 ]

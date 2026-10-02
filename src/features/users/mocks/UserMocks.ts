@@ -1,6 +1,6 @@
 import type {User} from '../types/users'
 
-export const usuariosMock: User[] = [
+export const MOCK_USERS: User[] = [
   {
     id: '1',
     nombre: 'Pedro Antonio Salas Sanchez',

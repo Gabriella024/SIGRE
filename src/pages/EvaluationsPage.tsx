@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Download } from 'lucide-react'
 import { EvaluationTabs } from '@/components/evaluations/EvaluationTabs'
 import { EvaluationSummaryBar } from '@/components/evaluations/EvaluationSummaryBar'
 import { EvaluationCard } from '@/components/evaluations/EvaluationCard'
