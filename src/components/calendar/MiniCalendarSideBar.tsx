@@ -18,7 +18,7 @@ interface MiniCalendarSidebarProps {
   onSelectDate: (date: Date) => void;
 }
 
-const WEEKDAY_INITIALS = ["L", "M", "X", "J", "V", "S", "D"] as const;
+const WEEKDAY_INITIALS = ["L", "M", "M", "J", "V", "S", "D"] as const;
 
 export default function MiniCalendarSidebar({
   selectedDate,
@@ -44,7 +44,6 @@ export default function MiniCalendarSidebar({
 
   return (
     <aside className="flex w-full flex-col gap-4 lg:w-80 lg:shrink-0">
-      {/* Mini calendario */}
       <section className="rounded-xl border border-slate-200 bg-white p-4">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-800">{formatMonthYear(visibleMonth)}</h3>
@@ -90,8 +89,8 @@ export default function MiniCalendarSidebar({
                 onClick={() => onSelectDate(day)}
                 aria-label={formatLongDate(day)}
                 aria-pressed={selected}
-                className={`relative mx-auto flex h-8 w-8 items-center justify-center rounded-full text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${selected
-                    ? "bg-slate-900 font-semibold text-white"
+                className={`relative mx-auto flex h-8 w-8 items-center justify-center rounded-full text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-olive-400 ${selected
+                    ? "bg-lime-900 font-semibold text-white"
                     : isToday
                       ? "font-semibold text-slate-900 ring-1 ring-slate-300 hover:bg-slate-100"
                       : inMonth

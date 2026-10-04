@@ -99,7 +99,7 @@ export default function CalendarHeader({
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex h-9 items-center gap-2 rounded-lg bg-slate-900 px-3 text-sm font-medium text-white transition-colors hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
+          className="inline-flex h-9 items-center gap-2 roun ded-lg bg-lime-900 px-3 text-sm font-medium text-white transition-colors hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
         >
           <Plus className="h-4 w-4" />
           {CREATE_LABEL[module]}

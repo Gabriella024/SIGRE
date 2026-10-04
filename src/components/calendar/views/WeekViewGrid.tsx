@@ -113,10 +113,10 @@ export default function WeekViewGrid({
                 </span>
                 <span
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${isToday
-                    ? "bg-slate-900 text-white"
+                    ? "bg-lime-900 text-white"
                     : isSelected
-                      ? "text-slate-900 ring-1 ring-slate-300"
-                      : "text-slate-700"
+                      ? "text-lime-900 ring-1 ring-lime-300"
+                      : "text-olive-700"
                     }`}
                 >
                   {day.getDate()}
