@@ -41,7 +41,7 @@ export default function CalendarHeader({
 }: CalendarHeaderProps) {
   return (
     <header className="flex flex-col gap-3 border-b border-slate-200 bg-white p-4 xl:flex-row xl:items-center xl:justify-between">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
         <div className="flex items-center gap-1.5">
           <button type="button" onClick={onPrev} aria-label="Anterior" className={iconButton}>
             <ChevronLeft className="h-4 w-4" />
@@ -60,7 +60,7 @@ export default function CalendarHeader({
         <h2 className="text-lg font-semibold text-slate-800">{title}</h2>
       </div>
  
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex shrink-0 flex-wrap items-center gap-2">
         <div
           role="tablist"
           aria-label="Vista del calendario"
@@ -87,23 +87,25 @@ export default function CalendarHeader({
           })}
         </div>
  
-        <button
-          type="button"
-          onClick={onExport}
-          className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-        >
-          <Download className="h-4 w-4" />
-          Exportar
-        </button>
- 
-        <button
-          type="button"
-          onClick={onCreate}
-          className="inline-flex h-9 items-center gap-2 roun ded-lg bg-lime-900 px-3 text-sm font-medium text-white transition-colors hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
-        >
-          <Plus className="h-4 w-4" />
-          {CREATE_LABEL[module]}
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={onExport}
+            className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+          >
+            <Download className="h-4 w-4" />
+            Exportar
+          </button>
+
+          <button
+            type="button"
+            onClick={onCreate}
+            className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-lg bg-lime-900 px-3 text-sm font-medium text-white transition-colors hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2"
+          >
+            <Plus className="h-4 w-4" />
+            {CREATE_LABEL[module]}
+          </button>
+        </div>
       </div>
     </header>
   );
