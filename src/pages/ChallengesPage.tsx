@@ -1,44 +1,53 @@
 import { useMemo, useState } from 'react'
-
 import { ChallengesTable } from '@/components/challenges/ChallengesTable'
 import { MOCK_CHALLENGES } from '@/features/challenges/mocks/ChallengesMocks'
 import { ChallengesFilters } from '@/components/challenges/ChallengesFilters'
 import type { Challenge } from '@/features/challenges/types/Challenge'
+import { ViewToggle, type ViewMode } from '@/components/ui/viewToggle'
+import SessionCalendar from '@/components/calendar/SessionCalendar'
 
 export function ChallengesPage() {
-  const [activeTab, setActiveTab] = useState('metricas')
+  const [activeTab, setActiveTab] = useState('R1')
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
 
   const retosFiltrados = useMemo(() => {
-    if (activeTab === 'metricas') return MOCK_CHALLENGES
     return MOCK_CHALLENGES.filter((r) => r.nivel === activeTab)
   }, [activeTab])
 
   const handleEdit = (challenge: Challenge) => {
-    console.log("Editar proyecto:", challenge.codigo);
-  };
+    console.log("Editar reto:", challenge.codigo)
+  }
 
   const handleDelete = (challenge: Challenge) => {
-    console.log("Eliminar proyecto:", challenge.codigo);
-  };
+    console.log("Eliminar reto:", challenge.codigo)
+  }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Listado de Retos</h1>
+    <div className="p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Gestión de Retos</h1>
+        </div>
+        <ViewToggle viewMode={viewMode} onViewChange={setViewMode} />
       </div>
 
-      <ChallengesFilters activeTab={activeTab} onTabChange={setActiveTab} />
-
-      {activeTab === 'metricas' ? (
-        <div className="rounded-lg border bg-white p-6 text-center text-slate-400 shadow-sm">
-          Panel de métricas generales de R1, R2 y R3 (pendiente de diseño)
-        </div>
+      {viewMode === 'list' ? (
+        <>
+          <ChallengesFilters
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            showAddButton={true}
+          />
+          <ChallengesTable
+            data={retosFiltrados}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        </>
       ) : (
-        <ChallengesTable
-          data={retosFiltrados}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <SessionCalendar module="orientaciones" />
+        </div>
       )}
     </div>
   )

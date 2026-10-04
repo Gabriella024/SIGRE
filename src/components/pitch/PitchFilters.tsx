@@ -1,7 +1,13 @@
-import { Download, Plus} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Download, Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { useState } from 'react'
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
+
+type PitchFiltersProps = {
+  activeTab: string
+  onTabChange: (value: string) => void
+}
 
 type Filters = {
   estado: string
@@ -11,8 +17,7 @@ type Filters = {
 
 const initialFilters: Filters = { estado: '', modalidad: '', fechaHoraAtencion: '' }
 
-export function PitchFilters() {
-
+export function PitchFilters({ activeTab, onTabChange }: PitchFiltersProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState<Filters>(initialFilters)
 
@@ -27,21 +32,20 @@ export function PitchFilters() {
       placeholder: 'Todos los estados',
       onChange: setFilter('estado'),
       options: [
-        { value: 'activo', label: 'Activo' },
-        { value: 'inactivo', label: 'Inactivo' },
-        { value: 'finalizado', label: 'Finalizado' },
+        { value: 'Programado', label: 'Programado' },
+        { value: 'Cerrado', label: 'Cerrado' },
+        { value: 'En Evaluación', label: 'En Evaluación' },
       ],
     },
     {
       key: 'modalidad',
       label: 'Modalidad',
       value: filters.modalidad,
-      placeholder: 'Todos las modalidades',
+      placeholder: 'Todas las modalidades',
       onChange: setFilter('modalidad'),
       options: [
-        { value: 'programado', label: 'Programado' },
-        { value: 'cerrado', label: 'Cerrado' },
-        { value: 'en evaluación', label: 'En evaluación' },
+        { value: 'Virtual', label: 'Virtual' },
+        { value: 'Presencial', label: 'Presencial' },
       ],
     },
     {
@@ -54,24 +58,39 @@ export function PitchFilters() {
   ]
 
   return (
-    <FiltersBar
-      searchTerm={searchTerm}
-      onSearchChange={setSearchTerm}
-      searchPlaceholder="Buscar por sesión..."
-      filters={filterConfig}
-      onClearFilters={() => setFilters(initialFilters)}
-      actions={
-        <>
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Exportar
-          </Button>
-          <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-            <Plus className="h-4 w-4" />
-            Nuevo Pitch
-          </Button>
-        </>
-      }
-    />
+    <div className="space-y-4">
+      <Tabs value={activeTab} onValueChange={onTabChange}>
+        <TabsList>
+          <TabsTrigger value="R5" className="gap-1.5">
+            R5
+            <span className="text-[11px] text-slate-500 font-normal">(Prep. Pitch)</span>
+          </TabsTrigger>
+          <TabsTrigger value="R6" className="gap-1.5">
+            R6
+            <span className="text-[11px] text-slate-500 font-normal">(Pitch)</span>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <FiltersBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Buscar por sesión..."
+        filters={filterConfig}
+        onClearFilters={() => setFilters(initialFilters)}
+        actions={
+          <>
+            <Button variant="outline" className="gap-2">
+              <Download className="h-4 w-4" />
+              Exportar
+            </Button>
+            <Button className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
+              <Plus className="h-4 w-4" />
+              Nueva sesión
+            </Button>
+          </>
+        }
+      />
+    </div>
   )
 }

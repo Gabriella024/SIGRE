@@ -1,15 +1,15 @@
-export type PitchStatus = 'Programado'| 'Cerrado'| 'En Evaluación'
+export type PitchStatus = 'Programado' | 'Cerrado' | 'En Evaluación'
 
-export type PitchStages = 'R4' | 'R6'
+export type PitchStages = 'R5' | 'R6'
 
 export type PitchModalities = 'Virtual' | 'Presencial'
 
 export interface Pitch {
-    id:string
-    etapa: PitchStages
-    nombre: string
-    fechayhora: string
-    modalidad: PitchModalities
-    lugarylink: string
-    estado: PitchStatus
+  id: string
+  etapa: PitchStages
+  nombre: string
+  fechayhora: string
+  modalidad: PitchModalities
+  lugarylink: string
+  estado: PitchStatus
 }

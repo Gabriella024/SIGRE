@@ -1,5 +1,5 @@
-import { Download, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Download, Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
@@ -7,6 +7,7 @@ import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
 type ChallengesFiltersProps = {
   activeTab: string
   onTabChange: (value: string) => void
+  showAddButton?: boolean
 }
 
 type Filters = {
@@ -16,7 +17,7 @@ type Filters = {
 
 const initialFilters: Filters = { estado: '', fechaHoraAtencion: '' }
 
-export function ChallengesFilters({ activeTab, onTabChange }: ChallengesFiltersProps) {
+export function ChallengesFilters({ activeTab, onTabChange, showAddButton = true }: ChallengesFiltersProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState<Filters>(initialFilters)
 
@@ -45,19 +46,24 @@ export function ChallengesFilters({ activeTab, onTabChange }: ChallengesFiltersP
       onChange: setFilter('fechaHoraAtencion'),
     },
   ]
-  return (
-    <>
 
+  return (
+    <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={onTabChange}>
         <TabsList>
-          <TabsTrigger value="metricas">Métricas</TabsTrigger>
           <TabsTrigger value="R1">R1</TabsTrigger>
           <TabsTrigger value="R2">R2</TabsTrigger>
           <TabsTrigger value="R3">R3</TabsTrigger>
+          <TabsTrigger value="R4" className="gap-1.5">
+            R4
+            <span className="rounded bg-lime-100 px-1.5 py-0.5 text-[10px] font-semibold text-lime-800">
+              Sustentación
+            </span>
+          </TabsTrigger>
         </TabsList>
       </Tabs>
-      <FiltersBar
 
+      <FiltersBar
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         searchPlaceholder="Buscar por código o sesión..."
@@ -65,19 +71,19 @@ export function ChallengesFilters({ activeTab, onTabChange }: ChallengesFiltersP
         onClearFilters={() => setFilters(initialFilters)}
         actions={
           <>
-
-
             <Button variant="outline" className="gap-2">
               <Download className="h-4 w-4" />
               Exportar
             </Button>
-            <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-              <Plus className="h-4 w-4" />
-              Nuevo Reto
-            </Button>
+            {showAddButton && (
+              <Button className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
+                <Plus className="h-4 w-4" />
+                Nuevo Reto
+              </Button>
+            )}
           </>
         }
       />
-    </>
+    </div>
   )
 }
