@@ -12,7 +12,7 @@ export function DashboardPage() {
   const formattedName = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
           Hola {formattedName}

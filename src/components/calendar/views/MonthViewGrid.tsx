@@ -58,7 +58,7 @@ export default function MonthViewGrid({
                   type="button"
                   onClick={() => onSelectDate?.(day)}
                   className={`mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${isToday
-                      ? "bg-slate-900 text-white"
+                      ? "bg-lime-900 text-white"
                       : isSelected
                         ? "text-slate-900 ring-1 ring-slate-300"
                         : inMonth
