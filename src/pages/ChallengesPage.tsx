@@ -45,8 +45,8 @@ export function ChallengesPage() {
           />
         </>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          <SessionCalendar module="orientaciones" />
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-4">
+          <SessionCalendar module="orientaciones" readOnly={true} />
         </div>
       )}
     </div>

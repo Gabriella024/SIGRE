@@ -10,6 +10,7 @@ import type { CalendarModule, CalendarSession, CalendarView } from "../../featur
 interface SessionCalendarProps {
   module: CalendarModule;
   sessions?: CalendarSession[];
+  readOnly?: boolean;
   onCreate?: () => void;
   onExport?: () => void;
   onSelectSession?: (session: CalendarSession) => void;
@@ -18,6 +19,7 @@ interface SessionCalendarProps {
 export default function SessionCalendar({
   module,
   sessions,
+  readOnly = false,
   onCreate,
   onExport,
   onSelectSession,
@@ -44,6 +46,8 @@ export default function SessionCalendar({
 
   const days = view === "day" ? [selectedDate] : getWeekDays(selectedDate);
 
+  // const handleCreateAction = readOnly ? undefined : onCreate;
+
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
       <MiniCalendarSidebar
@@ -61,8 +65,8 @@ export default function SessionCalendar({
           onPrev={() => move(-1)}
           onNext={() => move(1)}
           onTomorrow={() => setSelectedDate(addDays(startOfDay(new Date()), 1))}
-          {...(onExport ? { onExport } : {})}
-          {...(onCreate ? { onCreate } : {})}
+          onExport={onExport}
+          onCreate={onCreate}
         />
 
         {view === "month" ? (

@@ -56,8 +56,8 @@ export function ChallengesFilters({ activeTab, onTabChange, showAddButton = true
           <TabsTrigger value="R3">R3</TabsTrigger>
           <TabsTrigger value="R4" className="gap-1.5">
             R4
-            <span className="rounded bg-lime-100 px-1.5 py-0.5 text-[10px] font-semibold text-lime-800">
-              Sustentación
+            <span className="text-[11px] text-slate-500 font-normal">
+              (Sustentación)
             </span>
           </TabsTrigger>
         </TabsList>
