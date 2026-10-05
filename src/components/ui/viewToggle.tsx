@@ -1,5 +1,4 @@
 import React from "react";
-import { Calendar, List } from "lucide-react";
 
 export type ViewMode = "list" | "calendar";
 

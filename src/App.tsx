@@ -15,7 +15,8 @@ import { PitchPage } from './pages/PitchPage'
 import { EvaluatorPage } from './pages/EvaluatorsPage'
 import { ChallengesPage } from './pages/ChallengesPage'
 import { EvaluationsPage } from './pages/EvaluationsPage'
-// import {CalendarPage} from './pages/CalendarPage'
+
+import CargarAsistentesPage from './pages/CargarAsistentesPage'
 
 function App() {
   return (
@@ -40,7 +41,7 @@ function App() {
             <Route path='/evaluadores' element={<EvaluatorPage />}></Route>
             <Route path='/retos' element={<ChallengesPage />}></Route>
             <Route path='/evaluaciones' element={<EvaluationsPage />}></Route>
-            {/* <Route path='/calendario' element={<CalendarPage />}></Route> */}
+            <Route path='/orientacion-masiva' element={<CargarAsistentesPage />}></Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
