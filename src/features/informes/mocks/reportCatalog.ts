@@ -45,13 +45,13 @@ export const REPORTS: ReadonlyArray<ReportDefinition> = [
     tone: "orange",
     icon: Presentation,
   },
-  {
-    id: "auditoria",
-    title: "Auditoría",
-    description: "Cambios importantes dentro del sistema SIGRE.",
-    tone: "teal",
-    icon: PersonStanding,
-  },
+  // {
+  //   id: "auditoria",
+  //   title: "Auditoría",
+  //   description: "Cambios importantes dentro del sistema SIGRE.",
+  //   tone: "teal",
+  //   icon: PersonStanding,
+  // },
   {
     id: "rendimiento",
     title: "Informe de rendimiento",
