@@ -2,9 +2,9 @@ import React, { useMemo, useState } from "react"
 import SessionCalendar from "@/components/calendar/SessionCalendar"
 import { ViewToggle, type ViewMode } from "@/components/ui/viewToggle"
 import { MOCK_PITCH } from "@/features/pitch/mocks/PitchMocks"
-import { PitchTable } from "@/components/pitch/PitchTable"
+import { PitchTable } from "@/features/pitch/components/PitchTable"
 import type { Pitch } from "@/features/pitch/types/pitch"
-import { PitchFilters } from "@/components/pitch/PitchFilters"
+import { PitchFilters } from "@/features/pitch/components/PitchFilters"
 
 export function PitchPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("list")
