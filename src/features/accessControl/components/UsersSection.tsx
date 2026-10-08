@@ -6,8 +6,8 @@ import {
   UserPlus,
 } from "lucide-react";
 
-import { MOCK_USERS } from "../../features/accessControl/mocks/accessControlMocks";
-import type { AccessUser, UserStatus } from "../../features/accessControl/types/types";
+import { MOCK_USERS } from "../mocks/accessControlMocks";
+import type { AccessUser, UserStatus } from "../types/types";
 
 interface UsuariosSectionProps {
   initialData?: AccessUser[];
