@@ -2,9 +2,9 @@ import { Stepper } from '../components/common/Stepper';
 import { InfoOrientacionCard } from '../components/common/InfoOrientacionCard';
 import { TemplateDownloadCard } from '../components/common/TemplateDownloadCard';
 
-import { Dropzone } from '../components/massOrientation/Dropzone';
-import { FilePreview } from '../components/massOrientation/FilePreview';
-import { RecommendationPanel } from '../components/massOrientation/RecommendationPanel';
+import { Dropzone } from '../features/orientacionMasiva/components/Dropzone';
+import { FilePreview } from '../features/orientacionMasiva/components/FilePreview';
+import { RecommendationPanel } from '../features/orientacionMasiva/components/RecommendationPanel';
 
 import { ValidationSummaryCards } from '../components/validation/ValidationSummaryCards';
 import { ValidationAlert } from '../components/validation/ValidationAlert';
@@ -13,7 +13,7 @@ import { ValidationTable } from '../components/validation/ValidationTable';
 import { HeaderConfirmado } from '../components/cargaConfirmada/HeaderConfirmado';
 import { TablaResultadosReadOnly } from '../components/cargaConfirmada/TablaResultadosReadOnly';
 
-import { useAsistentesCarga } from '@/features/orientacionMasiva/useOrientiacionCarga';
+import { useAsistentesCarga } from '@/features/orientacionMasiva/hooks/useOrientiacionCarga';
 
 export default function CargarAsistentesPage() {
   const {

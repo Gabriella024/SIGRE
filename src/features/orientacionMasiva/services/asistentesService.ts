@@ -1,6 +1,6 @@
-import { MOCK_FILAS_VALIDACION, MOCK_INFO_ORIENTACION } from './mocks/asistentesValidacion';
-import { MOCK_ROWS_PREVIEW } from './mocks/asistentesPreview';
-import type { FilaRegistro, InfoOrientacion } from './types/cargaMasiva';
+import { MOCK_FILAS_VALIDACION, MOCK_INFO_ORIENTACION } from '../mocks/asistentesValidacion';
+import { MOCK_ROWS_PREVIEW } from '../mocks/asistentesPreview';
+import type { FilaRegistro, InfoOrientacion } from '../types/cargaMasiva';
 
 export const asistentesService = {
   async obtenerVistaPrevia(file: File): Promise<string[][]> {

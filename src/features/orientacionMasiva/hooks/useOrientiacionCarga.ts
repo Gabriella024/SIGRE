@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import type { FilaRegistro, EstadoValidacion, InfoOrientacion } from './types/cargaMasiva';
-import { asistentesService } from './asistentesService';
+import type { FilaRegistro, EstadoValidacion, InfoOrientacion } from '../types/cargaMasiva';
+import { asistentesService } from '../services/asistentesService';
 
 export function useAsistentesCarga() {
     const [pasoActual, setPasoActual] = useState<1 | 2 | 3>(1);
