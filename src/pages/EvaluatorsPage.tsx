@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { EvaluatorsTable } from '@/components/evaluators/EvaluatorsTable'
+import { EvaluatorsTable } from '@/features/evaluators/components/EvaluatorsTable'
 import { MOCK_EVALUATORS } from '@/features/evaluators/mocks/EvaluatorsMocks'
 import { EvaluatorsFilters } from '@/components/evaluators/EvaluatorsFilters'
 import type { Evaluator } from '@/features/evaluators/types/evaluators'

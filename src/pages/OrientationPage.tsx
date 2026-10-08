@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import SessionCalendar from "@/components/calendar/SessionCalendar";
 import { ViewToggle, type ViewMode } from "@/components/ui/viewToggle";
 import { MOCK_ORIENTATIONS } from "@/features/orientations/mocks/OrientationsMocks";
-import { OrientationTable } from "@/components/orientations/OrientationsTable";
+import { OrientationTable } from "@/features/orientations/components/OrientationsTable";
 import type { Orientacion } from "@/features/orientations/types/orientations";
-import { OrientationsFilters } from "@/components/orientations/OrientationsFilters";
+import { OrientationsFilters } from "@/features/orientations/components/OrientationsFilters";
 
 export function OrientationPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
