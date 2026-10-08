@@ -10,8 +10,8 @@ import { ValidationSummaryCards } from '../features/orientacionMasiva/components
 import { ValidationAlert } from '../features/orientacionMasiva/components/ValidationAlert';
 import { ValidationTable } from '../components/validation/ValidationTable';
 
-import { HeaderConfirmado } from '../components/cargaConfirmada/HeaderConfirmado';
-import { TablaResultadosReadOnly } from '../components/cargaConfirmada/TablaResultadosReadOnly';
+import { HeaderConfirmado } from '../features/orientacionMasiva/components/HeaderConfirmado';
+import { TablaResultadosReadOnly } from '../features/orientacionMasiva/components/TablaResultadosReadOnly';
 
 import { useAsistentesCarga } from '@/features/orientacionMasiva/hooks/useOrientiacionCarga';
 

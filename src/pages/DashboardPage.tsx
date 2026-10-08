@@ -1,9 +1,9 @@
 import { Users, Calendar, Target, FileBadge } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { StatCard } from '@/components/dashboard/StatCard'
-import { ProjectsChart } from '@/components/dashboard/ProjectsChart'
-import { FunnelCard } from '@/components/dashboard/FunnelPanel'
-import { AttentionTable } from '@/components/dashboard/AttentionTable'
+import { StatCard } from '@/features/dashboard/components/StatCard'
+import { ProjectsChart } from '@/features/dashboard/components/ProjectsChart'
+import { FunnelCard } from '@/features/dashboard/components/FunnelPanel'
+import { AttentionTable } from '@/features/dashboard/components/AttentionTable'
 import { statsData } from '@/features/dashboard/mocks/dashboardMocks'
 
 export function DashboardPage() {
