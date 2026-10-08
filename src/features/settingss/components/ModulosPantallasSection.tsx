@@ -13,7 +13,7 @@ import {
 
 import type { LucideIcon } from "lucide-react";
 
-import ConfigSection from "./ConfigSection";
+import ConfigSection from "../../features/settingss/components/ConfigSection";
 import ToggleSwitch from "./ToggleSwitch";
 
 import { MOCK_MODULES } from "../../features/settingss/mocks/SettingsMocks";

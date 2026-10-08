@@ -9,7 +9,7 @@ import {
   Search,
 } from "lucide-react";
 
-import ConfigSection from "./ConfigSection";
+import ConfigSection from "../../features/settingss/components/ConfigSection";
 import { MOCK_MUNICIPALITIES } from "../../features/settingss/mocks/SettingsMocks";
 
 import type {
