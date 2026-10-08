@@ -1,4 +1,4 @@
-import type { EmailTemplate, Municipality, SystemModule } from "../../../features/settingss/types/types";
+import type { EmailTemplate, Municipality, SystemModule } from "../types/types";
 
 export const MOCK_MUNICIPALITIES: Municipality[] = [
   { id: "m-1", name: "Bogotá D.C.", department: "Bogotá D.C.", active: true },

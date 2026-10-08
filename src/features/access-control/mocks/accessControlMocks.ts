@@ -2,7 +2,7 @@ import type {
   AccessRole,
   AccessUser,
   PermissionModule,
-} from "../../../features/accessControl/types/types";
+} from "../types/types";
 
 export const MOCK_USERS: AccessUser[] = [
   {

@@ -1,9 +1,9 @@
 // pages/ProjectsPage.tsx
 import React from "react";
-import { MOCK_PROJECTS } from "@/features/proyects/mocks/ProyectMocks";
-import ProjectsTable from "@/features/proyects/components/ProjectsTable";
-import type { Project } from "@/features/proyects/types/proyect";
-import { ProjectsFilters } from "@/features/proyects/components/ProjectsFilters";
+import { MOCK_PROJECTS } from "@/features/projects/mocks/ProyectMocks";
+import ProjectsTable from "@/features/projects/components/ProjectsTable";
+import type { Project } from "@/features/projects/types/proyect";
+import { ProjectsFilters } from "@/features/projects/components/ProjectsFilters";
 
 
 export function ProjectsPage() {

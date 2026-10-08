@@ -1,4 +1,4 @@
-import UsuariosSection from "../features/accessControl/components/UsersSection";
+import UsuariosSection from "../features/access-control/components/UsersSection";
 import RolesSection from "../components/accessControl/RolesSection";
 import PermisosSection from "../components/accessControl/PermissionsSection";
 

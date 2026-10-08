@@ -1,4 +1,4 @@
-import type { FilaRegistro } from '@/features/orientacionMasiva/types/cargaMasiva';
+import type { FilaRegistro } from '@/features/orientation-mass/types/cargaMasiva';
 
 interface TablaResultadosReadOnlyProps {
   filas: FilaRegistro[];

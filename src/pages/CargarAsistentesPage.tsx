@@ -1,19 +1,19 @@
-import { Stepper } from '../components/common/Stepper';
-import { InfoOrientacionCard } from '../components/common/InfoOrientacionCard';
-import { TemplateDownloadCard } from '../components/common/TemplateDownloadCard';
+import { Stepper } from '../features/orientation-mass/components/Stepper';
+import { InfoOrientacionCard } from '../features/orientation-mass/components/InfoOrientacionCard';
+import { TemplateDownloadCard } from '../features/orientation-mass/components/TemplateDownloadCard';
 
-import { Dropzone } from '../features/orientacionMasiva/components/Dropzone';
-import { FilePreview } from '../features/orientacionMasiva/components/FilePreview';
-import { RecommendationPanel } from '../features/orientacionMasiva/components/RecommendationPanel';
+import { Dropzone } from '../features/orientation-mass/components/Dropzone';
+import { FilePreview } from '../features/orientation-mass/components/FilePreview';
+import { RecommendationPanel } from '../features/orientation-mass/components/RecommendationPanel';
 
-import { ValidationSummaryCards } from '../features/orientacionMasiva/components/ValidationSummaryCards';
-import { ValidationAlert } from '../features/orientacionMasiva/components/ValidationAlert';
+import { ValidationSummaryCards } from '../features/orientation-mass/components/ValidationSummaryCards';
+import { ValidationAlert } from '../features/orientation-mass/components/ValidationAlert';
 import { ValidationTable } from '../components/validation/ValidationTable';
 
-import { HeaderConfirmado } from '../features/orientacionMasiva/components/HeaderConfirmado';
-import { TablaResultadosReadOnly } from '../features/orientacionMasiva/components/TablaResultadosReadOnly';
+import { HeaderConfirmado } from '../features/orientation-mass/components/HeaderConfirmado';
+import { TablaResultadosReadOnly } from '../features/orientation-mass/components/TablaResultadosReadOnly';
 
-import { useAsistentesCarga } from '@/features/orientacionMasiva/hooks/useOrientiacionCarga';
+import { useAsistentesCarga } from '@/features/orientation-mass/hooks/useOrientationUpload';
 
 export default function CargarAsistentesPage() {
   const {
