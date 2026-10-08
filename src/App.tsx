@@ -1,8 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
 
-import { ProtectedRoute } from './routes/ProtectedRoute'
-import { AuthProvider } from './context/AuthContext'
+import { ProtectedRoute } from './app/router/ProtectedRoute'
+import { AuthProvider } from './app/providers/AuthContext'
 
 import {ProjectsPage} from './pages/ProyectPage'
 import { LoginPage } from './pages/LoginPage'

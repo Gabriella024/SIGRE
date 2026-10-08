@@ -1,8 +1,8 @@
 import React from "react"
 import { MOCK_ENTREPRENEURS } from "@/features/entrepreneurs/mocks/EntrepreneursMocks"
-import { EntrepreneursTable } from "@/components/entrepreneurs/EntrepreneursTable"
+import { EntrepreneursTable } from "@/features/entrepreneurs/components/EntrepreneursTable"
 import type { Entrepreneur } from "@/features/entrepreneurs/types/entrepreneur"
-import { EntrepreneursFilters } from "@/components/entrepreneurs/EntrepreneursFilters"
+import { EntrepreneursFilters } from "@/features/entrepreneurs/components/EntrepreneursFilters"
 
 export function EntrepreneursPage() {
   const handleEdit = (project: Entrepreneur) => {

@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { EvaluationTabs } from '@/components/evaluations/EvaluationTabs'
+import { EvaluationTabs } from '@/features/evaluations/components/EvaluationTabs'
 import { EvaluationSummaryBar } from '@/components/evaluations/EvaluationSummaryBar'
-import { EvaluationCard } from '@/components/evaluations/EvaluationCard'
+import { EvaluationCard } from '@/features/evaluations/components/EvaluationCard'
 import { evaluacionesMock } from '@/features/evaluations/mocks/evaluacionesMocks'
 import { MOCK_RESULTS } from '@/features/evaluations/mocks/resultadoMocks'
 import type { EvaluationResults } from '@/features/evaluations/types/resultado'
-import { ResultTable } from '@/components/evaluations/ResultTable'
-import { ResultFilters } from '@/components/evaluations/ResultFilters'
+import { ResultTable } from '@/features/evaluations/components/ResultTable'
+import { ResultFilters } from '@/features/evaluations/components/ResultFilters'
 
 export function EvaluationsPage() {
   const [activeTab, setActiveTab] = useState('asignaciones')

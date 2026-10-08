@@ -1,7 +1,7 @@
 import type { Column } from "@/components/ui/table/types"
 import type { EvaluationResults, ConsolidatedResult } from "./types/resultado"
-import { ScoreBar } from '@/components/evaluations/ScoreBar'
-import { AvatarGroup } from '@/components/evaluations/AvatarGroup'
+import { ScoreBar } from '@/features/evaluations/components/ScoreBar'
+import { AvatarGroup } from '@/features/evaluations/components/AvatarGroup'
 
 function EstadoBadge({ estado }: { estado: ConsolidatedResult }) {
   const styles: Record<ConsolidatedResult, string> = {
