@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
-import type { EstadoValidacion } from './ValidationSummaryCards';
+import type { EstadoValidacion } from '../../features/orientacionMasiva/components/ValidationSummaryCards';
 
 export interface FilaRegistro {
   fila: number;

@@ -6,8 +6,8 @@ import { Dropzone } from '../features/orientacionMasiva/components/Dropzone';
 import { FilePreview } from '../features/orientacionMasiva/components/FilePreview';
 import { RecommendationPanel } from '../features/orientacionMasiva/components/RecommendationPanel';
 
-import { ValidationSummaryCards } from '../components/validation/ValidationSummaryCards';
-import { ValidationAlert } from '../components/validation/ValidationAlert';
+import { ValidationSummaryCards } from '../features/orientacionMasiva/components/ValidationSummaryCards';
+import { ValidationAlert } from '../features/orientacionMasiva/components/ValidationAlert';
 import { ValidationTable } from '../components/validation/ValidationTable';
 
 import { HeaderConfirmado } from '../components/cargaConfirmada/HeaderConfirmado';
