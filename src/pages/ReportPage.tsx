@@ -1,4 +1,4 @@
-import { InformesHeader } from "@/components/report/ReportHeader";
+import { InformesHeader } from "@/features/informes/components/ReportHeader";
 import { ReportGrid } from "@/components/ui/report/ReportGrid";
 import { REPORTS } from "@/features/informes/mocks/reportCatalog";
 import type { ReportId } from "@/features/informes/types/types";
