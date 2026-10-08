@@ -17,6 +17,7 @@ import { ChallengesPage } from './pages/ChallengesPage'
 import { EvaluationsPage } from './pages/EvaluationsPage'
 import InformesPage from './pages/ReportPage'
 import ConfiguracionPage from './pages/SettingPage'
+import AccessControlPage from './pages/AccessControlPage'
 
 
 import CargarAsistentesPage from './pages/CargarAsistentesPage'
@@ -47,6 +48,7 @@ function App() {
             <Route path='/orientacion-masiva' element={<CargarAsistentesPage />}></Route>
             <Route path='/informes' element={<InformesPage />}></Route>
             <Route path='/configuracion' element={<ConfiguracionPage />}></Route>
+            <Route path='/control-accesos' element={<AccessControlPage />}></Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
