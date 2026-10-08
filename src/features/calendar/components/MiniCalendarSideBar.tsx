@@ -8,9 +8,9 @@ import {
   getMonthMatrix,
   isSameDay,
   isSameMonth,
-} from "../../features/calendar/utils/dateUtils";
-import { CATEGORY_STYLES, MODALITY_STYLES, getResponsible } from "../../features/calendar/utils/calendarUtils";
-import type { CalendarSession } from "../../features/calendar/types/calendar";
+} from "../utils/dateUtils";
+import { CATEGORY_STYLES, MODALITY_STYLES, getResponsible } from "../utils/calendarUtils";
+import type { CalendarSession } from "../types/calendar";
 
 interface MiniCalendarSidebarProps {
   selectedDate: Date;
