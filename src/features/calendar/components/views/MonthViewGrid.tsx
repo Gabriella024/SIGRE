@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { formatShortWeekday, getMonthMatrix, getWeekDays, isSameDay, isSameMonth } from "../../../features/calendar/utils/dateUtils";
-import { CATEGORY_STYLES } from "../../../features/calendar/utils/calendarUtils";
-import type { CalendarSession } from "../../../features/calendar/types/calendar";
+import { formatShortWeekday, getMonthMatrix, getWeekDays, isSameDay, isSameMonth } from "../../utils/dateUtils";
+import { CATEGORY_STYLES } from "../../utils/calendarUtils";
+import type { CalendarSession } from "../../types/calendar";
 
 interface MonthViewGridProps {
   date: Date;

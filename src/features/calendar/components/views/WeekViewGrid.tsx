@@ -5,9 +5,9 @@ import {
   formatTimeRange,
   isSameDay,
   minutesOfDay,
-} from "../../../features/calendar/utils/dateUtils";
-import { CATEGORY_STYLES, MODALITY_STYLES } from "../../../features/calendar/utils/calendarUtils";
-import type { CalendarSession } from "../../../features/calendar/types/calendar";
+} from "../../utils/dateUtils";
+import { CATEGORY_STYLES, MODALITY_STYLES } from "../../utils/calendarUtils";
+import type { CalendarSession } from "../../types/calendar";
 
 interface WeekViewGridProps {
   /** 7 días para la vista Semana, 1 día para la vista Día. */
