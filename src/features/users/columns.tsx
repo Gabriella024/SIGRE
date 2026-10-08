@@ -1,7 +1,7 @@
 import type { Column } from "@/components/ui/table/types";
 import { AvatarInitials } from '@/components/ui/avatar-initials'
 import type { User, EstadoUsuario } from "./types/users";
-import { RoleBadge } from "@/components/users/RoleBadge";
+import { RoleBadge } from "@/features/users/components/RoleBadge";
 
 function EstadoBadge({ estado }: { estado: EstadoUsuario }) {
   const styles: Record<EstadoUsuario, string> = {
