@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { Pitch } from "@/features/pitch/types/pitch";
 import { PITCH_COLUMNS } from "@/features/pitch/columns";

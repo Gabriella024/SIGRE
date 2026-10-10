@@ -1,4 +1,3 @@
-import React from "react"
 import { MOCK_ENTREPRENEURS } from "@/features/entrepreneurs/mocks/EntrepreneursMocks"
 import { EntrepreneursTable } from "@/features/entrepreneurs/components/EntrepreneursTable"
 import type { Entrepreneur } from "@/features/entrepreneurs/types/entrepreneur"

@@ -1,5 +1,5 @@
 import type { Column } from "@/components/ui/table/types";
-import type { Challenge, EstadoReto, ModalidadReto, NivelReto } from "./types/Challenge";
+import type { Challenge, EstadoReto} from "./types/Challenge";
 
 function EstadoBadge({ estado }: { estado: EstadoReto }) {
   const styles: Record<EstadoReto, string> = {

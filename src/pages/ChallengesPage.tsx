@@ -4,7 +4,7 @@ import { MOCK_CHALLENGES } from '@/features/challenges/mocks/ChallengesMocks'
 import { ChallengesFilters } from '@/features/challenges/components/ChallengesFilters'
 import type { Challenge } from '@/features/challenges/types/Challenge'
 import { ViewToggle, type ViewMode } from '@/components/ui/viewToggle'
-import SessionCalendar from '@/components/calendar/SessionCalendar'
+import SessionCalendar from '@/features/calendar/components/SessionCalendar'
 
 export function ChallengesPage() {
   const [activeTab, setActiveTab] = useState('R1')

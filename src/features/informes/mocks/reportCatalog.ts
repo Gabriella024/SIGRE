@@ -2,7 +2,6 @@ import {
   Activity,
   CalendarDays,
   Globe,
-  PersonStanding,
   Presentation,
   Sparkles,
   Users,

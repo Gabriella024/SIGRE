@@ -1,5 +1,5 @@
 import { Users, Calendar, Target, FileBadge } from 'lucide-react'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/features/auth/context/AuthContext'
 import { StatCard } from '@/features/dashboard/components/StatCard'
 import { ProjectsChart } from '@/features/dashboard/components/ProjectsChart'
 import { FunnelCard } from '@/features/dashboard/components/FunnelPanel'

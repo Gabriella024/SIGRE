@@ -9,13 +9,13 @@ import {
   Search,
 } from "lucide-react";
 
-import ConfigSection from "../../features/settingss/components/ConfigSection";
-import { MOCK_MUNICIPALITIES } from "../../features/settingss/mocks/SettingsMocks";
+import ConfigSection from "./ConfigSection";
+import { MOCK_MUNICIPALITIES } from "../mocks/SettingsMocks";
 
 import type {
   Municipality,
   MunicipalityStatusFilter,
-} from "../../features/settingss/types/types";
+} from "../types/types";
 
 interface MunicipiosSectionProps {
   initialData?: Municipality[];

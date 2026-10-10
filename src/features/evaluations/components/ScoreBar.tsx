@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
-import type { ResultadoConsolidado } from '@/features/evaluations/types/resultado'
+import type { ConsolidatedResult } from '@/features/evaluations/types/resultado'
 
-const barColor: Record<ResultadoConsolidado, string> = {
+const barColor: Record<ConsolidatedResult, string> = {
   Completado: 'bg-green-500',
   Rechazado: 'bg-orange-400',
   'En revisión': 'bg-slate-300',
@@ -12,7 +12,7 @@ export function ScoreBar({
   resultado,
 }: {
   puntaje: number | null
-  resultado: ResultadoConsolidado
+  resultado: ConsolidatedResult
 }) {
   if (puntaje === null) {
     return <span className="text-slate-300">—</span>

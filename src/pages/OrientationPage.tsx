@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import SessionCalendar from "@/components/calendar/SessionCalendar";
+import { useState } from "react";
+import SessionCalendar from "@/features/calendar/components/SessionCalendar";
 import { ViewToggle, type ViewMode } from "@/components/ui/viewToggle";
 import { MOCK_ORIENTATIONS } from "@/features/orientations/mocks/OrientationsMocks";
 import { OrientationTable } from "@/features/orientations/components/OrientationsTable";

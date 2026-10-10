@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react"
-import SessionCalendar from "@/components/calendar/SessionCalendar"
+import { useMemo, useState } from "react"
+import SessionCalendar from "@/features/calendar/components/SessionCalendar"
 import { ViewToggle, type ViewMode } from "@/components/ui/viewToggle"
 import { MOCK_PITCH } from "@/features/pitch/mocks/PitchMocks"
 import { PitchTable } from "@/features/pitch/components/PitchTable"

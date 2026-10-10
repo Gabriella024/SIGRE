@@ -6,8 +6,8 @@ import {
 } from "lucide-react";
 
 import ToggleSwitch from "./ToggleSwitch";
-import { MOCK_ROLES } from "../../features/accessControl/mocks/accessControlMocks";
-import type { AccessRole } from "../../features/accessControl/types/types";
+import { MOCK_ROLES } from "../mocks/accessControlMocks";
+import type { AccessRole } from "../types/types";
 
 interface RolesSectionProps {
   initialData?: AccessRole[];

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { Orientacion } from '@/features/orientations/types/orientations'
 import { ORIENTATION_COLUMNS } from "@/features/orientations/columns";

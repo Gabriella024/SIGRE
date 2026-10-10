@@ -1,5 +1,3 @@
-// pages/ProjectsPage.tsx
-import React from "react";
 import { MOCK_PROJECTS } from "@/features/projects/mocks/ProyectMocks";
 import ProjectsTable from "@/features/projects/components/ProjectsTable";
 import type { Project } from "@/features/projects/types/proyect";

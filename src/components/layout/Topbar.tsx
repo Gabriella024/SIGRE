@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useLocation } from "react-router-dom";
 
 const breadcrumbMap: Record<string, string> = {

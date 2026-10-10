@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { Challenge } from "@/features/challenges/types/Challenge";
 import { CHALLENGE_COLUMNS } from "@/features/challenges/columns";

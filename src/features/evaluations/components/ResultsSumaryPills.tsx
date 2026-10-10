@@ -1,4 +1,4 @@
-import type { ResultadoEvaluacion } from '@/features/evaluations/types/resultado'
+import type { EvaluationResults } from '@/features/evaluations/types/resultado'
 
 const pillStyles: Record<string, string> = {
   Completado: 'bg-green-100 text-green-700',
@@ -12,7 +12,7 @@ const labels: Record<string, string> = {
   'En revisión': 'En revisión',
 }
 
-export function ResultsSummaryPills({ resultados }: { resultados: ResultadoEvaluacion[] }) {
+export function ResultsSummaryPills({ resultados }: { resultados: EvaluationResults[] }) {
   const counts = resultados.reduce<Record<string, number>>((acc, r) => {
     acc[r.resultado] = (acc[r.resultado] ?? 0) + 1
     return acc

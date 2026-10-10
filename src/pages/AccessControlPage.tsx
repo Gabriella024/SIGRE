@@ -1,6 +1,6 @@
 import UsuariosSection from "../features/access-control/components/UsersSection";
-import RolesSection from "../components/accessControl/RolesSection";
-import PermisosSection from "../components/accessControl/PermissionsSection";
+import RolesSection from "@/features/access-control/components/RolesSection";
+import PermisosSection from "@/features/access-control/components/PermissionsSection";
 
 interface ControlAccesoViewProps {
   code?: string;

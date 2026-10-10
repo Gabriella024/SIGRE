@@ -9,13 +9,13 @@ import {
   Search,
 } from "lucide-react";
 
-import ConfigSection from "../../features/settingss/components/ConfigSection";
-import { MOCK_MUNICIPALITIES } from "../../features/settingss/mocks/SettingsMocks";
+import ConfigSection from "./ConfigSection";
+import { MOCK_MUNICIPALITIES } from "../mocks/SettingsMocks";
 
 import type {
   Municipality,
   MunicipalityStatusFilter,
-} from "../../features/settingss/types/types";
+} from "../types/types";
 
 interface MunicipiosSectionProps {
   initialData?: Municipality[];
@@ -49,7 +49,7 @@ function StatusPill({ active }: { active: boolean }) {
   );
 }
 
-export default function MunicipiosSection({
+export default function PlantillasCorreoSection({
   initialData = MOCK_MUNICIPALITIES,
   pageSize = 5,
   onCreate,
@@ -161,7 +161,6 @@ export default function MunicipiosSection({
           </label>
         </div>
 
-        {/* Tabla */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[600px] border-collapse text-sm">
             <thead className="border-b border-slate-200 bg-slate-50">

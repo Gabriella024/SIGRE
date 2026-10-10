@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { EvaluationTabs } from '@/features/evaluations/components/EvaluationTabs'
-import { EvaluationSummaryBar } from '@/components/evaluations/EvaluationSummaryBar'
+import { EvaluationSummaryBar } from '@/features/evaluations/components/EvaluationSummaryBar'
 import { EvaluationCard } from '@/features/evaluations/components/EvaluationCard'
 import { evaluacionesMock } from '@/features/evaluations/mocks/evaluacionesMocks'
 import { MOCK_RESULTS } from '@/features/evaluations/mocks/resultadoMocks'

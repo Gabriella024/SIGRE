@@ -13,15 +13,15 @@ import {
 
 import type { LucideIcon } from "lucide-react";
 
-import ConfigSection from "../../features/settingss/components/ConfigSection";
+import ConfigSection from "./ConfigSection";
 import ToggleSwitch from "./ToggleSwitch";
 
-import { MOCK_MODULES } from "../../features/settingss/mocks/SettingsMocks";
+import { MOCK_MODULES } from "../mocks/SettingsMocks";
 
 import type {
   ModuleIconKey,
   SystemModule,
-} from "../../features/settingss/types/types";
+} from "../types/types";
 
 interface ModulosPantallasSectionProps {
   initialData?: SystemModule[];

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { User } from "@/features/users/types/users";
 import { USER_COLUMNS } from "@/features/users/columns";

@@ -1,4 +1,3 @@
-import React from "react";
 import type { UserRole, UserStatus, UserStage } from "./types";
 
 export function InitialsAvatar({ name }: { name: string }) {

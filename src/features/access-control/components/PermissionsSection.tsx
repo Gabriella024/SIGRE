@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Save, Check, X } from "lucide-react";
 
-import { MOCK_PERMISSIONS } from "../../features/accessControl/mocks/accessControlMocks";
-import type { PermissionModule } from "../../features/accessControl/types/types";
+import { MOCK_PERMISSIONS } from "../mocks/accessControlMocks";
+import type { PermissionModule } from "../types/types";
 
 interface PermisosSectionProps {
   initialData?: PermissionModule[];

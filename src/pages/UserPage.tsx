@@ -1,4 +1,3 @@
-import React from 'react'
 import { UsersTable } from '@/features/users/components/UsersTable'
 import { UsersFilters } from '@/features/users/components/UsersFilters'
 import { MOCK_USERS } from '@/features/users/mocks/UserMocks'

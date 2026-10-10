@@ -8,7 +8,7 @@ import { RecommendationPanel } from '../features/orientation-mass/components/Rec
 
 import { ValidationSummaryCards } from '../features/orientation-mass/components/ValidationSummaryCards';
 import { ValidationAlert } from '../features/orientation-mass/components/ValidationAlert';
-import { ValidationTable } from '../components/validation/ValidationTable';
+import { ValidationTable } from '@/features/orientation-mass/components/ValidationTable';
 
 import { HeaderConfirmado } from '../features/orientation-mass/components/HeaderConfirmado';
 import { TablaResultadosReadOnly } from '../features/orientation-mass/components/TablaResultadosReadOnly';

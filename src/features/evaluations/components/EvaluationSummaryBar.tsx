@@ -1,4 +1,4 @@
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import type { Evaluacion } from "@/features/evaluations/types/evaluacion";
 
 export function EvaluationSummaryBar({ evaluaciones }: { evaluaciones: Evaluacion[] }) {

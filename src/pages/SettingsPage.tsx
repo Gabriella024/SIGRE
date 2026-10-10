@@ -1,6 +1,6 @@
-import MunicipiosSection from "../components/settingss/MunicipiosSection";
-import PlantillasCorreoSection from "../components/settingss/PlantillasCorreoSection";
-import ModulosPantallasSection from "../components/settingss/ModulosPantallasSection";
+import MunicipiosSection from "@/features/settings/components/MunicipiosSection";
+import ModulosPantallasSection from "@/features/settings/components/ModulosPantallasSection";
+import PlantillasCorreoSection from "@/features/settings/components/PlantillasCorreoSection";
 
 interface ConfiguracionProps {
   code?: string;

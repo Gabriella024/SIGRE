@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import CalendarHeader from "./CalendarHeader";
-import MiniCalendarSidebar from "../../components/calendar/MiniCalendarSideBar";
-import MonthViewGrid from "../../components/calendar/views/MonthViewGrid";
-import WeekViewGrid from "../../components/calendar/views/WeekViewGrid";
-import { addDays, addMonths, formatRangeTitle, getWeekDays, startOfDay } from "../../features/calendar/utils/dateUtils";
-import { buildMockOrientaciones, buildMockPitches } from "../../features/calendar/mocks/calendarMocks";
-import type { CalendarModule, CalendarSession, CalendarView } from "../../features/calendar/types/calendar";
+import MiniCalendarSidebar from "../components/MiniCalendarSideBar";
+import MonthViewGrid from "..//components/views/MonthViewGrid";
+import WeekViewGrid from "../components/views/WeekViewGrid";
+import { addDays, addMonths, formatRangeTitle, getWeekDays, startOfDay } from "../utils/dateUtils";
+import { buildMockOrientaciones, buildMockPitches } from "../mocks/calendarMocks";
+import type { CalendarModule, CalendarSession, CalendarView } from "../types/calendar";
 
 interface SessionCalendarProps {
   module: CalendarModule;

@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight, Download, Plus } from "lucide-react";
-import type { CalendarModule, CalendarView } from "../../features/calendar/types/calendar";
+import type { CalendarModule, CalendarView } from "../types/calendar";
 
 interface CalendarHeaderProps {
   title: string;
