@@ -115,7 +115,7 @@ export function Sidebar() {
 
           <div className="flex items-center gap-3">
             <img
-              src="../../../public/logoSenaNaranja.png"
+              src="/logoSenaNaranja.png"
               alt="SENA Logo"
               className="h-6 w-auto object-contain lg:[@media(min-height:800px)]:h-8"
               onError={(e) => {
