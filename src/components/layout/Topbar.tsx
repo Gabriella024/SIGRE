@@ -1,6 +1,13 @@
 import { Bell } from "lucide-react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useLocation } from "react-router-dom";
+import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
+
+const { roles } = useAccessControl();
+
+const roleLabel = roles
+  .map((role) => role.charAt(0).toUpperCase() + role.slice(1))
+  .join(", ");
 
 const breadcrumbMap: Record<string, string> = {
   '/dashboard': 'Inicio',
@@ -42,7 +49,7 @@ export function Topbar() {
         </button>
 
         <span className="hidden sm:inline-block rounded-full bg-[#dcfce7] px-3.5 py-1 text-xs font-semibold text-[#15803d]">
-          Administrador
+          {roleLabel || "Sin rol asignado"}
         </span>
 
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#032b43] text-xs font-bold text-white shadow-xs">

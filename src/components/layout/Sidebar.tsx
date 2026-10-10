@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutGrid,
@@ -20,25 +21,27 @@ import {
 import { cn } from '@/lib/utils';
 
 const mainNav = [
-  { to: '/dashboard', label: 'Inicio', icon: LayoutGrid },
-  { to: '/proyectos', label: 'Proyectos', icon: FolderKanban },
-  { to: '/emprendedores', label: 'Emprendedores', icon: Users },
-  { to: '/orientaciones', label: 'Orientaciones', icon: Calendar },
-  { to: '/orientacion-masiva', label: 'Orientación masiva', icon: Send },
-  { to: '/retos', label: 'Retos', icon: Target },
-  { to: '/pitch', label: 'Pitch', icon: Presentation },
-  { to: '/evaluaciones', label: 'Evaluación', icon: ClipboardCheck },
-  { to: '/evaluadores', label: 'Evaluadores', icon: UserCheck },
-  { to: '/informes', label: 'Informes', icon: FileText },
+  { to: '/dashboard', moduleCode: 'panel', label: 'Inicio', icon: LayoutGrid },
+  { to: '/proyectos', moduleCode: 'proyectos', label: 'Proyectos', icon: FolderKanban },
+  { to: '/emprendedores', moduleCode: 'emprendedores', label: 'Emprendedores', icon: Users },
+  { to: '/orientaciones', moduleCode: 'orientaciones', label: 'Orientaciones', icon: Calendar },
+  { to: '/orientacion-masiva', moduleCode: 'orientacion_masiva', label: 'Orientación masiva', icon: Send },
+  { to: '/retos', moduleCode: 'retos', label: 'Retos', icon: Target },
+  { to: '/pitch', moduleCode: 'pitch', label: 'Pitch', icon: Presentation },
+  { to: '/evaluaciones', moduleCode: 'evaluaciones', label: 'Evaluación', icon: ClipboardCheck },
+  { to: '/evaluadores', moduleCode: 'evaluadores', label: 'Evaluadores', icon: UserCheck },
+  { to: '/informes', moduleCode: 'informes', label: 'Informes', icon: FileText },
 ];
 
 const adminNav = [
-  { to: '/usuarios', label: 'Usuarios', icon: Users2 },
-  { to: '/control-accesos', label: 'Control de accesos', icon: ShieldCheck },
-  { to: '/configuracion', label: 'Configuración', icon: Settings },
+  { to: '/usuarios', moduleCode: 'usuarios', label: 'Usuarios', icon: Users2 },
+  { to: '/control-accesos', moduleCode: 'control_accesos', label: 'Control de accesos', icon: ShieldCheck },
+  { to: '/configuracion', moduleCode: 'configuracion', label: 'Configuración', icon: Settings },
 ];
 
-function NavItem({ to, label, icon: Icon }: (typeof mainNav)[number]) {
+type NavItemProps = Omit<(typeof mainNav)[number], 'moduleCode'>;
+
+function NavItem({ to, label, icon: Icon }: NavItemProps) {
   return (
     <NavLink
       to={to}
@@ -61,6 +64,10 @@ function NavItem({ to, label, icon: Icon }: (typeof mainNav)[number]) {
 export function Sidebar() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const { can } = useAccessControl();
+
+  const visibleMainNav = mainNav.filter((item) => can(item.moduleCode, 'ver'));
+  const visibleAdminNav = adminNav.filter((item) => can(item.moduleCode, 'ver'));
 
   useEffect(() => {
     setOpen(false);
@@ -135,16 +142,18 @@ export function Sidebar() {
         </div>
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2 lg:[@media(min-height:800px)]:space-y-1 lg:[@media(min-height:800px)]:py-4">
-          {mainNav.map((item) => (
-            <NavItem key={item.to} {...item} />
+          {visibleMainNav.map(({ moduleCode, ...item }) => (
+            <NavItem key={moduleCode} {...item} />
           ))}
         </nav>
 
-        <div className="space-y-0.5 border-t border-[#084166] px-3 py-2 lg:[@media(min-height:800px)]:space-y-1 lg:[@media(min-height:800px)]:py-4">
-          {adminNav.map((item) => (
-            <NavItem key={item.to} {...item} />
-          ))}
-        </div>
+        {visibleAdminNav.length > 0 && (
+          <div className="space-y-0.5 border-t border-[#084166] px-3 py-2 lg:[@media(min-height:800px)]:space-y-1 lg:[@media(min-height:800px)]:py-4">
+            {visibleAdminNav.map(({ moduleCode, ...item }) => (
+              <NavItem key={moduleCode} {...item} />
+            ))}
+          </div>
+        )}
       </aside>
     </>
   );

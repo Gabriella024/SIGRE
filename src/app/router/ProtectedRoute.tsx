@@ -1,11 +1,44 @@
-import { Navigate } from 'react-router-dom'
-import { useAuth } from '@/features/auth/context/AuthContext'
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth()
+import type { ReactNode } from "react";
 
-  if (isLoading) return <div>Cargando...</div>
-  if (!user) return <Navigate to="/login" replace />
+type ProtectedRouteProps = {
+  children: ReactNode;
+  moduleCode?: string;
+};
 
-  return <>{children}</>
+export function ProtectedRoute({
+  children,
+  moduleCode,
+}: ProtectedRouteProps) {
+  const { user, isLoading } = useAuth();
+  const {
+    can,
+    isLoading: permissionsLoading,
+    error,
+  } = useAccessControl();
+
+  if (isLoading) {
+    return <div>Cargando sesión...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (permissionsLoading) {
+    return <div>Verificando permisos...</div>;
+  }
+
+  if (error) {
+    return <div>Error al verificar permisos: {error}</div>;
+  }
+
+  if (moduleCode && !can(moduleCode, "ver")) {
+    return <div>No tienes permisos para acceder a este módulo.</div>;
+  }
+
+  return <>{children}</>;
 }
