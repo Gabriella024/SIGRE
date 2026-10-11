@@ -1,16 +1,16 @@
+
 import {
   createContext,
   useContext,
   useEffect,
   useState,
-  useCallback,
 } from "react";
 
 import type { ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 
 import { supabase } from "@/lib/supabase";
-import { getUserPermissions } from "@/features/access-control/services/accessControlService";
+import { getUserAccess } from "@/features/access-control/services/accessControlService";
 
 import type {
   SigrePermission,
@@ -40,71 +40,49 @@ export function AuthProvider({
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [roles, setRoles] = useState<SigreRole[]>([]);
-  const [permissions, setPermissions] = useState<SigrePermission[]>([]);
-  const [permissionsLoading, setPermissionsLoading] = useState(true);
-  const [permissionsError, setPermissionsError] = useState<string | null>(null);
-
-  const loadAccess = useCallback(async (userId: string) => {
-    setPermissionsLoading(true);
-    setPermissionsError(null);
-
-    try {
-      const { data, error } = await supabase
-        .from("usuario_roles")
-        .select("roles:id_rol_fk(nombre_rol)")
-        .eq("id_usuario_fk", userId)
-        .eq("estado", "activo");
-
-      if (error) throw error;
-
-      const roleNames = (data ?? [])
-        .flatMap((item) => {
-          const relation = item.roles as unknown as {
-            nombre_rol: string;
-          } | null;
-
-          return relation ? [relation.nombre_rol as SigreRole] : [];
-        });
-
-      const userPermissions = await getUserPermissions(userId);
-
-      setRoles(roleNames);
-      setPermissions(userPermissions);
-    } catch (error) {
-      setRoles([]);
-      setPermissions([]);
-      setPermissionsError(
-        error instanceof Error
-          ? error.message
-          : "Error al cargar permisos"
-      );
-    } finally {
-      setPermissionsLoading(false);
-    }
-  }, []);
+  const [accessState, setAccessState] = useState<{
+    userId: string | null;
+    roles: SigreRole[];
+    permissions: SigrePermission[];
+    loading: boolean;
+    error: string | null;
+  }>({
+    userId: null,
+    roles: [],
+    permissions: [],
+    loading: true,
+    error: null,
+  });
 
   useEffect(() => {
     let active = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-
-      setSession(data.session);
-      setIsLoading(false);
-    }).catch(() => {
-      if (!active) return;
-      setIsLoading(false);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, nextSession) => {
+    supabase.auth.getSession()
+      .then(({ data, error }) => {
         if (!active) return;
 
-        setSession(nextSession);
+        if (error) {
+          console.error("Error de sesión:", error.message);
+        }
+
+        setSession(data.session);
         setIsLoading(false);
-      }
-    );
+      })
+      .catch((error) => {
+        if (!active) return;
+        console.error("Error de autenticación:", error);
+        setIsLoading(false);
+      });
+
+    const { data: listener } =
+      supabase.auth.onAuthStateChange(
+        (_event, nextSession) => {
+          if (!active) return;
+
+          setSession(nextSession);
+          setIsLoading(false);
+        }
+      );
 
     return () => {
       active = false;
@@ -112,21 +90,68 @@ export function AuthProvider({
     };
   }, []);
 
+  const userId = session?.user.id ?? null;
+
   useEffect(() => {
-    if (!session?.user.id) {
-      setRoles([]);
-      setPermissions([]);
-      setPermissionsError(null);
-      setPermissionsLoading(false);
-      return;
+    let cancelled = false;
+
+    if (!userId) {
+      return () => {
+        cancelled = true;
+      };
     }
 
-    void loadAccess(session.user.id);
-  }, [session?.user.id, loadAccess]);
+    getUserAccess(userId)
+      .then((access) => {
+        if (cancelled) return;
+
+        setAccessState({
+          userId,
+          roles: access.roles,
+          permissions: access.permissions,
+          loading: false,
+          error: null,
+        });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+
+        setAccessState({
+          userId,
+          roles: [],
+          permissions: [],
+          loading: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : "Error al cargar permisos",
+        });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  const accessReady =
+    !isLoading &&
+    accessState.userId === userId &&
+    !accessState.loading;
+
+  const roles = accessReady ? accessState.roles : [];
+  const permissions = accessReady
+    ? accessState.permissions
+    : [];
+
+  const permissionsLoading =
+    isLoading || (userId !== null && !accessReady);
+
+  const permissionsError = accessReady
+    ? accessState.error
+    : null;
 
   async function logout() {
     const { error } = await supabase.auth.signOut();
-
     if (error) throw error;
   }
 
@@ -152,7 +177,9 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuth debe usarse dentro de AuthProvider");
+    throw new Error(
+      "useAuth debe usarse dentro de AuthProvider"
+    );
   }
 
   return context;
