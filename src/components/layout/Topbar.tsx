@@ -23,7 +23,7 @@ const breadcrumbMap: Record<string, string> = {
 
 export function Topbar() {
   const { user, logout } = useAuth();
-  const { roles } = useAccessControl();
+  const { roles, isLoading: permissionsLoading } = useAccessControl();
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -60,6 +60,10 @@ export function Topbar() {
     )
     .join(", ");
 
+  const roleText = permissionsLoading
+    ? "Cargando rol..."
+    : roleLabel || "Sin rol asignado";
+
   return (
     <header className="flex h-16 w-full items-center justify-between border-b border-slate-200/70 bg-white pl-16 pr-4 sm:pr-6 lg:px-8 transition-all">
       <div className="flex min-w-0 items-center text-sm font-semibold text-slate-800">
@@ -75,14 +79,16 @@ export function Topbar() {
       <div className="flex shrink-0 items-center gap-2 sm:gap-4">
         <button
           type="button"
-          className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+          disabled
+          aria-label="Notificaciones (disponible próximamente)"
+          title="Notificaciones disponibles próximamente"
+          className="rounded-full p-2 text-slate-400 disabled:cursor-not-allowed"
         >
           <Bell className="h-5 w-5 stroke-[1.8]" />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
         </button>
 
         <span className="hidden sm:inline-block rounded-full bg-[#dcfce7] px-3.5 py-1 text-xs font-semibold text-[#15803d]">
-          {roleLabel || "Sin rol asignado"}
+          {roleText}
         </span>
 
         <DropdownMenu.Root>
@@ -107,7 +113,7 @@ export function Topbar() {
                   {user?.email}
                 </p>
                 <p className="truncate text-xs text-slate-500">
-                  {roleLabel || "Sin rol asignado"}
+                  {roleText}
                 </p>
               </div>
 

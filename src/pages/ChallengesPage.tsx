@@ -2,9 +2,8 @@ import { useMemo, useState } from 'react'
 import { ChallengesTable } from '@/features/challenges/components/ChallengesTable'
 import { MOCK_CHALLENGES } from '@/features/challenges/mocks/ChallengesMocks'
 import { ChallengesFilters } from '@/features/challenges/components/ChallengesFilters'
-import type { Challenge } from '@/features/challenges/types/Challenge'
 import { ViewToggle, type ViewMode } from '@/components/ui/viewToggle'
-import SessionCalendar from '@/features/calendar/components/SessionCalendar'
+import { PendingIntegrationNotice } from '@/components/ui/pending-integration'
 
 export function ChallengesPage() {
   const [activeTab, setActiveTab] = useState('R1')
@@ -13,14 +12,6 @@ export function ChallengesPage() {
   const retosFiltrados = useMemo(() => {
     return MOCK_CHALLENGES.filter((r) => r.nivel === activeTab)
   }, [activeTab])
-
-  const handleEdit = (challenge: Challenge) => {
-    console.log("Editar reto:", challenge.codigo)
-  }
-
-  const handleDelete = (challenge: Challenge) => {
-    console.log("Eliminar reto:", challenge.codigo)
-  }
 
   return (
     <div className="p-6 space-y-6">
@@ -38,16 +29,12 @@ export function ChallengesPage() {
             onTabChange={setActiveTab}
             showAddButton={true}
           />
-          <ChallengesTable
-            data={retosFiltrados}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <ChallengesTable data={retosFiltrados} />
         </>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-4">
-          <SessionCalendar module="orientaciones" readOnly={true} />
-        </div>
+        <PendingIntegrationNotice title="Calendario de retos pendiente">
+          El calendario de retos se habilitará cuando exista la integración de sus sesiones con Supabase.
+        </PendingIntegrationNotice>
       )}
     </div>
   )

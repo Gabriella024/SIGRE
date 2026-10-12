@@ -20,12 +20,8 @@ export function ReportCard({ report, onOpen }: ReportCardProps) {
   const Icon = report.icon;
   const tone = TONE_STYLES[report.tone];
 
-  return (
-    <button
-      type="button"
-      onClick={() => onOpen?.(report.id)}
-      className="group flex h-full w-full flex-col justify-between gap-6 rounded-xl bg-white p-5 text-left shadow-sm ring-1 ring-slate-100 transition-all hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-    >
+  const content = (
+    <>
       <div className="flex items-start gap-3">
         <span
           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${tone.icon}`}
@@ -38,10 +34,32 @@ export function ReportCard({ report, onOpen }: ReportCardProps) {
         </div>
       </div>
 
-      <span className={`flex items-center justify-between text-sm font-medium ${tone.link}`}>
-        Ver informe
-        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-      </span>
+      {onOpen ? (
+        <span className={`flex items-center justify-between text-sm font-medium ${tone.link}`}>
+          Ver informe
+          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      ) : (
+        <span className="text-xs font-medium text-slate-400">Disponible próximamente</span>
+      )}
+    </>
+  );
+
+  if (!onOpen) {
+    return (
+      <div className="flex h-full w-full flex-col justify-between gap-6 rounded-xl bg-white p-5 text-left shadow-sm ring-1 ring-slate-100">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(report.id)}
+      className="group flex h-full w-full flex-col justify-between gap-6 rounded-xl bg-white p-5 text-left shadow-sm ring-1 ring-slate-100 transition-all hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+    >
+      {content}
     </button>
   );
 }

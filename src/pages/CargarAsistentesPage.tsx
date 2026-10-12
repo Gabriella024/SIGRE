@@ -14,13 +14,20 @@ import { HeaderConfirmado } from '../features/orientation-mass/components/Header
 import { TablaResultadosReadOnly } from '../features/orientation-mass/components/TablaResultadosReadOnly';
 
 import { useAsistentesCarga } from '@/features/orientation-mass/hooks/useOrientationUpload';
+import { useAccessControl } from '@/features/access-control/hooks/useAccessControl';
+import { SCREEN_CODES } from '@/features/access-control/constants/screens';
+import { PendingIntegrationNotice } from '@/components/ui/pending-integration';
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 export default function CargarAsistentesPage() {
   const {
     pasoActual,
     setPasoActual,
     archivo,
-    rowsPreview,
     filasValidacion,
     infoOrientacion,
     filtroTab,
@@ -32,13 +39,8 @@ export default function CargarAsistentesPage() {
     handleConfirmar,
     handleReset,
   } = useAsistentesCarga();
-
-  const handleSimularArchivo = () => {
-    const dummyFile = new File([''], 'Asistentes_Orientacion_SENA.xlsx', {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    handleSeleccionarArchivo(dummyFile);
-  };
+  const { can } = useAccessControl();
+  const canRegister = can('orientacion_masiva', 'crear', SCREEN_CODES.orientacion_masiva);
 
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased pb-12">
@@ -61,18 +63,22 @@ export default function CargarAsistentesPage() {
           <HeaderConfirmado fechaConfirmacion={infoOrientacion?.fechaCarga || '04/10/2026'} />
         )}
 
+        <PendingIntegrationNotice title="Modo demostrativo">
+          Puedes seleccionar un archivo desde tu equipo, pero su contenido todavía no se lee.
+          La validación y el registro muestran datos de ejemplo y no guardan información en Supabase.
+        </PendingIntegrationNotice>
+
         <Stepper currentStep={pasoActual} onSelectStep={(paso) => setPasoActual(paso)} />
 
         {pasoActual === 1 && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               {!archivo ? (
-                <Dropzone onSelectFile={handleSimularArchivo} />
+                <Dropzone onSelectFile={handleSeleccionarArchivo} />
               ) : (
                 <FilePreview
                   fileName={archivo.name}
-                  fileSize="24 KB"
-                  rows={rowsPreview}
+                  fileSize={formatFileSize(archivo.size)}
                   onRemove={handleReset}
                 />
               )}
@@ -93,7 +99,7 @@ export default function CargarAsistentesPage() {
                     onClick={handleProcesarArchivo}
                     className="px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
                   >
-                    {isProcessing ? 'Procesando...' : 'Procesar y Validar Archivo'}
+                    {isProcessing ? 'Procesando...' : 'Procesar (demostración)'}
                   </button>
                 </div>
               )}
@@ -138,14 +144,20 @@ export default function CargarAsistentesPage() {
               >
                 Volver a cargar
               </button>
-              <button
-                type="button"
-                disabled={isProcessing || resumenCounts.valida === 0}
-                onClick={handleConfirmar}
-                className="px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
-              >
-                {isProcessing ? 'Confirmando...' : `Confirmar y Registrar (${resumenCounts.valida} válidos)`}
-              </button>
+              {canRegister ? (
+                <button
+                  type="button"
+                  disabled={isProcessing || resumenCounts.valida === 0}
+                  onClick={handleConfirmar}
+                  className="px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
+                >
+                  {isProcessing ? 'Confirmando...' : `Confirmar registro de demostración (${resumenCounts.valida})`}
+                </button>
+              ) : (
+                <p className="text-xs text-slate-500">
+                  No tienes permiso para registrar asistentes.
+                </p>
+              )}
             </div>
           </div>
         )}

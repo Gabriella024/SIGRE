@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
 import type { Evaluacion } from "@/features/evaluations/types/evaluacion";
 
-export function EvaluationSummaryBar({ evaluaciones }: { evaluaciones: Evaluacion[] }) {
+type EvaluationSummaryBarProps = {
+  evaluaciones: Evaluacion[]
+  onAssign?: () => void
+}
+
+export function EvaluationSummaryBar({ evaluaciones, onAssign }: EvaluationSummaryBarProps) {
   const totalAsignados = evaluaciones.length
   const sinAsignar = 5
   const completados = evaluaciones.filter((e) => e.estado === 'Completado').length
@@ -13,7 +18,9 @@ export function EvaluationSummaryBar({ evaluaciones }: { evaluaciones: Evaluacio
         {totalAsignados} pitches asignados · {sinAsignar} pitches sin asignar ·{' '}
         {completados} completados · {pendientes} pendientes
       </p>
-      <Button className="bg-lime-500 hover:bg-lime-600">Realizar asignaciones</Button>
+      {onAssign && (
+        <Button onClick={onAssign} className="bg-lime-500 hover:bg-lime-600">Realizar asignaciones</Button>
+      )}
     </div>
   )
 }

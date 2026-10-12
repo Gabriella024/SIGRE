@@ -3,11 +3,11 @@ import { FileSpreadsheet, Trash2, Check } from 'lucide-react';
 interface FilePreviewProps {
   fileName: string;
   fileSize: string;
-  rows: string[][];
+  rows?: string[][];
   onRemove?: () => void;
 }
 
-export function FilePreview({ fileName, fileSize, rows, onRemove }: FilePreviewProps) {
+export function FilePreview({ fileName, fileSize, rows = [], onRemove }: FilePreviewProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3.5 border border-emerald-500 bg-emerald-50/40 rounded-xl p-3 md:p-4">
@@ -25,7 +25,7 @@ export function FilePreview({ fileName, fileSize, rows, onRemove }: FilePreviewP
         <div className="flex items-center gap-3 shrink-0">
           <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 font-semibold text-xs px-2.5 py-1 rounded-full">
             <Check className="w-3.5 h-3.5" />
-            Listo
+            Seleccionado
           </span>
           <button
             type="button"
@@ -38,41 +38,47 @@ export function FilePreview({ fileName, fileSize, rows, onRemove }: FilePreviewP
         </div>
       </div>
 
-      <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
-        <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
-          <div>
-            <b className="text-slate-900 mr-1">Vista previa</b> Primeras {rows.length} filas
+      {rows.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-xs text-slate-500">
+          La vista previa del contenido estará disponible cuando se integre la lectura real del archivo.
+        </p>
+      ) : (
+        <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+          <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
+            <div>
+              <b className="text-slate-900 mr-1">Vista previa</b> Primeras {rows.length} filas
+            </div>
+            <span>Registros detectados</span>
           </div>
-          <span>Registros detectados</span>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left border-collapse min-w-[640px]">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold">
-                <th className="px-3.5 py-2.5">TIPO</th>
-                <th className="px-3.5 py-2.5">DOCUMENTO</th>
-                <th className="px-3.5 py-2.5">NOMBRES</th>
-                <th className="px-3.5 py-2.5">APELLIDOS</th>
-                <th className="px-3.5 py-2.5">CORREO</th>
-                <th className="px-3.5 py-2.5">TELÉFONO</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
-              {rows.map((row, idx) => (
-                <tr key={`${row[1]}-${idx}`} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="px-3.5 py-2.5">{row[0]}</td>
-                  <td className="px-3.5 py-2.5 font-medium text-slate-900">{row[1]}</td>
-                  <td className="px-3.5 py-2.5">{row[2]}</td>
-                  <td className="px-3.5 py-2.5">{row[3]}</td>
-                  <td className="px-3.5 py-2.5 text-slate-500">{row[4]}</td>
-                  <td className="px-3.5 py-2.5">{row[5]}</td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs text-left border-collapse min-w-[640px]">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold">
+                  <th className="px-3.5 py-2.5">TIPO</th>
+                  <th className="px-3.5 py-2.5">DOCUMENTO</th>
+                  <th className="px-3.5 py-2.5">NOMBRES</th>
+                  <th className="px-3.5 py-2.5">APELLIDOS</th>
+                  <th className="px-3.5 py-2.5">CORREO</th>
+                  <th className="px-3.5 py-2.5">TELÉFONO</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                {rows.map((row, idx) => (
+                  <tr key={`${row[1]}-${idx}`} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="px-3.5 py-2.5">{row[0]}</td>
+                    <td className="px-3.5 py-2.5 font-medium text-slate-900">{row[1]}</td>
+                    <td className="px-3.5 py-2.5">{row[2]}</td>
+                    <td className="px-3.5 py-2.5">{row[3]}</td>
+                    <td className="px-3.5 py-2.5 text-slate-500">{row[4]}</td>
+                    <td className="px-3.5 py-2.5">{row[5]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

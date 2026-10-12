@@ -6,6 +6,7 @@ import {
   UserPlus,
 } from "lucide-react";
 
+import { ReadOnlyBadge } from "@/components/ui/pending-integration";
 import { MOCK_USERS } from "../mocks/accessControlMocks";
 import type { AccessUser, UserStatus } from "../types/types";
 
@@ -49,6 +50,7 @@ export default function UsuariosSection({
   const [users, setUsers] = useState<AccessUser[]>(initialData);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | UserStatus>("all");
+  const hasActions = Boolean(onEdit || onToggleActive);
 
   const filteredUsers = useMemo(() => {
     const search = normalize(query.trim());
@@ -94,6 +96,7 @@ export default function UsuariosSection({
         <div>
           <h2 className="text-xl font-semibold text-[#0f2f4a]">
             Usuarios
+            {!onCreate && !hasActions && <ReadOnlyBadge />}
           </h2>
 
           <p className="mt-0.5 text-sm text-slate-500">
@@ -101,14 +104,16 @@ export default function UsuariosSection({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onCreate}
-          className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f8f00] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39a900] focus-visible:ring-offset-2"
-        >
-          <UserPlus className="h-4 w-4" />
-          Nuevo usuario
-        </button>
+        {onCreate && (
+          <button
+            type="button"
+            onClick={onCreate}
+            className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f8f00] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39a900] focus-visible:ring-offset-2"
+          >
+            <UserPlus className="h-4 w-4" />
+            Nuevo usuario
+          </button>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -168,9 +173,11 @@ export default function UsuariosSection({
                   Estado
                 </th>
 
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Acciones
-                </th>
+                {hasActions && (
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Acciones
+                  </th>
+                )}
               </tr>
             </thead>
 
@@ -198,40 +205,46 @@ export default function UsuariosSection({
                     <StatusPill active={user.status === "active"} />
                   </td>
 
-                  <td className="px-4 py-4">
-                    <div className="flex justify-end gap-1">
-                      <button
-                        type="button"
-                        onClick={() => onEdit?.(user)}
-                        aria-label={`Editar ${user.name}`}
-                        className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
+                  {hasActions && (
+                    <td className="px-4 py-4">
+                      <div className="flex justify-end gap-1">
+                        {onEdit && (
+                          <button
+                            type="button"
+                            onClick={() => onEdit(user)}
+                            aria-label={`Editar ${user.name}`}
+                            className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                        )}
 
-                      <button
-                        type="button"
-                        onClick={() => toggleUser(user)}
-                        aria-label={`${user.status === "active"
-                            ? "Desactivar"
-                            : "Activar"
-                          } ${user.name}`}
-                        className={`rounded-md p-2 ${user.status === "active"
-                            ? "text-red-500 hover:bg-red-50"
-                            : "text-green-600 hover:bg-green-50"
-                          }`}
-                      >
-                        <Power className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+                        {onToggleActive && (
+                          <button
+                            type="button"
+                            onClick={() => toggleUser(user)}
+                            aria-label={`${user.status === "active"
+                                ? "Desactivar"
+                                : "Activar"
+                              } ${user.name}`}
+                            className={`rounded-md p-2 ${user.status === "active"
+                                ? "text-red-500 hover:bg-red-50"
+                                : "text-green-600 hover:bg-green-50"
+                              }`}
+                          >
+                            <Power className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
 
               {filteredUsers.length === 0 && (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={hasActions ? 5 : 4}
                     className="px-4 py-10 text-center text-sm text-slate-400"
                   >
                     No se encontraron usuarios.

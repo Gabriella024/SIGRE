@@ -1,19 +1,8 @@
 import type { Column } from "@/components/ui/table/types";
-import type { Entrepreneur, EntrepreneurStatus } from './types/entrepreneur'
+import { NullableText } from "@/components/ui/nullable-text";
+import { StatusBadge } from "@/components/ui/status-badge";
 
-function EstadoBadge({ estado }: { estado: EntrepreneurStatus }) {
-  const styles: Record<EntrepreneurStatus, string> = {
-    Activo: "bg-emerald-100 text-emerald-700",
-    Inactivo: "bg-rose-100 text-rose-800",
-    Suspendido: "bg-indigo-100 text-indigo-700",
-  };
-
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[estado]}`}>
-      {estado}
-    </span>
-  );
-}
+import type { Entrepreneur } from "./types/entrepreneur";
 
 export const ENTREPRENEUR_COLUMNS: Column<Entrepreneur>[] = [
   {
@@ -25,29 +14,33 @@ export const ENTREPRENEUR_COLUMNS: Column<Entrepreneur>[] = [
     ),
   },
   {
-    key: "documento",
-    label: "DOCUMENTO",
-    sortable: true,
-  },
-  {
-    key: "correo",
-    label: "CORREO",
-    sortable: true,
-  },
-  {
-    key: "municipio",
-    label: "MUNICIPIO",
-    sortable: true,
-  },
-  {
     key: "centro",
-    label: "CENTRO",
+    label: "CENTRO SENA",
     sortable: true,
+    render: (row) => <NullableText value={row.centro} />,
+  },
+  {
+    key: "programa",
+    label: "PROGRAMA",
+    sortable: true,
+    render: (row) => <NullableText value={row.programa} />,
+  },
+  {
+    key: "nivelFormacion",
+    label: "NIVEL",
+    sortable: true,
+    render: (row) => <NullableText value={row.nivelFormacion} />,
+  },
+  {
+    key: "tipo",
+    label: "TIPO",
+    sortable: true,
+    render: (row) => <NullableText value={row.tipo} />,
   },
   {
     key: "estado",
     label: "ESTADO",
-    sortable: false,
-    render: (row) => <EstadoBadge estado={row.estado} />,
-  }
-]
+    sortable: true,
+    render: (row) => <StatusBadge value={row.estado} />,
+  },
+];

@@ -1,13 +1,18 @@
-export type ProjectStage = "Retos" | "Orientación" | "Pitch" | "Registro";
-export type ProjectStatus = "Activo" | "Finalizado" | "Inactivo";
-
 export interface Project {
-  id: string | number;
-  nombre: string;
-  emprendedor: string;
-  municipio: string;
+  id: string;
+  titulo: string;
+  emprendedorId: string | null;
+  emprendedor: string | null;
+  sector: string | null;
+  etapa: string | null;
+  estado: string | null;
+  createdAt: string;
+}
+
+export interface ProjectFilters {
+  search: string;
+  estado: string;
   sector: string;
-  etapa: ProjectStage;
+  etapa: string;
   fechaRegistro: string;
-  estado: ProjectStatus;
 }

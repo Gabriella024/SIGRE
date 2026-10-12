@@ -46,8 +46,6 @@ export default function SessionCalendar({
 
   const days = view === "day" ? [selectedDate] : getWeekDays(selectedDate);
 
-  // const handleCreateAction = readOnly ? undefined : onCreate;
-
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
       <MiniCalendarSidebar
@@ -66,7 +64,7 @@ export default function SessionCalendar({
           onNext={() => move(1)}
           onTomorrow={() => setSelectedDate(addDays(startOfDay(new Date()), 1))}
           onExport={onExport}
-          onCreate={onCreate}
+          onCreate={readOnly ? undefined : onCreate}
         />
 
         {view === "month" ? (

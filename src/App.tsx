@@ -2,6 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 
 import { ProtectedRoute } from "./app/router/ProtectedRoute";
+import { HomeRedirect } from "./app/router/HomeRedirect";
+import { SCREEN_CODES } from "./features/access-control/constants/screens";
 import { AuthProvider } from "./features/auth/context/AuthContext";
 
 import { ProjectsPage } from "./pages/ProjectPage";
@@ -27,6 +29,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<HomeRedirect />} />
 
           <Route
             element={
@@ -38,7 +41,10 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                <ProtectedRoute moduleCode="panel">
+                <ProtectedRoute
+                  moduleCode="panel"
+                  screenCode={SCREEN_CODES.panel}
+                >
                   <DashboardPage />
                 </ProtectedRoute>
               }
@@ -47,7 +53,10 @@ function App() {
             <Route
               path="/proyectos"
               element={
-                <ProtectedRoute moduleCode="proyectos">
+                <ProtectedRoute
+                  moduleCode="proyectos"
+                  screenCode={SCREEN_CODES.proyectos}
+                >
                   <ProjectsPage />
                 </ProtectedRoute>
               }
@@ -56,7 +65,10 @@ function App() {
             <Route
               path="/emprendedores"
               element={
-                <ProtectedRoute moduleCode="emprendedores">
+                <ProtectedRoute
+                  moduleCode="emprendedores"
+                  screenCode={SCREEN_CODES.emprendedores}
+                >
                   <EntrepreneursPage />
                 </ProtectedRoute>
               }
@@ -65,7 +77,10 @@ function App() {
             <Route
               path="/orientaciones"
               element={
-                <ProtectedRoute moduleCode="orientaciones">
+                <ProtectedRoute
+                  moduleCode="orientaciones"
+                  screenCode={SCREEN_CODES.orientaciones}
+                >
                   <OrientationPage />
                 </ProtectedRoute>
               }
@@ -74,7 +89,10 @@ function App() {
             <Route
               path="/usuarios"
               element={
-                <ProtectedRoute moduleCode="usuarios">
+                <ProtectedRoute
+                  moduleCode="usuarios"
+                  screenCode={SCREEN_CODES.usuarios}
+                >
                   <UsersPage />
                 </ProtectedRoute>
               }
@@ -83,7 +101,10 @@ function App() {
             <Route
               path="/pitch"
               element={
-                <ProtectedRoute moduleCode="pitch">
+                <ProtectedRoute
+                  moduleCode="pitch"
+                  screenCode={SCREEN_CODES.pitch}
+                >
                   <PitchPage />
                 </ProtectedRoute>
               }
@@ -92,7 +113,10 @@ function App() {
             <Route
               path="/evaluadores"
               element={
-                <ProtectedRoute moduleCode="evaluadores">
+                <ProtectedRoute
+                  moduleCode="evaluadores"
+                  screenCode={SCREEN_CODES.evaluadores}
+                >
                   <EvaluatorPage />
                 </ProtectedRoute>
               }
@@ -101,7 +125,10 @@ function App() {
             <Route
               path="/retos"
               element={
-                <ProtectedRoute moduleCode="retos">
+                <ProtectedRoute
+                  moduleCode="retos"
+                  screenCode={SCREEN_CODES.retos}
+                >
                   <ChallengesPage />
                 </ProtectedRoute>
               }
@@ -110,7 +137,10 @@ function App() {
             <Route
               path="/evaluaciones"
               element={
-                <ProtectedRoute moduleCode="evaluaciones">
+                <ProtectedRoute
+                  moduleCode="evaluaciones"
+                  screenCode={SCREEN_CODES.evaluaciones}
+                >
                   <EvaluationsPage />
                 </ProtectedRoute>
               }
@@ -119,7 +149,10 @@ function App() {
             <Route
               path="/orientacion-masiva"
               element={
-                <ProtectedRoute moduleCode="orientacion_masiva">
+                <ProtectedRoute
+                  moduleCode="orientacion_masiva"
+                  screenCode={SCREEN_CODES.orientacion_masiva}
+                >
                   <CargarAsistentesPage />
                 </ProtectedRoute>
               }
@@ -128,7 +161,10 @@ function App() {
             <Route
               path="/informes"
               element={
-                <ProtectedRoute moduleCode="informes">
+                <ProtectedRoute
+                  moduleCode="informes"
+                  screenCode={SCREEN_CODES.informes}
+                >
                   <InformesPage />
                 </ProtectedRoute>
               }
@@ -137,7 +173,10 @@ function App() {
             <Route
               path="/configuracion"
               element={
-                <ProtectedRoute moduleCode="configuracion">
+                <ProtectedRoute
+                  moduleCode="configuracion"
+                  screenCode={SCREEN_CODES.configuracion}
+                >
                   <ConfiguracionPage />
                 </ProtectedRoute>
               }
@@ -146,7 +185,10 @@ function App() {
             <Route
               path="/control-accesos"
               element={
-                <ProtectedRoute moduleCode="control_accesos">
+                <ProtectedRoute
+                  moduleCode="control_accesos"
+                  screenCode={SCREEN_CODES.control_accesos}
+                >
                   <AccessControlPage />
                 </ProtectedRoute>
               }
@@ -155,7 +197,7 @@ function App() {
 
           <Route
             path="*"
-            element={<Navigate to="/login" replace />}
+            element={<Navigate to="/" replace />}
           />
         </Routes>
       </BrowserRouter>

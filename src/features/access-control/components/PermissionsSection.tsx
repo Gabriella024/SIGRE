@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Save, Check, X } from "lucide-react";
 
+import { ReadOnlyBadge } from "@/components/ui/pending-integration";
 import { MOCK_PERMISSIONS } from "../mocks/accessControlMocks";
 import type { PermissionModule } from "../types/types";
 
@@ -88,6 +89,7 @@ export default function PermisosSection({
         <div>
           <h2 className="text-xl font-semibold text-[#0f2f4a]">
             Permisos
+            {!onSave && <ReadOnlyBadge />}
           </h2>
 
           <p className="mt-0.5 text-sm text-slate-500">
@@ -95,14 +97,16 @@ export default function PermisosSection({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => onSave?.(permissions)}
-          className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
-        >
-          <Save className="h-4 w-4" />
-          Guardar cambios
-        </button>
+        {onSave && (
+          <button
+            type="button"
+            onClick={() => onSave(permissions)}
+            className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
+          >
+            <Save className="h-4 w-4" />
+            Guardar cambios
+          </button>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -124,7 +128,8 @@ export default function PermisosSection({
             onChange={(event) =>
               setSelectedRole(event.target.value)
             }
-            className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-700 outline-none focus:border-[#39a900] focus:ring-2 focus:ring-green-100"
+            disabled={!onSave}
+            className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-700 outline-none focus:border-[#39a900] focus:ring-2 focus:ring-green-100 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <option>Administrador</option>
             <option>Orientador</option>
@@ -178,7 +183,8 @@ export default function PermisosSection({
                           )
                         }
                         aria-label={`${permission.label} ${module.name}`}
-                        className="rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39a900] focus-visible:ring-offset-2"
+                        disabled={!onSave}
+                        className="rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39a900] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <PermissionIcon
                           enabled={
@@ -195,10 +201,16 @@ export default function PermisosSection({
         </div>
 
         <div className="border-t border-slate-200 bg-slate-50/50 px-4 py-3 text-xs text-slate-500">
-          Configurando permisos para el rol:{" "}
-          <span className="font-semibold text-slate-700">
-            {selectedRole}
-          </span>
+          {onSave ? (
+            <>
+              Configurando permisos para el rol:{" "}
+              <span className="font-semibold text-slate-700">
+                {selectedRole}
+              </span>
+            </>
+          ) : (
+            "Matriz de ejemplo: no refleja los permisos configurados en Supabase."
+          )}
         </div>
       </div>
     </section>

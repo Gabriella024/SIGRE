@@ -1,18 +1,16 @@
 import { InformesHeader } from "@/features/informes/components/ReportHeader";
 import { ReportGrid } from "@/components/ui/report/ReportGrid";
 import { REPORTS } from "@/features/informes/mocks/reportCatalog";
-import type { ReportId } from "@/features/informes/types/types";
-
+import { PendingIntegrationNotice } from "@/components/ui/pending-integration";
 
 export default function InformesPage() {
-  const handleOpenReport = (id: ReportId) => {
-    console.log(`Navegando al informe: ${id}`);
-  };
-
   return (
     <section className="mx-auto w-full max-w-6xl px-6 py-8">
       <InformesHeader />
-      <ReportGrid reports={REPORTS} onOpenReport={handleOpenReport} />
+      <PendingIntegrationNotice className="mb-6">
+        Los informes estarán disponibles cuando se integren sus consultas con Supabase.
+      </PendingIntegrationNotice>
+      <ReportGrid reports={REPORTS} />
     </section>
   );
 }

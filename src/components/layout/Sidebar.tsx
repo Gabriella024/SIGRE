@@ -19,27 +19,28 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SCREEN_CODES } from '@/features/access-control/constants/screens';
 
 const mainNav = [
-  { to: '/dashboard', moduleCode: 'panel', label: 'Inicio', icon: LayoutGrid },
-  { to: '/proyectos', moduleCode: 'proyectos', label: 'Proyectos', icon: FolderKanban },
-  { to: '/emprendedores', moduleCode: 'emprendedores', label: 'Emprendedores', icon: Users },
-  { to: '/orientaciones', moduleCode: 'orientaciones', label: 'Orientaciones', icon: Calendar },
-  { to: '/orientacion-masiva', moduleCode: 'orientacion_masiva', label: 'Orientación masiva', icon: Send },
-  { to: '/retos', moduleCode: 'retos', label: 'Retos', icon: Target },
-  { to: '/pitch', moduleCode: 'pitch', label: 'Pitch', icon: Presentation },
-  { to: '/evaluaciones', moduleCode: 'evaluaciones', label: 'Evaluación', icon: ClipboardCheck },
-  { to: '/evaluadores', moduleCode: 'evaluadores', label: 'Evaluadores', icon: UserCheck },
-  { to: '/informes', moduleCode: 'informes', label: 'Informes', icon: FileText },
+  { to: '/dashboard', moduleCode: 'panel', screenCode: SCREEN_CODES.panel, label: 'Inicio', icon: LayoutGrid },
+  { to: '/proyectos', moduleCode: 'proyectos', screenCode: SCREEN_CODES.proyectos, label: 'Proyectos', icon: FolderKanban },
+  { to: '/emprendedores', moduleCode: 'emprendedores', screenCode: SCREEN_CODES.emprendedores, label: 'Emprendedores', icon: Users },
+  { to: '/orientaciones', moduleCode: 'orientaciones', screenCode: SCREEN_CODES.orientaciones, label: 'Orientaciones', icon: Calendar },
+  { to: '/orientacion-masiva', moduleCode: 'orientacion_masiva', screenCode: SCREEN_CODES.orientacion_masiva, label: 'Orientación masiva', icon: Send },
+  { to: '/retos', moduleCode: 'retos', screenCode: SCREEN_CODES.retos, label: 'Retos', icon: Target },
+  { to: '/pitch', moduleCode: 'pitch', screenCode: SCREEN_CODES.pitch, label: 'Pitch', icon: Presentation },
+  { to: '/evaluaciones', moduleCode: 'evaluaciones', screenCode: SCREEN_CODES.evaluaciones, label: 'Evaluación', icon: ClipboardCheck },
+  { to: '/evaluadores', moduleCode: 'evaluadores', screenCode: SCREEN_CODES.evaluadores, label: 'Evaluadores', icon: UserCheck },
+  { to: '/informes', moduleCode: 'informes', screenCode: SCREEN_CODES.informes, label: 'Informes', icon: FileText },
 ];
 
 const adminNav = [
-  { to: '/usuarios', moduleCode: 'usuarios', label: 'Usuarios', icon: Users2 },
-  { to: '/control-accesos', moduleCode: 'control_accesos', label: 'Control de accesos', icon: ShieldCheck },
-  { to: '/configuracion', moduleCode: 'configuracion', label: 'Configuración', icon: Settings },
+  { to: '/usuarios', moduleCode: 'usuarios', screenCode: SCREEN_CODES.usuarios, label: 'Usuarios', icon: Users2 },
+  { to: '/control-accesos', moduleCode: 'control_accesos', screenCode: SCREEN_CODES.control_accesos, label: 'Control de accesos', icon: ShieldCheck },
+  { to: '/configuracion', moduleCode: 'configuracion', screenCode: SCREEN_CODES.configuracion, label: 'Configuración', icon: Settings },
 ];
 
-type NavItemProps = Omit<(typeof mainNav)[number], 'moduleCode'>;
+type NavItemProps = Omit<(typeof mainNav)[number], 'moduleCode' | 'screenCode'>;
 
 function NavItem({ to, label, icon: Icon }: NavItemProps) {
   return (
@@ -66,8 +67,8 @@ export function Sidebar() {
   const { pathname } = useLocation();
   const { can } = useAccessControl();
 
-  const visibleMainNav = mainNav.filter((item) => can(item.moduleCode, 'ver'));
-  const visibleAdminNav = adminNav.filter((item) => can(item.moduleCode, 'ver'));
+  const visibleMainNav = mainNav.filter((item) => can(item.moduleCode, 'ver', item.screenCode));
+  const visibleAdminNav = adminNav.filter((item) => can(item.moduleCode, 'ver', item.screenCode));
 
   useEffect(() => {
     setOpen(false);
@@ -142,15 +143,15 @@ export function Sidebar() {
         </div>
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2 lg:[@media(min-height:800px)]:space-y-1 lg:[@media(min-height:800px)]:py-4">
-          {visibleMainNav.map(({ moduleCode, ...item }) => (
-            <NavItem key={moduleCode} {...item} />
+          {visibleMainNav.map(({ moduleCode, to, label, icon }) => (
+            <NavItem key={moduleCode} to={to} label={label} icon={icon} />
           ))}
         </nav>
 
         {visibleAdminNav.length > 0 && (
           <div className="space-y-0.5 border-t border-[#084166] px-3 py-2 lg:[@media(min-height:800px)]:space-y-1 lg:[@media(min-height:800px)]:py-4">
-            {visibleAdminNav.map(({ moduleCode, ...item }) => (
-              <NavItem key={moduleCode} {...item} />
+            {visibleAdminNav.map(({ moduleCode, to, label, icon }) => (
+              <NavItem key={moduleCode} to={to} label={label} icon={icon} />
             ))}
           </div>
         )}

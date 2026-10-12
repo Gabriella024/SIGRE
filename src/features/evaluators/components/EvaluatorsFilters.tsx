@@ -1,7 +1,7 @@
 import { Download, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { FiltersBar, type FilterConfig } from "@/components/ui/filtersBar";
+import { FiltersBar, type FilterConfig, type FilterActionHandlers } from "@/components/ui/filtersBar";
 
 type Filters = {
 	estado: string
@@ -9,7 +9,7 @@ type Filters = {
 
 const initialFilters: Filters = { estado: '' }
 
-export function EvaluatorsFilters() {
+export function EvaluatorsFilters({ onCreate, onExport }: FilterActionHandlers) {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [filters, setFilters] = useState<Filters>(initialFilters)
 
@@ -39,14 +39,18 @@ export function EvaluatorsFilters() {
 			onClearFilters={() => setFilters(initialFilters)}
 			actions={
 				<>
-					<Button variant="outline" className="gap-2">
-						<Download className="h-4 w-4" />
-						Exportar
-					</Button>
-					<Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-						<Plus className="h-4 w-4" />
-						Nuevo Evaluador
-					</Button>
+					{onExport && (
+						<Button onClick={onExport} variant="outline" className="gap-2">
+							<Download className="h-4 w-4" />
+							Exportar
+						</Button>
+					)}
+					{onCreate && (
+						<Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
+							<Plus className="h-4 w-4" />
+							Nuevo Evaluador
+						</Button>
+					)}
 				</>
 			}
 		/>

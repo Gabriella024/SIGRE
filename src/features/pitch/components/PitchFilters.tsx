@@ -2,9 +2,9 @@ import { Download, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
+import { FiltersBar, type FilterConfig, type FilterActionHandlers } from '@/components/ui/filtersBar'
 
-type PitchFiltersProps = {
+type PitchFiltersProps = FilterActionHandlers & {
   activeTab: string
   onTabChange: (value: string) => void
 }
@@ -17,7 +17,7 @@ type Filters = {
 
 const initialFilters: Filters = { estado: '', modalidad: '', fechaHoraAtencion: '' }
 
-export function PitchFilters({ activeTab, onTabChange }: PitchFiltersProps) {
+export function PitchFilters({ activeTab, onTabChange, onCreate, onExport }: PitchFiltersProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState<Filters>(initialFilters)
 
@@ -80,14 +80,18 @@ export function PitchFilters({ activeTab, onTabChange }: PitchFiltersProps) {
         onClearFilters={() => setFilters(initialFilters)}
         actions={
           <>
-            <Button variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Exportar
-            </Button>
-            <Button className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
-              <Plus className="h-4 w-4" />
-              Nueva sesión
-            </Button>
+            {onExport && (
+              <Button onClick={onExport} variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                Exportar
+              </Button>
+            )}
+            {onCreate && (
+              <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
+                <Plus className="h-4 w-4" />
+                Nueva sesión
+              </Button>
+            )}
           </>
         }
       />

@@ -25,7 +25,8 @@ import type {
 
 interface ModulosPantallasSectionProps {
   initialData?: SystemModule[];
-  onSave?: (modules: SystemModule[]) => void;
+  onSave?: (modules: SystemModule[]) => void | Promise<void>;
+  lastUpdatedAt?: string;
 }
 
 const ICONS: Record<
@@ -82,12 +83,14 @@ function formatSavedAt(date: Date): string {
 export default function ModulosPantallasSection({
   initialData = MOCK_MODULES,
   onSave,
+  lastUpdatedAt,
 }: ModulosPantallasSectionProps) {
   const [modules, setModules] =
     useState<SystemModule[]>(initialData);
 
   const [updatedAt, setUpdatedAt] =
-    useState("hoy, 9:42 a. m.");
+    useState<string | null>(lastUpdatedAt ?? null);
+  const readOnly = !onSave;
 
   const updateModule = (
     id: string,
@@ -105,42 +108,53 @@ export default function ModulosPantallasSection({
     );
   };
 
-  const handleSave = () => {
-    onSave?.(modules);
-    setUpdatedAt(
-      formatSavedAt(new Date())
-    );
+  const handleSave = async (
+    save: NonNullable<ModulosPantallasSectionProps["onSave"]>
+  ) => {
+    try {
+      await save(modules);
+      setUpdatedAt(
+        formatSavedAt(new Date())
+      );
+    } catch (error) {
+      console.error("No fue posible guardar los módulos:", error);
+    }
   };
 
   return (
     <ConfigSection
       id="modulos-pantallas"
       title="Módulos y pantallas"
+      readOnly={readOnly}
       description="Configura la navegación y disponibilidad de las pantallas del sistema."
       action={
-        <button
-          type="button"
-          onClick={handleSave}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
-        >
-          <Save className="h-4 w-4" />
-          Guardar cambios
-        </button>
+        onSave && (
+          <button
+            type="button"
+            onClick={() => void handleSave(onSave)}
+            className="inline-flex items-center gap-2 rounded-lg bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
+          >
+            <Save className="h-4 w-4" />
+            Guardar cambios
+          </button>
+        )
       }
     >
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 
         {/* ALERTA */}
-        <div className="m-4 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          <TriangleAlert className="h-4 w-4 shrink-0" />
+        {!readOnly && (
+          <div className="m-4 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <TriangleAlert className="h-4 w-4 shrink-0" />
 
-          <p>
-            <strong className="font-semibold">
-              Ten en cuenta:
-            </strong>{" "}
-            Desactivar una pantalla la oculta para todos los roles.
-          </p>
-        </div>
+            <p>
+              <strong className="font-semibold">
+                Ten en cuenta:
+              </strong>{" "}
+              Desactivar una pantalla la oculta para todos los roles.
+            </p>
+          </div>
+        )}
 
         {/* TABLA */}
         <div className="overflow-x-auto">
@@ -215,6 +229,7 @@ export default function ModulosPantallasSection({
                         min={1}
                         value={item.order}
                         aria-label={`Orden de ${item.module} en el menú`}
+                        disabled={readOnly}
                         onChange={(event) =>
                           updateModule(
                             item.id,
@@ -225,7 +240,7 @@ export default function ModulosPantallasSection({
                             }
                           )
                         }
-                        className="h-10 w-16 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-[#39a900] focus:ring-2 focus:ring-[#39a900]/20"
+                        className="h-10 w-16 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-[#39a900] focus:ring-2 focus:ring-[#39a900]/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
                       />
                     </td>
 
@@ -251,6 +266,7 @@ export default function ModulosPantallasSection({
                             ? "Desactivar"
                             : "Activar"
                           } pantalla ${item.screenName}`}
+                        disabled={readOnly}
                       />
                     </td>
                   </tr>
@@ -267,9 +283,11 @@ export default function ModulosPantallasSection({
             {modules.length} pantallas configuradas
           </span>
 
-          <span>
-            Última actualización: {updatedAt}
-          </span>
+          {updatedAt && (
+            <span>
+              Última actualización: {updatedAt}
+            </span>
+          )}
         </div>
       </div>
     </ConfigSection>

@@ -1,17 +1,8 @@
 import { UsersTable } from '@/features/users/components/UsersTable'
 import { UsersFilters } from '@/features/users/components/UsersFilters'
 import { MOCK_USERS } from '@/features/users/mocks/UserMocks'
-import type { User } from '@/features/users/types/users'
 
 export function UsersPage() {
-  const handleEdit = (user: User) => {
-    console.log("Editar usuario:", user.nombre);
-  };
-
-  const handleDelete = (user: User) => {
-    console.log("Eliminar usuario:", user.nombre);
-  };
-
   return (
     <div className="p-6 space-y-6">
       <div>
@@ -20,11 +11,7 @@ export function UsersPage() {
 
       <UsersFilters />
 
-      <UsersTable
-        data={MOCK_USERS}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      <UsersTable data={MOCK_USERS} />
     </div>
   );
 }

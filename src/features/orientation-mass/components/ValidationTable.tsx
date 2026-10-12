@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search } from 'lucide-react';
 import type { EstadoValidacion } from '../components/ValidationSummaryCards';
 
 export interface FilaRegistro {
@@ -161,29 +161,8 @@ export function ValidationTable({
         </table>
       </div>
 
-      <div className="p-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-        <span>Mostrando 1–{filasFiltradas.length} de {filasFiltradas.length} filas</span>
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            disabled
-            className="p-1.5 rounded-md border border-slate-200 text-slate-300 disabled:opacity-50 cursor-not-allowed"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            className="w-7 h-7 rounded-md bg-slate-900 text-white font-semibold flex items-center justify-center"
-          >
-            1
-          </button>
-          <button
-            type="button"
-            className="p-1.5 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+      <div className="p-4 border-t border-slate-200 text-xs text-slate-500">
+        <span>Mostrando {filasFiltradas.length} filas</span>
       </div>
     </section>
   );

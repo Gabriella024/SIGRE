@@ -10,6 +10,11 @@ export type FilterOption = {
   label: string
 }
 
+export type FilterActionHandlers = {
+  onCreate?: () => void
+  onExport?: () => void
+}
+
 export type FilterConfig = {
   key: string
   label: string

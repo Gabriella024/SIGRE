@@ -13,7 +13,12 @@ const badgeStyles: Record<Evaluacion['estado'], string> = {
   Completado: 'bg-green-100 text-green-700',
 }
 
-export function EvaluationCard({ evaluacion }: { evaluacion: Evaluacion }) {
+type EvaluationCardProps = {
+  evaluacion: Evaluacion
+  onGrade?: (evaluacion: Evaluacion) => void
+}
+
+export function EvaluationCard({ evaluacion, onGrade }: EvaluationCardProps) {
   const fecha = new Date(evaluacion.fechaPitch)
   const fechaStr = fecha.toLocaleDateString('es-CO')
   const horaStr = fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
@@ -51,8 +56,8 @@ export function EvaluationCard({ evaluacion }: { evaluacion: Evaluacion }) {
 
         {evaluacion.estado === 'Completado' ? (
           <span className="font-semibold text-slate-900">{evaluacion.puntaje}/100</span>
-        ) : (
-          <Button size="sm" className="gap-1 bg-lime-500 hover:bg-lime-600">
+        ) : onGrade && (
+          <Button size="sm" onClick={() => onGrade(evaluacion)} className="gap-1 bg-lime-500 hover:bg-lime-600">
             Calificación
             <ChevronRight className="h-4 w-4" />
           </Button>

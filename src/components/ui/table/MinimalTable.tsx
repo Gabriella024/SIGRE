@@ -67,6 +67,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 	const [page, setPage] = useState(1);
 	const [selected, setSelected] = useState<Set<RowId>>(new Set());
 	const headerCheckboxRef = useRef<HTMLInputElement>(null);
+	const hasActions = Boolean(onEdit || onDelete);
 
 	const sorted = useMemo(() => {
 		if (!sort) return data;
@@ -177,9 +178,11 @@ export default function MinimalTable<T extends { id: RowId }>({
 								);
 							})}
 
-							<th scope="col" className={`${thBase} text-right uppercase tracking-wider`}>
-								ACCIONES
-							</th>
+							{hasActions && (
+								<th scope="col" className={`${thBase} text-right uppercase tracking-wider`}>
+									ACCIONES
+								</th>
+							)}
 						</tr>
 					</thead>
 
@@ -187,7 +190,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 						{pageRows.length === 0 ? (
 							<tr>
 								<td
-									colSpan={columns.length + 2}
+									colSpan={columns.length + (hasActions ? 2 : 1)}
 									className="px-4 py-12 text-center text-slate-400"
 								>
 									No hay registros para mostrar.
@@ -223,28 +226,34 @@ export default function MinimalTable<T extends { id: RowId }>({
 											</td>
 										))}
 
-										<td className="px-4 py-3">
-											<div className="flex items-center justify-end gap-1">
-												<button
-													type="button"
-													onClick={() => onEdit?.(item)}
-													aria-label="Editar"
-													title="Editar"
-													className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-												>
-													<Pencil className="h-4 w-4" />
-												</button>
-												<button
-													type="button"
-													onClick={() => onDelete?.(item)}
-													aria-label="Eliminar"
-													title="Eliminar"
-													className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
-												>
-													<Trash2 className="h-4 w-4" />
-												</button>
-											</div>
-										</td>
+										{hasActions && (
+											<td className="px-4 py-3">
+												<div className="flex items-center justify-end gap-1">
+													{onEdit && (
+														<button
+															type="button"
+															onClick={() => onEdit(item)}
+															aria-label="Editar"
+															title="Editar"
+															className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+														>
+															<Pencil className="h-4 w-4" />
+														</button>
+													)}
+													{onDelete && (
+														<button
+															type="button"
+															onClick={() => onDelete(item)}
+															aria-label="Eliminar"
+															title="Eliminar"
+															className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+														>
+															<Trash2 className="h-4 w-4" />
+														</button>
+													)}
+												</div>
+											</td>
+										)}
 									</tr>
 								);
 							})

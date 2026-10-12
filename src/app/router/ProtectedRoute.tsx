@@ -1,8 +1,9 @@
 
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
+import { PermissionsErrorNotice } from "./PermissionsErrorNotice";
 
 import type { ReactNode } from "react";
 import type { SigreAction } from "@/features/access-control/types/types";
@@ -10,12 +11,14 @@ import type { SigreAction } from "@/features/access-control/types/types";
 type ProtectedRouteProps = {
   children: ReactNode;
   moduleCode?: string;
+  screenCode?: string;
   action?: SigreAction;
 };
 
 export function ProtectedRoute({
   children,
   moduleCode,
+  screenCode,
   action = "ver",
 }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
@@ -24,6 +27,7 @@ export function ProtectedRoute({
     can,
     isLoading: permissionsLoading,
     error,
+    firstAllowedPath,
   } = useAccessControl();
 
   if (isLoading) {
@@ -39,15 +43,10 @@ export function ProtectedRoute({
   }
 
   if (error) {
-    return (
-      <div role="alert" className="p-6 text-red-700">
-        No fue posible verificar los permisos.
-        Intenta iniciar sesión nuevamente.
-      </div>
-    );
+    return <PermissionsErrorNotice />;
   }
 
-  if (moduleCode && !can(moduleCode, action)) {
+  if (moduleCode && !can(moduleCode, action, screenCode)) {
     return (
       <div className="p-6">
         <h2 className="text-lg font-semibold">
@@ -57,6 +56,15 @@ export function ProtectedRoute({
           No tienes autorización para acceder
           a esta funcionalidad.
         </p>
+        {firstAllowedPath && (
+          <Link
+            to={firstAllowedPath}
+            replace
+            className="mt-4 inline-block text-sm font-semibold text-[#084166] underline"
+          >
+            Ir a un módulo permitido
+          </Link>
+        )}
       </div>
     );
   }

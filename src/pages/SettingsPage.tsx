@@ -1,6 +1,7 @@
 import MunicipiosSection from "@/features/settings/components/MunicipiosSection";
 import ModulosPantallasSection from "@/features/settings/components/ModulosPantallasSection";
 import PlantillasCorreoSection from "@/features/settings/components/PlantillasCorreoSection";
+import { PendingIntegrationNotice } from "@/components/ui/pending-integration";
 
 interface ConfiguracionProps {
   code?: string;
@@ -27,6 +28,11 @@ export default function ConfiguracionPage({
           {code}
         </span>
       </header>
+
+      <PendingIntegrationNotice className="mb-10" title="Datos de ejemplo">
+        Los municipios y la configuración de módulos y pantallas son de ejemplo y no se pueden modificar todavía.
+        Los cambios se habilitarán cuando exista la integración con Supabase.
+      </PendingIntegrationNotice>
 
       <MunicipiosSection />
 

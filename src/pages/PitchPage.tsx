@@ -3,7 +3,6 @@ import SessionCalendar from "@/features/calendar/components/SessionCalendar"
 import { ViewToggle, type ViewMode } from "@/components/ui/viewToggle"
 import { MOCK_PITCH } from "@/features/pitch/mocks/PitchMocks"
 import { PitchTable } from "@/features/pitch/components/PitchTable"
-import type { Pitch } from "@/features/pitch/types/pitch"
 import { PitchFilters } from "@/features/pitch/components/PitchFilters"
 
 export function PitchPage() {
@@ -13,14 +12,6 @@ export function PitchPage() {
   const pitchesFiltrados = useMemo(() => {
     return MOCK_PITCH.filter((p) => p.etapa === activeTab)
   }, [activeTab])
-
-  const handleEdit = (pitch: Pitch) => {
-    console.log("Editar sesión pitch:", pitch.nombre)
-  }
-
-  const handleDelete = (pitch: Pitch) => {
-    console.log("Eliminar sesión pitch:", pitch.nombre)
-  }
 
   return (
     <div className="p-6 space-y-6">
@@ -37,11 +28,7 @@ export function PitchPage() {
         <>
           <PitchFilters activeTab={activeTab} onTabChange={setActiveTab} />
 
-          <PitchTable
-            data={pitchesFiltrados}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <PitchTable data={pitchesFiltrados} />
         </>
       ) : (
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-4">

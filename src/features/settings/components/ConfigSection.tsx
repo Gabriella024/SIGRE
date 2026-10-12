@@ -1,10 +1,13 @@
 import type { ReactNode } from "react";
 
+import { ReadOnlyBadge } from "@/components/ui/pending-integration";
+
 interface ConfigSectionProps {
   id: string;
   title: string;
   description: string;
   action?: ReactNode;
+  readOnly?: boolean;
   children: ReactNode;
 }
 
@@ -13,6 +16,7 @@ export default function ConfigSection({
   title,
   description,
   action,
+  readOnly = false,
   children,
 }: ConfigSectionProps) {
   return (
@@ -28,6 +32,7 @@ export default function ConfigSection({
             className="text-xl font-semibold text-[#0f2f4a]"
           >
             {title}
+            {readOnly && <ReadOnlyBadge />}
           </h2>
 
           <p className="mt-0.5 text-sm text-slate-500">

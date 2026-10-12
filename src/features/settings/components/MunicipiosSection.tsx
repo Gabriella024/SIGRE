@@ -61,6 +61,7 @@ export default function MunicipiosSection({
   const [status, setStatus] =
     useState<MunicipalityStatusFilter>("all");
   const [page, setPage] = useState(1);
+  const hasActions = Boolean(onEdit || onToggleActive);
 
   const filtered = useMemo(() => {
     const needle = normalize(query.trim());
@@ -111,16 +112,19 @@ export default function MunicipiosSection({
     <ConfigSection
       id="municipios"
       title="Municipios"
+      readOnly={!onCreate && !hasActions}
       description="Administra los municipios disponibles para el registro de usuarios."
       action={
-        <button
-          type="button"
-          onClick={() => onCreate?.()}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f8f00] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39a900] focus-visible:ring-offset-2"
-        >
-          <Plus className="h-4 w-4" />
-          Nuevo municipio
-        </button>
+        onCreate && (
+          <button
+            type="button"
+            onClick={onCreate}
+            className="inline-flex items-center gap-2 rounded-lg bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f8f00] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39a900] focus-visible:ring-offset-2"
+          >
+            <Plus className="h-4 w-4" />
+            Nuevo municipio
+          </button>
+        )
       }
     >
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -178,9 +182,11 @@ export default function MunicipiosSection({
                   Estado
                 </th>
 
-                <th className="px-4 py-3 text-right text-[11px] font-bold uppercase tracking-wide text-slate-500">
-                  Acciones
-                </th>
+                {hasActions && (
+                  <th className="px-4 py-3 text-right text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                    Acciones
+                  </th>
+                )}
               </tr>
             </thead>
 
@@ -188,7 +194,7 @@ export default function MunicipiosSection({
               {rows.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={hasActions ? 4 : 3}
                     className="px-4 py-10 text-center text-sm text-slate-400"
                   >
                     No se encontraron municipios.
@@ -212,36 +218,42 @@ export default function MunicipiosSection({
                       <StatusPill active={item.active} />
                     </td>
 
-                    <td className="px-4 py-4">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          type="button"
-                          onClick={() => onEdit?.(item)}
-                          aria-label={`Editar ${item.name}`}
-                          className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
+                    {hasActions && (
+                      <td className="px-4 py-4">
+                        <div className="flex items-center justify-end gap-1">
+                          {onEdit && (
+                            <button
+                              type="button"
+                              onClick={() => onEdit(item)}
+                              aria-label={`Editar ${item.name}`}
+                              className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                          )}
 
-                        <button
-                          type="button"
-                          onClick={() => toggleActive(item)}
-                          aria-label={`${item.active ? "Desactivar" : "Activar"
-                            } ${item.name}`}
-                          title={
-                            item.active
-                              ? "Desactivar"
-                              : "Activar"
-                          }
-                          className={`rounded-md p-2 ${item.active
-                            ? "text-red-500 hover:bg-red-50"
-                            : "text-green-600 hover:bg-green-50"
-                            }`}
-                        >
-                          <Power className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
+                          {onToggleActive && (
+                            <button
+                              type="button"
+                              onClick={() => toggleActive(item)}
+                              aria-label={`${item.active ? "Desactivar" : "Activar"
+                                } ${item.name}`}
+                              title={
+                                item.active
+                                  ? "Desactivar"
+                                  : "Activar"
+                              }
+                              className={`rounded-md p-2 ${item.active
+                                ? "text-red-500 hover:bg-red-50"
+                                : "text-green-600 hover:bg-green-50"
+                                }`}
+                            >
+                              <Power className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}

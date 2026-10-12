@@ -1,54 +1,66 @@
-import type { Column } from '@/components/ui/table/types';
-import type { Orientacion, OrientationStatus } from './types/orientations'
+import type { Column } from '@/components/ui/table/types'
+import { NullableText } from '@/components/ui/nullable-text'
+import { StatusBadge } from '@/components/ui/status-badge'
+import { formatDateOnly, formatTime } from '@/lib/format'
 
-function EstadoBadge({ estado }: { estado: OrientationStatus }) {
-  const styles: Record<OrientationStatus, string> = {
-    Programada: "bg-emerald-100 text-emerald-700",
-    Finalizada: "bg-indigo-100 text-indigo-700",
-    "En Proceso": "bg-rose-100 text-rose-800",
-  };
+import type { Orientacion } from './types/orientations'
+import { isUrl } from './utils/orientationUtils'
 
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[estado]}`}>
-      {estado}
-    </span>
-  );
+function LugarLink({ value }: { value: string | null }) {
+  if (value && isUrl(value)) {
+    return (
+      <a
+        href={value}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sky-700 underline hover:text-sky-900"
+      >
+        Abrir enlace
+      </a>
+    )
+  }
+
+  return <NullableText value={value} />
 }
-
 
 export const ORIENTATION_COLUMNS: Column<Orientacion>[] = [
   {
-    key: "nombre",
-    label: "JORNADA",
+    key: 'tema',
+    label: 'JORNADA',
     sortable: true,
     render: (row) => (
-      <span className="font-semibold text-slate-900">{row.nombre}</span>
+      <span className="font-semibold text-slate-900">{row.tema}</span>
     ),
   },
   {
-    key: "fechayhora",
-    label: "FECHA Y HORA",
+    key: 'fechaHora',
+    label: 'FECHA Y HORA',
     sortable: true,
+    render: (row) =>
+      `${formatDateOnly(row.fecha)} · ${formatTime(row.horaInicio)}–${formatTime(row.horaFin)}`,
   },
   {
-    key: "modalidad",
-    label: "MODALIDAD",
+    key: 'modalidad',
+    label: 'MODALIDAD',
     sortable: true,
+    render: (row) => <NullableText value={row.modalidad} />,
   },
   {
-    key: "lugarylink",
-    label: "LUGAR Y LINK",
+    key: 'lugarLink',
+    label: 'LUGAR Y LINK',
     sortable: true,
+    render: (row) => <LugarLink value={row.lugarLink} />,
   },
   {
-    key: "cupo",
-    label: "CUPO",
+    key: 'audiencia',
+    label: 'AUDIENCIA ESPERADA',
     sortable: true,
+    render: (row) => <NullableText value={row.audiencia} />,
   },
   {
-    key: "estado",
-    label: "ESTADO",
-    sortable: false,
-    render: (row) => <EstadoBadge estado={row.estado} />,
+    key: 'estado',
+    label: 'ESTADO',
+    sortable: true,
+    render: (row) => <StatusBadge value={row.estado} />,
   },
 ]

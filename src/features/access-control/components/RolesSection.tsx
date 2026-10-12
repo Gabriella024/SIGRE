@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import ToggleSwitch from "./ToggleSwitch";
+import { ReadOnlyBadge } from "@/components/ui/pending-integration";
 import { MOCK_ROLES } from "../mocks/accessControlMocks";
 import type { AccessRole } from "../types/types";
 
@@ -38,9 +39,6 @@ export default function RolesSection({
     );
   };
 
-  const handleSave = () => {
-    onSave?.(roles);
-  };
 
   return (
     <section
@@ -51,6 +49,7 @@ export default function RolesSection({
         <div>
           <h2 className="text-xl font-semibold text-[#0f2f4a]">
             Roles
+            {!onCreate && !onEdit && !onSave && <ReadOnlyBadge />}
           </h2>
 
           <p className="mt-0.5 text-sm text-slate-500">
@@ -58,16 +57,18 @@ export default function RolesSection({
           </p>
         </div>
 
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={onCreate}
-            className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
-          >
-            <Plus className="h-4 w-4" />
-            Nuevo rol
-          </button>
-        </div>
+        {onCreate && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={onCreate}
+              className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
+            >
+              <Plus className="h-4 w-4" />
+              Nuevo rol
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -91,9 +92,11 @@ export default function RolesSection({
                   Estado
                 </th>
 
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Acciones
-                </th>
+                {onEdit && (
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Acciones
+                  </th>
+                )}
               </tr>
             </thead>
 
@@ -130,36 +133,41 @@ export default function RolesSection({
                           ? "Desactivar"
                           : "Activar"
                         } rol ${role.name}`}
+                      disabled={!onSave}
                     />
                   </td>
 
-                  <td className="px-4 py-4">
-                    <div className="flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => onEdit?.(role)}
-                        aria-label={`Editar ${role.name}`}
-                        className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+                  {onEdit && (
+                    <td className="px-4 py-4">
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => onEdit(role)}
+                          aria-label={`Editar ${role.name}`}
+                          className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <div className="flex justify-end border-t border-slate-200 p-4">
-          <button
-            type="button"
-            onClick={handleSave}
-            className="rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
-          >
-            Guardar cambios
-          </button>
-        </div>
+        {onSave && (
+          <div className="flex justify-end border-t border-slate-200 p-4">
+            <button
+              type="button"
+              onClick={() => onSave(roles)}
+              className="rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
+            >
+              Guardar cambios
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

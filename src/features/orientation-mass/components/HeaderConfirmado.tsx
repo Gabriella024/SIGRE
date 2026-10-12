@@ -23,7 +23,7 @@ export function HeaderConfirmado({ fechaConfirmacion }: HeaderConfirmadoProps) {
         <div className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
           <Check className="w-2.5 h-2.5 stroke-[3]" />
         </div>
-        <span>Carga confirmada · {fechaConfirmacion}</span>
+        <span>Carga demostrativa · {fechaConfirmacion}</span>
       </div>
     </div>
   );

@@ -1,21 +1,25 @@
-import { useState } from "react";
-import SessionCalendar from "@/features/calendar/components/SessionCalendar";
+import { useMemo, useState } from "react";
 import { ViewToggle, type ViewMode } from "@/components/ui/viewToggle";
-import { MOCK_ORIENTATIONS } from "@/features/orientations/mocks/OrientationsMocks";
 import { OrientationTable } from "@/features/orientations/components/OrientationsTable";
-import type { Orientacion } from "@/features/orientations/types/orientations";
 import { OrientationsFilters } from "@/features/orientations/components/OrientationsFilters";
+import { useOrientations } from "@/features/orientations/hooks/useOrientations";
+import {
+  INITIAL_ORIENTATION_FILTERS,
+  filterOrientations,
+} from "@/features/orientations/utils/orientationUtils";
+import { EmptyState, ErrorState, LoadingState } from "@/components/ui/query-state";
+import { PendingIntegrationNotice } from "@/components/ui/pending-integration";
+import { distinctOptions } from "@/lib/format";
 
 export function OrientationPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const { data, error, isLoading, reload } = useOrientations();
+  const [filters, setFilters] = useState(INITIAL_ORIENTATION_FILTERS);
 
-  const handleEdit = (orientation: Orientacion) => {
-    console.log("Editar proyecto:", orientation.nombre);
-  };
-
-  const handleDelete = (orientation: Orientacion) => {
-    console.log("Eliminar proyecto:", orientation.nombre);
-  };
+  const rows = useMemo(() => data ?? [], [data]);
+  const filtered = useMemo(() => filterOrientations(rows, filters), [rows, filters]);
+  const estadoOptions = useMemo(() => distinctOptions(rows.map((row) => row.estado)), [rows]);
+  const modalidadOptions = useMemo(() => distinctOptions(rows.map((row) => row.modalidad)), [rows]);
 
   return (
     <div className="p-6 space-y-4">
@@ -28,17 +32,28 @@ export function OrientationPage() {
 
       {viewMode === "list" ? (
         <>
-          <OrientationsFilters />
-          <OrientationTable
-            data={MOCK_ORIENTATIONS}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+          <OrientationsFilters
+            value={filters}
+            onChange={setFilters}
+            estadoOptions={estadoOptions}
+            modalidadOptions={modalidadOptions}
           />
+
+          {isLoading ? (
+            <LoadingState message="Cargando orientaciones..." />
+          ) : error ? (
+            <ErrorState message="No fue posible cargar las orientaciones." detail={error} onRetry={reload} />
+          ) : rows.length === 0 ? (
+            <EmptyState message="No hay orientaciones registradas o visibles para tu usuario." />
+          ) : (
+            <OrientationTable data={filtered} />
+          )}
         </>
       ) : (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <SessionCalendar module="orientaciones" />
-        </div>
+        <PendingIntegrationNotice title="Calendario de orientaciones pendiente">
+          El calendario mostrará las orientaciones reales cuando se integren los inscritos, el cupo y el orientador.
+          Mientras tanto, consulta las orientaciones en la vista de lista.
+        </PendingIntegrationNotice>
       )}
     </div>
   );

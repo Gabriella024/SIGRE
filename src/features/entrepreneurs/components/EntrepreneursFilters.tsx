@@ -1,64 +1,72 @@
-import { useState } from 'react'
-import { Download, Plus, Grip } from 'lucide-react'
+import { Download, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
+import {
+  FiltersBar,
+  type FilterActionHandlers,
+  type FilterConfig,
+  type FilterOption,
+} from '@/components/ui/filtersBar'
+import { INITIAL_ENTREPRENEUR_FILTERS } from '../utils/entrepreneurUtils'
+import type { EntrepreneurFilters } from '../types/entrepreneur'
 
-type Filters = {
-  estado: string
-  municipio: string
+type EntrepreneursFiltersProps = FilterActionHandlers & {
+  value: EntrepreneurFilters
+  onChange: (value: EntrepreneurFilters) => void
+  estadoOptions: FilterOption[]
+  centroOptions: FilterOption[]
 }
 
-const initialFilters: Filters = { estado: '', municipio: '' }
-
-export function EntrepreneursFilters() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filters, setFilters] = useState<Filters>(initialFilters)
-
-  const setFilter = (key: keyof Filters) => (value: string) =>
-    setFilters((prev) => ({ ...prev, [key]: value }))
+export function EntrepreneursFilters({
+  value,
+  onChange,
+  estadoOptions,
+  centroOptions,
+  onCreate,
+  onExport,
+}: EntrepreneursFiltersProps) {
+  const setFilter = (key: keyof EntrepreneurFilters) => (next: string) =>
+    onChange({ ...value, [key]: next })
 
   const filterConfig: FilterConfig[] = [
     {
       key: 'estado',
       label: 'Estado',
-      value: filters.estado,
+      value: value.estado,
       placeholder: 'Todos los estados',
       onChange: setFilter('estado'),
-      options: [
-        { value: 'activo', label: 'Activo' },
-        { value: 'inactivo', label: 'Inactivo' },
-        { value: 'suspendido', label: 'Suspendido' },
-      ],
+      options: estadoOptions,
     },
     {
-      key: 'municipio',
-      label: 'Municipio',
-      value: filters.municipio,
-      placeholder: 'Todos los municipios',
-      onChange: setFilter('municipio'),
-      options: [],
+      key: 'centro',
+      label: 'Centro SENA',
+      value: value.centro,
+      placeholder: 'Todos los centros',
+      onChange: setFilter('centro'),
+      options: centroOptions,
     },
   ]
 
   return (
     <FiltersBar
-      searchTerm={searchTerm}
-      onSearchChange={setSearchTerm}
-      searchPlaceholder="Buscar por nombre, documento o correo..."
+      searchTerm={value.search}
+      onSearchChange={setFilter('search')}
+      searchPlaceholder="Buscar por nombre, centro o programa..."
       filters={filterConfig}
-      onClearFilters={() => setFilters(initialFilters)}
+      onClearFilters={() => onChange({ ...INITIAL_ENTREPRENEUR_FILTERS, search: value.search })}
       actions={
         <>
-          <Grip className='h-4 w-4' />
-
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Exportar
-          </Button>
-          <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-            <Plus className="h-4 w-4" />
-            Nuevo Pitch
-          </Button>
+          {onExport && (
+            <Button onClick={onExport} variant="outline" className="gap-2">
+              <Download className="h-4 w-4" />
+              Exportar
+            </Button>
+          )}
+          {onCreate && (
+            <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
+              <Plus className="h-4 w-4" />
+              Nuevo emprendedor
+            </Button>
+          )}
         </>
       }
     />

@@ -1,7 +1,7 @@
-import { Plus, Grip, Download } from 'lucide-react'
+import { Plus, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
-import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
+import { FiltersBar, type FilterConfig, type FilterActionHandlers } from '@/components/ui/filtersBar'
 
 
 type Filters = {
@@ -12,7 +12,7 @@ type Filters = {
 
 const initialFilters: Filters = { estado: '', fechaCreacion: '', fechaUltimoAcceso: '' }
 
-export function UsersFilters() {
+export function UsersFilters({ onCreate, onExport }: FilterActionHandlers) {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState<Filters>(initialFilters)
 
@@ -59,16 +59,18 @@ export function UsersFilters() {
       onClearFilters={() => setFilters(initialFilters)}
       actions={
         <>
-          <Grip className='h-4 w-4' />
-
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Exportar
-          </Button>
-          <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-            <Plus className="h-4 w-4" />
-            Nuevo Pitch
-          </Button>
+          {onExport && (
+            <Button onClick={onExport} variant="outline" className="gap-2">
+              <Download className="h-4 w-4" />
+              Exportar
+            </Button>
+          )}
+          {onCreate && (
+            <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
+              <Plus className="h-4 w-4" />
+              Nuevo Pitch
+            </Button>
+          )}
         </>
       }
     />

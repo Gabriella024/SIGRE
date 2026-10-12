@@ -1,70 +1,79 @@
 import { Download, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
-import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
+import {
+  FiltersBar,
+  type FilterActionHandlers,
+  type FilterConfig,
+  type FilterOption,
+} from '@/components/ui/filtersBar'
+import { INITIAL_ORIENTATION_FILTERS } from '../utils/orientationUtils'
+import type { OrientationFilters } from '../types/orientations'
 
-type Filters = {
-  estado: string
-  modalidad: string
-  fechaHoraAtencion: string
+type OrientationsFiltersProps = FilterActionHandlers & {
+  value: OrientationFilters
+  onChange: (value: OrientationFilters) => void
+  estadoOptions: FilterOption[]
+  modalidadOptions: FilterOption[]
 }
 
-const initialFilters: Filters = { estado: '', modalidad: '', fechaHoraAtencion: '' }
-
-export function OrientationsFilters() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filters, setFilters] = useState<Filters>(initialFilters)
-
-  const setFilter = (key: keyof Filters) => (value: string) =>
-    setFilters((prev) => ({ ...prev, [key]: value }))
+export function OrientationsFilters({
+  value,
+  onChange,
+  estadoOptions,
+  modalidadOptions,
+  onCreate,
+  onExport,
+}: OrientationsFiltersProps) {
+  const setFilter = (key: keyof OrientationFilters) => (next: string) =>
+    onChange({ ...value, [key]: next })
 
   const filterConfig: FilterConfig[] = [
     {
       key: 'estado',
       label: 'Estado',
-      value: filters.estado,
+      value: value.estado,
       placeholder: 'Todos los estados',
       onChange: setFilter('estado'),
-      options: [
-        { value: 'programada', label: 'Programada' },
-        { value: 'finalizada', label: 'Finalizada' },
-        { value: 'en proceso', label: 'En proceso' },
-      ],
+      options: estadoOptions,
     },
     {
       key: 'modalidad',
       label: 'Modalidad',
-      value: filters.modalidad,
-      placeholder: 'Todos los municipios',
+      value: value.modalidad,
+      placeholder: 'Todas las modalidades',
       onChange: setFilter('modalidad'),
-      options: [],
+      options: modalidadOptions,
     },
     {
-    key: 'fechaHoraAtencion',
-    label: 'Fecha y Hora',
-    type: 'datetime',
-    value: filters.fechaHoraAtencion,
-    onChange: setFilter('fechaHoraAtencion'),
-  },
+      key: 'fecha',
+      label: 'Fecha',
+      type: 'date',
+      value: value.fecha,
+      onChange: setFilter('fecha'),
+    },
   ]
 
   return (
     <FiltersBar
-      searchTerm={searchTerm}
-      onSearchChange={setSearchTerm}
-      searchPlaceholder="Buscar por jornada..."
+      searchTerm={value.search}
+      onSearchChange={setFilter('search')}
+      searchPlaceholder="Buscar por jornada o lugar..."
       filters={filterConfig}
-      onClearFilters={() => setFilters(initialFilters)}
+      onClearFilters={() => onChange({ ...INITIAL_ORIENTATION_FILTERS, search: value.search })}
       actions={
         <>
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
-            Exportar
-          </Button>
-          <Button className="gap-2 bg-lime-500 hover:bg-lime-600">
-            <Plus className="h-4 w-4" />
-            Nueva Orientación
-          </Button>
+          {onExport && (
+            <Button onClick={onExport} variant="outline" className="gap-2">
+              <Download className="h-4 w-4" />
+              Exportar
+            </Button>
+          )}
+          {onCreate && (
+            <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
+              <Plus className="h-4 w-4" />
+              Nueva Orientación
+            </Button>
+          )}
         </>
       }
     />

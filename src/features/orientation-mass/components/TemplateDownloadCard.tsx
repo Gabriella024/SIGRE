@@ -1,6 +1,10 @@
 import { Download } from 'lucide-react';
 
-export function TemplateDownloadCard() {
+interface TemplateDownloadCardProps {
+  onDownload?: () => void;
+}
+
+export function TemplateDownloadCard({ onDownload }: TemplateDownloadCardProps) {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-50 rounded-xl p-4 mt-6 border border-slate-200/60">
       <div className="space-y-1">
@@ -16,13 +20,20 @@ export function TemplateDownloadCard() {
         </p>
       </div>
 
-      <button
-        type="button"
-        className="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 font-semibold text-xs px-3.5 py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer whitespace-nowrap shrink-0"
-      >
-        <Download className="w-4 h-4 text-slate-600" />
-        Descargar plantilla de Excel
-      </button>
+      {onDownload ? (
+        <button
+          type="button"
+          onClick={onDownload}
+          className="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-100 text-slate-800 font-semibold text-xs px-3.5 py-2.5 rounded-lg transition-colors shadow-xs cursor-pointer whitespace-nowrap shrink-0"
+        >
+          <Download className="w-4 h-4 text-slate-600" />
+          Descargar plantilla de Excel
+        </button>
+      ) : (
+        <span className="text-xs font-medium text-slate-500 shrink-0">
+          Plantilla oficial disponible próximamente
+        </span>
+      )}
     </div>
   );
 }

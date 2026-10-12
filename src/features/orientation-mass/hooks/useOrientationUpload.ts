@@ -5,16 +5,13 @@ import { asistentesService } from '../services/massOrientationService';
 export function useAsistentesCarga() {
     const [pasoActual, setPasoActual] = useState<1 | 2 | 3>(1);
     const [archivo, setArchivo] = useState<File | null>(null);
-    const [rowsPreview, setRowsPreview] = useState<string[][]>([]);
     const [filasValidacion, setFilasValidacion] = useState<FilaRegistro[]>([]);
     const [infoOrientacion, setInfoOrientacion] = useState<InfoOrientacion | null>(null);
     const [filtroTab, setFiltroTab] = useState<EstadoValidacion | 'todas'>('todas');
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const handleSeleccionarArchivo = async (file: File) => {
+    const handleSeleccionarArchivo = (file: File) => {
         setArchivo(file);
-        const preview = await asistentesService.obtenerVistaPrevia(file);
-        setRowsPreview(preview);
     };
 
     const handleProcesarArchivo = async () => {
@@ -44,7 +41,6 @@ export function useAsistentesCarga() {
     const handleReset = () => {
         setPasoActual(1);
         setArchivo(null);
-        setRowsPreview([]);
         setFilasValidacion([]);
         setInfoOrientacion(null);
         setFiltroTab('todas');
@@ -63,7 +59,6 @@ export function useAsistentesCarga() {
         pasoActual,
         setPasoActual,
         archivo,
-        rowsPreview,
         filasValidacion,
         infoOrientacion,
         filtroTab,

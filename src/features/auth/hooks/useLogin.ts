@@ -13,7 +13,7 @@ export function useLogin() {
         setError(null)
         try {
             await loginWithEmail(data)
-            navigate('/dashboard')
+            navigate('/', { replace: true })
         } catch (err) {
             setError(err instanceof Error ? err.message: 'Error al iniciar sesión')
         } finally {

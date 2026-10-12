@@ -1,78 +1,70 @@
 import type { Column } from "@/components/ui/table/types";
-import type { Project, ProjectStage, ProjectStatus } from "./types/proyect";
+import { NullableText } from "@/components/ui/nullable-text";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { formatStatusLabel, formatTimestamp, normalizeText } from "@/lib/format";
 
+import type { Project } from "./types/proyect";
 
-function EtapaBadge({ etapa }: { etapa: ProjectStage }) {
-  const stageStyles: Record<ProjectStage, string> = {
-    Retos: "bg-amber-100 text-amber-900 border-amber-200",
-    Orientación: "bg-sky-100 text-sky-900 border-sky-200",
-    Pitch: "bg-purple-100 text-purple-900 border-purple-200",
-    Registro: "bg-pink-100 text-pink-800 border-pink-200",
-  };
+const STAGE_STYLES: Record<string, string> = {
+  retos: "bg-amber-100 text-amber-900 border-amber-200",
+  orientacion: "bg-sky-100 text-sky-900 border-sky-200",
+  pitch: "bg-purple-100 text-purple-900 border-purple-200",
+  registro: "bg-pink-100 text-pink-800 border-pink-200",
+};
+
+const FALLBACK_STAGE = "bg-slate-100 text-slate-700 border-slate-200";
+
+function EtapaBadge({ etapa }: { etapa: string | null }) {
+  if (!etapa?.trim()) {
+    return <span className="text-xs text-slate-400">Sin etapa</span>;
+  }
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${stageStyles[etapa]}`}
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${STAGE_STYLES[normalizeText(etapa)] ?? FALLBACK_STAGE}`}
     >
-      {etapa}
-    </span>
-  );
-}
-
-
-function EstadoBadge({ estado }: { estado: ProjectStatus }) {
-  const styles: Record<ProjectStatus, string> = {
-    Activo: "bg-emerald-100 text-emerald-700",
-    Finalizado: "bg-indigo-100 text-indigo-700",
-    Inactivo: "bg-rose-100 text-rose-800",
-  };
-
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[estado]}`}>
-      {estado}
+      {formatStatusLabel(etapa)}
     </span>
   );
 }
 
 export const PROJECT_COLUMNS: Column<Project>[] = [
   {
-    key: "nombre",
+    key: "titulo",
     label: "PROYECTO",
     sortable: true,
     render: (row) => (
-      <span className="font-semibold text-slate-900">{row.nombre}</span>
+      <span className="font-semibold text-slate-900">{row.titulo}</span>
     ),
   },
   {
     key: "emprendedor",
     label: "EMPRENDEDOR",
     sortable: true,
-  },
-  {
-    key: "municipio",
-    label: "MUNICIPIO",
-    sortable: true,
+    render: (row) => <NullableText value={row.emprendedor} />,
   },
   {
     key: "sector",
     label: "SECTOR",
     sortable: true,
+    render: (row) => <NullableText value={row.sector} />,
   },
   {
     key: "etapa",
     label: "ETAPA",
-    sortable: false, 
+    sortable: true,
     render: (row) => <EtapaBadge etapa={row.etapa} />,
   },
   {
-    key: "fechaRegistro",
+    key: "createdAt",
     label: "FECHA DE REGISTRO",
     sortable: true,
+    render: (row) => formatTimestamp(row.createdAt),
   },
   {
     key: "estado",
     label: "ESTADO",
-    sortable: false,
-    render: (row) => <EstadoBadge estado={row.estado} />,
+    sortable: true,
+    render: (row) => <StatusBadge value={row.estado} />,
   },
 ];

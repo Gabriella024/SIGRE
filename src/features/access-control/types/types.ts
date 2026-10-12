@@ -44,6 +44,8 @@ export type AccessLevel =
   | "LE"
   | "AT";
 
+export type GrantingLevel = Exclude<AccessLevel, "SA">;
+
 export type SigreAction =
   | "ver"
   | "crear"
@@ -51,16 +53,33 @@ export type SigreAction =
   | "eliminar"
   | "exportar";
 
+export interface MyPermissionRow {
+  rol: string | null;
+  modulo: string | null;
+  pantalla: string | null;
+  accion: string | null;
+  nivel_acceso: string | null;
+}
+
 export interface SigrePermission {
   moduleCode: string;
   screenCode: string;
   action: SigreAction;
-  enabled: boolean;
-  accessLevel: AccessLevel;
+  accessLevels: GrantingLevel[];
+}
+
+export interface PermissionDifference {
+  moduleCode: string;
+  screenCode: string;
+  action: SigreAction;
+  levels: AccessLevel[];
+  grantingLevels: GrantingLevel[];
+  roles: string[];
+  granted: boolean;
 }
 
 export interface SigreUserAccess {
-  userId: string;
   roles: SigreRole[];
   permissions: SigrePermission[];
+  differences: PermissionDifference[];
 }

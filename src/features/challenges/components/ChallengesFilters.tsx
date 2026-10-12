@@ -2,9 +2,9 @@ import { Download, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
+import { FiltersBar, type FilterConfig, type FilterActionHandlers } from '@/components/ui/filtersBar'
 
-type ChallengesFiltersProps = {
+type ChallengesFiltersProps = FilterActionHandlers & {
   activeTab: string
   onTabChange: (value: string) => void
   showAddButton?: boolean
@@ -17,7 +17,7 @@ type Filters = {
 
 const initialFilters: Filters = { estado: '', fechaHoraAtencion: '' }
 
-export function ChallengesFilters({ activeTab, onTabChange, showAddButton = true }: ChallengesFiltersProps) {
+export function ChallengesFilters({ activeTab, onTabChange, showAddButton = true, onCreate, onExport }: ChallengesFiltersProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [filters, setFilters] = useState<Filters>(initialFilters)
 
@@ -71,12 +71,14 @@ export function ChallengesFilters({ activeTab, onTabChange, showAddButton = true
         onClearFilters={() => setFilters(initialFilters)}
         actions={
           <>
-            <Button variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Exportar
-            </Button>
-            {showAddButton && (
-              <Button className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
+            {onExport && (
+              <Button onClick={onExport} variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                Exportar
+              </Button>
+            )}
+            {showAddButton && onCreate && (
+              <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
                 <Plus className="h-4 w-4" />
                 Nuevo Reto
               </Button>

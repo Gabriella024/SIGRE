@@ -1,6 +1,7 @@
 import UsuariosSection from "../features/access-control/components/UsersSection";
 import RolesSection from "@/features/access-control/components/RolesSection";
 import PermisosSection from "@/features/access-control/components/PermissionsSection";
+import { PendingIntegrationNotice } from "@/components/ui/pending-integration";
 
 interface ControlAccesoViewProps {
   code?: string;
@@ -27,6 +28,11 @@ export default function ControlAccesoView({
           {code}
         </span>
       </header>
+
+      <PendingIntegrationNotice className="mb-8" title="Datos de ejemplo">
+        Los usuarios, roles y permisos de esta pantalla son de ejemplo y no se pueden modificar todavía.
+        La gestión se habilitará cuando existan los servicios administrativos.
+      </PendingIntegrationNotice>
 
       <UsuariosSection />
 
