@@ -71,7 +71,7 @@ export function OrientationsFilters({
           {onCreate && (
             <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
               <Plus className="h-4 w-4" />
-              Nueva Orientación
+              Nueva jornada
             </Button>
           )}
         </>

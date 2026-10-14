@@ -1,59 +1,128 @@
-import { useMemo, useState } from "react";
-import { ViewToggle, type ViewMode } from "@/components/ui/viewToggle";
-import { OrientationTable } from "@/features/orientations/components/OrientationsTable";
-import { OrientationsFilters } from "@/features/orientations/components/OrientationsFilters";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { CheckCircle2, X } from "lucide-react";
 import { useOrientations } from "@/features/orientations/hooks/useOrientations";
-import {
-  INITIAL_ORIENTATION_FILTERS,
-  filterOrientations,
-} from "@/features/orientations/utils/orientationUtils";
-import { EmptyState, ErrorState, LoadingState } from "@/components/ui/query-state";
-import { PendingIntegrationNotice } from "@/components/ui/pending-integration";
-import { distinctOptions } from "@/lib/format";
+import { useOrientationEditor } from "@/features/orientations/hooks/useOrientationEditor";
+import { useOrientationAccess } from "@/features/orientations/hooks/useOrientationAccess";
+import { JornadaFormModal } from "@/features/orientations/components/JornadaFormModal";
+import { JornadaDetailModal } from "@/features/orientations/components/JornadaDetailModal";
+import { AdminOrientationsView } from "@/features/orientations/views/AdminOrientationsView";
+import { CoordinatorOrientationsView } from "@/features/orientations/views/CoordinatorOrientationsView";
+import { OrientadorOrientationsView } from "@/features/orientations/views/OrientadorOrientationsView";
+import { EmprendedorOrientationsView } from "@/features/orientations/views/EmprendedorOrientationsView";
+import { ReadOnlyBadge } from "@/components/ui/pending-integration";
+import type { Orientacion } from "@/features/orientations/types/orientations";
+
+const NOTICE_TIMEOUT_MS = 4000;
+
+const TITLES = {
+  administrador: "Gestión de jornadas de orientación",
+  coordinador: "Supervisión de orientaciones",
+  orientador: "Mis jornadas de orientación",
+  emprendedor: "Orientaciones",
+} as const;
 
 export function OrientationPage() {
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
-  const { data, error, isLoading, reload } = useOrientations();
-  const [filters, setFilters] = useState(INITIAL_ORIENTATION_FILTERS);
+  const { data, error, isLoading, reload, refreshOrientations } = useOrientations();
+  const access = useOrientationAccess();
+  const [notice, setNotice] = useState<string | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
-  const rows = useMemo(() => data ?? [], [data]);
-  const filtered = useMemo(() => filterOrientations(rows, filters), [rows, filters]);
-  const estadoOptions = useMemo(() => distinctOptions(rows.map((row) => row.estado)), [rows]);
-  const modalidadOptions = useMemo(() => distinctOptions(rows.map((row) => row.modalidad)), [rows]);
+  const handleSaved = useCallback(
+    (message: string) => {
+      setNotice(message);
+      refreshOrientations();
+    },
+    [refreshOrientations]
+  );
+
+  const editor = useOrientationEditor({
+    canCreate: access.createJornada,
+    canEdit: access.editJornada,
+    onSaved: handleSaved,
+  });
+
+  const openDetail = useCallback((row: Orientacion) => setDetailId(row.id), []);
+
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(null), NOTICE_TIMEOUT_MS);
+    return () => clearTimeout(timer);
+  }, [notice]);
+
+  const query = useMemo(
+    () => ({ data: data ?? [], error, isLoading, reload }),
+    [data, error, isLoading, reload]
+  );
+
+  if (!access.view) {
+    return (
+      <div className="p-6">
+        <h2 className="text-lg font-semibold">Acceso restringido</h2>
+        <p className="mt-2 text-slate-600">Tu rol no tiene acceso al módulo de Orientaciones.</p>
+      </div>
+    );
+  }
+
+  const readOnly = access.view === "coordinador";
 
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-          Gestión de Orientaciones
-        </h1>
-        <ViewToggle viewMode={viewMode} onViewChange={setViewMode} />
-      </div>
+    <div className="p-4 sm:p-6 space-y-4">
+      <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+        {TITLES[access.view]}
+        {readOnly && <ReadOnlyBadge />}
+      </h1>
 
-      {viewMode === "list" ? (
-        <>
-          <OrientationsFilters
-            value={filters}
-            onChange={setFilters}
-            estadoOptions={estadoOptions}
-            modalidadOptions={modalidadOptions}
-          />
+      {notice && (
+        <div
+          role="status"
+          className="flex items-center justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+        >
+          <span className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4" />
+            {notice}
+          </span>
+          <button
+            type="button"
+            onClick={() => setNotice(null)}
+            aria-label="Cerrar aviso"
+            className="rounded-md p-1 text-emerald-700 hover:bg-emerald-100"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
-          {isLoading ? (
-            <LoadingState message="Cargando orientaciones..." />
-          ) : error ? (
-            <ErrorState message="No fue posible cargar las orientaciones." detail={error} onRetry={reload} />
-          ) : rows.length === 0 ? (
-            <EmptyState message="No hay orientaciones registradas o visibles para tu usuario." />
-          ) : (
-            <OrientationTable data={filtered} />
-          )}
-        </>
-      ) : (
-        <PendingIntegrationNotice title="Calendario de orientaciones pendiente">
-          El calendario mostrará las orientaciones reales cuando se integren los inscritos, el cupo y el orientador.
-          Mientras tanto, consulta las orientaciones en la vista de lista.
-        </PendingIntegrationNotice>
+      {access.view === "administrador" && (
+        <AdminOrientationsView
+          query={query}
+          onCreate={access.createJornada ? editor.openCreate : undefined}
+          onEdit={access.editJornada ? editor.openEdit : undefined}
+          onDetail={openDetail}
+        />
+      )}
+      {access.view === "coordinador" && <CoordinatorOrientationsView query={query} onDetail={openDetail} />}
+      {access.view === "orientador" && (
+        <OrientadorOrientationsView query={query} userId={access.userId} onDetail={openDetail} />
+      )}
+      {access.view === "emprendedor" && <EmprendedorOrientationsView query={query} />}
+
+      {access.view !== "emprendedor" && (
+        <JornadaDetailModal jornadaId={detailId} view={access.view} onClose={() => setDetailId(null)} />
+      )}
+
+      {(access.createJornada || access.editJornada) && (
+        <JornadaFormModal
+          open={editor.open}
+          mode={editor.mode}
+          recordKey={editor.id}
+          initialValues={editor.initialValues}
+          loading={editor.loading}
+          loadError={editor.loadError}
+          isSubmitting={editor.isSubmitting}
+          submitError={editor.submitError}
+          onSubmit={editor.submit}
+          onClose={editor.close}
+        />
       )}
     </div>
   );

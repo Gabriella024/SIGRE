@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
+import type { Column } from "@/components/ui/table/types";
 import type { Orientacion } from '@/features/orientations/types/orientations'
-import { ORIENTATION_COLUMNS } from "@/features/orientations/columns";
 
 export interface OrientationTableProps {
   data: Orientacion[];
-  onEdit?: (orientation: Orientacion) => void;
-  onDelete?: (orientation: Orientacion) => void;
+  columns: Column<Orientacion>[];
 }
 
-export function OrientationTable({ data, onEdit, onDelete }: OrientationTableProps) {
+export function OrientationTable({ data, columns }: OrientationTableProps) {
   const [dynamicPageSize, setDynamicPageSize] = useState(8);
 
   useEffect(() => {
@@ -32,10 +31,8 @@ export function OrientationTable({ data, onEdit, onDelete }: OrientationTablePro
   return (
     <MinimalTable<Orientacion>
       data={data}
-      columns={ORIENTATION_COLUMNS}
+      columns={columns}
       pageSize={dynamicPageSize}
-      onEdit={onEdit}
-      onDelete={onDelete}
     />
   );
 
