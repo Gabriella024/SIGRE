@@ -15,3 +15,9 @@ export interface EntrepreneurFilters {
   estado: string;
   centro: string;
 }
+
+export interface EligibleEntrepreneurUser {
+  id: string;
+  nombre: string;
+  correo: string;
+}

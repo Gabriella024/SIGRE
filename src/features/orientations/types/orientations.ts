@@ -1,4 +1,7 @@
+import type { EstadoAsistencia } from "../constants/jornada";
 import type { JORNADA_WRITABLE_FIELDS } from "../schemas/orientationSchema";
+
+export type { EstadoAsistencia };
 
 export interface Orientacion {
   id: string;
@@ -12,6 +15,7 @@ export interface Orientacion {
   audiencia: string | null;
   estado: string;
   idOrientador: string | null;
+  cupo: number | null;
 }
 
 export interface OrientacionDetalle extends Orientacion {
@@ -37,9 +41,32 @@ export interface OrientationCapabilities {
   assignOrientador: boolean;
   closeJornadas: boolean;
   manageAttendance: boolean;
+  enrollEntrepreneurs: boolean;
   registerManualAttendee: boolean;
   exportOwnReport: boolean;
   enroll: boolean;
+}
+
+export interface InscritoAsistencia {
+  idInscripcion: string;
+  emprendedorId: string;
+  nombreCompleto: string;
+  estadoAsistencia: EstadoAsistencia | null;
+  observacion: string | null;
+  confirmadoAt: string | null;
+  registradoPorUsuarioId: string | null;
+}
+
+export interface RegistrarAsistenciaInput {
+  orientacionId: string;
+  emprendedorId: string;
+  estado: EstadoAsistencia;
+  observacion: string | null;
+}
+
+export interface InscribirEmprendedorInput {
+  orientacionId: string;
+  emprendedorId: string;
 }
 
 export type JornadaWritableField = (typeof JORNADA_WRITABLE_FIELDS)[number];

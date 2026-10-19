@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const ORIENTACION_COLUMNS =
-  "id, tema, fecha, hora_inicio, hora_fin, modalidad, lugar_link, audiencia_esperada, estado, id_orientador_fk";
+  "id, tema, fecha, hora_inicio, hora_fin, modalidad, lugar_link, audiencia_esperada, estado, id_orientador_fk, cupo";
 
 export const ORIENTACION_DETAIL_COLUMNS =
-  "id, tema, descripcion, fecha, hora_inicio, hora_fin, modalidad, lugar_link, fuente, audiencia_esperada, estado, id_orientador_fk";
+  "id, tema, descripcion, fecha, hora_inicio, hora_fin, modalidad, lugar_link, fuente, audiencia_esperada, estado, id_orientador_fk, cupo";
 
 export const JORNADA_WRITABLE_FIELDS = [
   "tema",
@@ -26,6 +26,7 @@ export const orientacionRowSchema = z.object({
   audiencia_esperada: z.string().nullable(),
   estado: z.string(),
   id_orientador_fk: z.string().nullable(),
+  cupo: z.number().nullable(),
 });
 
 export const orientacionDetailRowSchema = orientacionRowSchema.extend({

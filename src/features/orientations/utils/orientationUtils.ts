@@ -1,6 +1,7 @@
 import { formatTime, matchesOption, matchesSearch, normalizeText } from "@/lib/format";
 
-import { DEFAULT_JORNADA_ESTADO, MODALIDAD_OPTIONS } from "../constants/jornada";
+import { DEFAULT_JORNADA_ESTADO, JORNADA_TIME_ZONE, MODALIDAD_OPTIONS } from "../constants/jornada";
+import type { InscritoAsistenciaRow } from "../schemas/attendanceSchema";
 import {
   JORNADA_WRITABLE_FIELDS,
   type JornadaFormValues,
@@ -8,6 +9,7 @@ import {
   type OrientacionRow,
 } from "../schemas/orientationSchema";
 import type {
+  InscritoAsistencia,
   JornadaChanges,
   JornadaInsert,
   JornadaWritableField,
@@ -55,6 +57,7 @@ export function toOrientacion(row: OrientacionRow): Orientacion {
     audiencia: row.audiencia_esperada,
     estado: row.estado,
     idOrientador: row.id_orientador_fk,
+    cupo: row.cupo,
   };
 }
 
@@ -63,6 +66,18 @@ export function toOrientacionDetalle(row: OrientacionDetailRow): OrientacionDeta
     ...toOrientacion(row),
     descripcion: row.descripcion,
     fuente: row.fuente,
+  };
+}
+
+export function toInscritoAsistencia(row: InscritoAsistenciaRow): InscritoAsistencia {
+  return {
+    idInscripcion: row.id_inscripcion,
+    emprendedorId: row.id_emprendedor_fk,
+    nombreCompleto: row.nombre_completo,
+    estadoAsistencia: row.estado_asistencia,
+    observacion: row.observacion,
+    confirmadoAt: row.confirmado_at,
+    registradoPorUsuarioId: row.registrado_por_usuario_id,
   };
 }
 
@@ -88,6 +103,42 @@ export function modalidadLabel(value: string | null): string | null {
 
 export function todayKey(): string {
   return new Date().toLocaleDateString("en-CA");
+}
+
+const JORNADA_CLOCK = new Intl.DateTimeFormat("sv-SE", {
+  timeZone: JORNADA_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+});
+
+export function nowInJornadaTimeZone(): string {
+  return JORNADA_CLOCK.format(new Date());
+}
+
+function jornadaStartKey(jornada: Pick<Orientacion, "fecha" | "horaInicio">): string {
+  const time = jornada.horaInicio.length === 5 ? `${jornada.horaInicio}:00` : jornada.horaInicio.slice(0, 8);
+  return `${jornada.fecha} ${time}`;
+}
+
+export function getEnrollmentBlocker(
+  jornada: Pick<Orientacion, "estado" | "cupo" | "fecha" | "horaInicio">,
+  now: string
+): string | null {
+  if (normalizeText(jornada.estado) !== DEFAULT_JORNADA_ESTADO) {
+    return "La jornada no está programada.";
+  }
+  if (jornada.cupo === null || jornada.cupo <= 0) {
+    return "La jornada no tiene un cupo mayor que cero.";
+  }
+  if (jornadaStartKey(jornada) <= now) {
+    return "La jornada ya inició o finalizó (hora de Bogotá).";
+  }
+  return null;
 }
 
 export function filterOrientations(

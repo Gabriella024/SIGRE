@@ -1,11 +1,11 @@
-import { Ban, CheckSquare, Eye, Pencil, UserPlus } from "lucide-react";
+import { Ban, Eye, Pencil, UserPlus } from "lucide-react";
 
 import type { Column } from "@/components/ui/table/types";
 import { NullableText } from "@/components/ui/nullable-text";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { formatDateOnly, formatTime } from "@/lib/format";
 
-import { LugarLink, PendingValue } from "./components/JornadaCells";
+import { AttendanceButton, EnrollButton, LugarLink, PendingValue } from "./components/JornadaCells";
 import { modalidadLabel } from "./utils/orientationUtils";
 
 import type { Orientacion } from "./types/orientations";
@@ -62,6 +62,14 @@ const estadoColumn: Column<Orientacion> = {
   render: (row) => <StatusBadge value={row.estado} />,
 };
 
+const cupoColumn: Column<Orientacion> = {
+  key: "cupo",
+  label: "CUPO",
+  align: "center",
+  sortable: true,
+  render: (row) => <NullableText value={row.cupo === null ? null : String(row.cupo)} />,
+};
+
 const pendingColumn = (key: string, label: string): Column<Orientacion> => ({
   key,
   label,
@@ -74,9 +82,13 @@ type DetailHandler = (row: Orientacion) => void;
 export function buildAdminColumns({
   onDetail,
   onEdit,
+  onAttendance,
+  onEnroll,
 }: {
   onDetail: DetailHandler;
   onEdit?: DetailHandler;
+  onAttendance?: DetailHandler;
+  onEnroll?: DetailHandler;
 }): Column<Orientacion>[] {
   return [
     temaColumn,
@@ -84,7 +96,7 @@ export function buildAdminColumns({
     horarioColumn,
     modalidadColumn,
     lugarColumn,
-    pendingColumn("cupo", "CUPO"),
+    cupoColumn,
     estadoColumn,
     {
       key: "acciones",
@@ -100,6 +112,8 @@ export function buildAdminColumns({
               <Pencil className="h-4 w-4" />
             </button>
           )}
+          <AttendanceButton className={iconButton} onClick={onAttendance && (() => onAttendance(row))} />
+          {onEnroll && <EnrollButton className={iconButton} onClick={() => onEnroll(row)} />}
           <button type="button" className={iconButton} disabled aria-label="Cancelar o cerrar" title="Cancelar/cerrar: pendiente de aprobación del catálogo de estados">
             <Ban className="h-4 w-4" />
           </button>
@@ -116,7 +130,7 @@ export function buildCoordinatorColumns({ onDetail }: { onDetail: DetailHandler 
     horarioColumn,
     modalidadColumn,
     lugarColumn,
-    pendingColumn("cupo", "CUPO"),
+    cupoColumn,
     {
       key: "orientador",
       label: "ORIENTADOR",
@@ -137,13 +151,21 @@ export function buildCoordinatorColumns({ onDetail }: { onDetail: DetailHandler 
   ];
 }
 
-export function buildOrientadorColumns({ onDetail }: { onDetail: DetailHandler }): Column<Orientacion>[] {
+export function buildOrientadorColumns({
+  onDetail,
+  onAttendance,
+  onEnroll,
+}: {
+  onDetail: DetailHandler;
+  onAttendance?: DetailHandler;
+  onEnroll?: DetailHandler;
+}): Column<Orientacion>[] {
   return [
     temaColumn,
     fechaHoraColumn,
     modalidadColumn,
     lugarColumn,
-    pendingColumn("cupo", "CUPO"),
+    cupoColumn,
     pendingColumn("inscritos", "INSCRITOS"),
     pendingColumn("asistentes", "ASISTENTES"),
     pendingColumn("noAsistentes", "NO ASISTENTES"),
@@ -156,9 +178,8 @@ export function buildOrientadorColumns({ onDetail }: { onDetail: DetailHandler }
           <button type="button" className={iconButton} onClick={() => onDetail(row)} aria-label="Ver detalles" title="Ver detalles">
             <Eye className="h-4 w-4" />
           </button>
-          <button type="button" className={iconButton} disabled aria-label="Marcar asistencia" title="Marcar asistencia: pendiente de servicio y RLS">
-            <CheckSquare className="h-4 w-4" />
-          </button>
+          <AttendanceButton className={iconButton} onClick={onAttendance && (() => onAttendance(row))} />
+          {onEnroll && <EnrollButton className={iconButton} onClick={() => onEnroll(row)} />}
         </div>
       ),
     },

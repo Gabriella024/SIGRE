@@ -8,15 +8,20 @@ import { ErrorState, LoadingState } from "@/components/ui/query-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { formatDateOnly, formatTime } from "@/lib/format";
 
+import { AttendancePanel } from "./AttendancePanel";
 import { LugarLink, PendingValue } from "./JornadaCells";
 import { useJornadaDetail } from "../hooks/useJornadaDetail";
 import { modalidadLabel } from "../utils/orientationUtils";
 
-import type { OrientacionDetalle, OrientationRoleView } from "../types/orientations";
+import type { Orientacion, OrientacionDetalle, OrientationRoleView } from "../types/orientations";
+
+type AttendanceGuard = (jornada: Orientacion) => boolean;
 
 interface JornadaDetailModalProps {
   jornadaId: string | null;
   view: OrientationRoleView;
+  canManageAttendance: AttendanceGuard;
+  refreshKey: number;
   onClose: () => void;
 }
 
@@ -50,7 +55,15 @@ function DisabledActions({ labels }: { labels: string[] }) {
   );
 }
 
-function JornadaDetail({ jornada, view }: { jornada: OrientacionDetalle; view: OrientationRoleView }) {
+interface JornadaDetailProps {
+  jornada: OrientacionDetalle;
+  view: OrientationRoleView;
+  canManageAttendance: AttendanceGuard;
+  refreshKey: number;
+}
+
+function JornadaDetail({ jornada, view, canManageAttendance, refreshKey }: JornadaDetailProps) {
+  const manageAttendance = canManageAttendance(jornada);
   const hasLegacy = Boolean(jornada.descripcion || jornada.fuente || jornada.audiencia);
 
   return (
@@ -63,7 +76,7 @@ function JornadaDetail({ jornada, view }: { jornada: OrientacionDetalle; view: O
           <Field label="Horario">{`${formatTime(jornada.horaInicio)}–${formatTime(jornada.horaFin)}`}</Field>
           <Field label="Modalidad"><NullableText value={modalidadLabel(jornada.modalidad)} /></Field>
           <Field label="Lugar o enlace"><LugarLink value={jornada.lugarLink} /></Field>
-          <Field label="Cupo"><PendingValue /></Field>
+          <Field label="Cupo"><NullableText value={jornada.cupo === null ? null : String(jornada.cupo)} /></Field>
           <Field label="Centro SENA"><PendingValue /></Field>
           <Field label="Orientador responsable">
             {jornada.idOrientador ? "Asignado" : <span className="text-slate-500">Sin asignar</span>}
@@ -82,36 +95,43 @@ function JornadaDetail({ jornada, view }: { jornada: OrientacionDetalle; view: O
         </Section>
       )}
 
-      {view === "orientador" && (
+      {(view === "administrador" || view === "orientador") && (
         <Section title="Inscritos y asistencia">
-          <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <Field label="Cupo"><PendingValue /></Field>
-            <Field label="Inscritos"><PendingValue /></Field>
-            <Field label="Asistentes"><PendingValue /></Field>
-            <Field label="No asistentes"><PendingValue /></Field>
-          </dl>
-          <PendingIntegrationNotice title="Lista de inscritos pendiente">
-            La lista con identificación y asistencia se mostrará cuando existan las tablas de inscripción y
-            asistencia con sus políticas RLS aprobadas.
-          </PendingIntegrationNotice>
-          <DisabledActions
-            labels={["Marcar asistencia", "Registrar asistente manual", "Registrar observaciones operativas"]}
-          />
+          {manageAttendance ? (
+            <AttendancePanel orientacionId={jornada.id} canManage={manageAttendance} refreshKey={refreshKey} />
+          ) : (
+            <PendingIntegrationNotice title="Registro de asistencia no habilitado">
+              No tienes permiso para registrar la asistencia de esta jornada.
+            </PendingIntegrationNotice>
+          )}
+          {view === "orientador" && (
+            <DisabledActions labels={["Registrar asistente manual", "Registrar observaciones operativas"]} />
+          )}
         </Section>
       )}
 
-      {(view === "administrador" || view === "coordinador") && (
+      {view === "administrador" && (
+        <PendingIntegrationNotice title="Métricas y auditoría pendientes">
+          Las métricas y la auditoría de la jornada se habilitarán tras la migración.
+        </PendingIntegrationNotice>
+      )}
+
+      {view === "coordinador" && (
         <PendingIntegrationNotice title="Inscripciones, asistencia y métricas pendientes">
-          {view === "administrador"
-            ? "Las inscripciones, la asistencia, las métricas y la auditoría de la jornada se habilitarán tras la migración."
-            : "Las métricas de participación se habilitarán tras la migración."}
+          Las métricas de participación se habilitarán tras la migración.
         </PendingIntegrationNotice>
       )}
     </div>
   );
 }
 
-export function JornadaDetailModal({ jornadaId, view, onClose }: JornadaDetailModalProps) {
+export function JornadaDetailModal({
+  jornadaId,
+  view,
+  canManageAttendance,
+  refreshKey,
+  onClose,
+}: JornadaDetailModalProps) {
   const { data, error, isLoading } = useJornadaDetail(jornadaId);
 
   return (
@@ -127,7 +147,12 @@ export function JornadaDetailModal({ jornadaId, view, onClose }: JornadaDetailMo
       ) : error ? (
         <ErrorState message="No fue posible cargar la jornada." detail={error} />
       ) : data ? (
-        <JornadaDetail jornada={data} view={view} />
+        <JornadaDetail
+          jornada={data}
+          view={view}
+          canManageAttendance={canManageAttendance}
+          refreshKey={refreshKey}
+        />
       ) : null}
     </Modal>
   );

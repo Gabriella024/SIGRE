@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Download } from "lucide-react";
+import { Download, UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { distinctOptions } from "@/lib/format";
@@ -16,9 +16,17 @@ interface OrientadorOrientationsViewProps {
   query: OrientationsQuery<Orientacion>;
   userId: string | null;
   onDetail: (row: Orientacion) => void;
+  onAttendance?: (row: Orientacion) => void;
+  onEnroll?: (row: Orientacion | null) => void;
 }
 
-export function OrientadorOrientationsView({ query, userId, onDetail }: OrientadorOrientationsViewProps) {
+export function OrientadorOrientationsView({
+  query,
+  userId,
+  onDetail,
+  onAttendance,
+  onEnroll,
+}: OrientadorOrientationsViewProps) {
   const [filters, setFilters] = useState(INITIAL_ORIENTATION_FILTERS);
 
   const assigned = useMemo(
@@ -28,7 +36,10 @@ export function OrientadorOrientationsView({ query, userId, onDetail }: Orientad
   const filtered = useMemo(() => filterOrientations(assigned, filters), [assigned, filters]);
   const estadoOptions = useMemo(() => distinctOptions(assigned.map((row) => row.estado)), [assigned]);
   const modalidadOptions = useMemo(() => distinctOptions(assigned.map((row) => row.modalidad)), [assigned]);
-  const columns = useMemo(() => buildOrientadorColumns({ onDetail }), [onDetail]);
+  const columns = useMemo(
+    () => buildOrientadorColumns({ onDetail, onAttendance, onEnroll }),
+    [onDetail, onAttendance, onEnroll]
+  );
 
   return (
     <div className="space-y-4">
@@ -39,7 +50,13 @@ export function OrientadorOrientationsView({ query, userId, onDetail }: Orientad
         modalidadOptions={modalidadOptions}
       />
 
-      <div className="flex justify-end">
+      <div className="flex flex-wrap justify-end gap-2">
+        {onEnroll && (
+          <Button variant="outline" className="gap-2" onClick={() => onEnroll(null)}>
+            <UserPlus className="h-4 w-4" />
+            Inscribir emprendedor
+          </Button>
+        )}
         <Button variant="outline" className="gap-2" disabled title="Exportar: pendiente de servicio y RLS">
           <Download className="h-4 w-4" />
           Exportar mis jornadas
