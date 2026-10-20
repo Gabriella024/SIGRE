@@ -88,10 +88,6 @@ export default function MinimalTable<T extends { id: RowId }>({
 	const startIndex = (currentPage - 1) * pageSize;
 	const pageRows = sorted.slice(startIndex, startIndex + pageSize);
 
-	useEffect(() => {
-		if (page > totalPages) setPage(totalPages);
-	}, [page, totalPages]);
-
 	const pageSelectedCount = pageRows.filter((r) => selected.has(r.id)).length;
 	const allPageSelected = pageRows.length > 0 && pageSelectedCount === pageRows.length;
 	const somePageSelected = pageSelectedCount > 0 && !allPageSelected;
@@ -273,7 +269,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 					</span>
 					<button
 						type="button"
-						onClick={() => setPage((p) => Math.max(1, p - 1))}
+						onClick={() => setPage(Math.max(1, currentPage - 1))}
 						disabled={currentPage === 1}
 						aria-label="Página anterior"
 						className="rounded-md border border-slate-200 p-1.5 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
@@ -282,7 +278,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 					</button>
 					<button
 						type="button"
-						onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+						onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
 						disabled={currentPage === totalPages}
 						aria-label="Página siguiente"
 						className="rounded-md border border-slate-200 p-1.5 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
