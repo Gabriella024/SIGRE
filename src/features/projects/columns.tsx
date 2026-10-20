@@ -1,32 +1,16 @@
+import { Eye, Pencil, Trash2 } from "lucide-react";
+
 import type { Column } from "@/components/ui/table/types";
 import { NullableText } from "@/components/ui/nullable-text";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { formatStatusLabel, formatTimestamp, normalizeText } from "@/lib/format";
+import { formatTimestamp } from "@/lib/format";
+
+import { EtapaBadge } from "./components/ProjectEtapaBadge";
 
 import type { Project } from "./types/proyect";
 
-const STAGE_STYLES: Record<string, string> = {
-  retos: "bg-amber-100 text-amber-900 border-amber-200",
-  orientacion: "bg-sky-100 text-sky-900 border-sky-200",
-  pitch: "bg-purple-100 text-purple-900 border-purple-200",
-  registro: "bg-pink-100 text-pink-800 border-pink-200",
-};
-
-const FALLBACK_STAGE = "bg-slate-100 text-slate-700 border-slate-200";
-
-function EtapaBadge({ etapa }: { etapa: string | null }) {
-  if (!etapa?.trim()) {
-    return <span className="text-xs text-slate-400">Sin etapa</span>;
-  }
-
-  return (
-    <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${STAGE_STYLES[normalizeText(etapa)] ?? FALLBACK_STAGE}`}
-    >
-      {formatStatusLabel(etapa)}
-    </span>
-  );
-}
+const iconButton =
+  "rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent";
 
 export const PROJECT_COLUMNS: Column<Project>[] = [
   {
@@ -68,3 +52,55 @@ export const PROJECT_COLUMNS: Column<Project>[] = [
     render: (row) => <StatusBadge value={row.estado} />,
   },
 ];
+
+interface ProjectColumnOptions {
+  onDetail: (project: Project) => void;
+  onEdit?: (project: Project) => void;
+  onDelete?: (project: Project) => void;
+}
+
+export function buildProjectColumns({ onDetail, onEdit, onDelete }: ProjectColumnOptions): Column<Project>[] {
+  return [
+    ...PROJECT_COLUMNS,
+    {
+      key: "acciones",
+      label: "ACCIONES",
+      align: "right",
+      render: (row) => (
+        <div className="flex items-center justify-end gap-1">
+          <button
+            type="button"
+            className={iconButton}
+            onClick={() => onDetail(row)}
+            aria-label={`Ver detalle de ${row.titulo}`}
+            title="Ver detalle"
+          >
+            <Eye className="h-4 w-4" />
+          </button>
+          {onEdit && (
+            <button
+              type="button"
+              className={iconButton}
+              onClick={() => onEdit(row)}
+              aria-label={`Editar ${row.titulo}`}
+              title="Editar"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              className={iconButton}
+              onClick={() => onDelete(row)}
+              aria-label={`Eliminar ${row.titulo}`}
+              title="Eliminar proyecto"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      ),
+    },
+  ];
+}

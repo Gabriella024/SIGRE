@@ -1,15 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { Project } from "@/features/projects/types/proyect";
-import { PROJECT_COLUMNS } from "@/features/projects/columns";
+import { buildProjectColumns } from "@/features/projects/columns";
 
 export interface ProjectsTableProps {
   data: Project[];
+  onDetail: (project: Project) => void;
   onEdit?: (project: Project) => void;
   onDelete?: (project: Project) => void;
 }
 
-export function ProjectsTable({ data, onEdit, onDelete }: ProjectsTableProps) {
+export function ProjectsTable({ data, onDetail, onEdit, onDelete }: ProjectsTableProps) {
+  const columns = useMemo(
+    () => buildProjectColumns({ onDetail, onEdit, onDelete }),
+    [onDetail, onEdit, onDelete]
+  );
   const [dynamicPageSize, setDynamicPageSize] = useState(8);
 
   useEffect(() => {
@@ -32,10 +37,8 @@ export function ProjectsTable({ data, onEdit, onDelete }: ProjectsTableProps) {
   return (
     <MinimalTable<Project>
       data={data}
-      columns={PROJECT_COLUMNS}
+      columns={columns}
       pageSize={dynamicPageSize}
-      onEdit={onEdit}
-      onDelete={onDelete}
     />
   );
 }

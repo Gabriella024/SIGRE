@@ -1,4 +1,4 @@
-import { Download, Plus } from 'lucide-react'
+import { Download, Loader2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   FiltersBar,
@@ -15,7 +15,12 @@ type ProjectsFiltersProps = FilterActionHandlers & {
   estadoOptions: FilterOption[]
   sectorOptions: FilterOption[]
   etapaOptions: FilterOption[]
+  canCreate?: boolean
+  canExport?: boolean
+  isExporting?: boolean
 }
+
+const PENDING_ACTION_TITLE = 'Pendiente de implementación'
 
 export function ProjectsFilters({
   value,
@@ -23,6 +28,9 @@ export function ProjectsFilters({
   estadoOptions,
   sectorOptions,
   etapaOptions,
+  canCreate = false,
+  canExport = false,
+  isExporting = false,
   onCreate,
   onExport,
 }: ProjectsFiltersProps) {
@@ -72,17 +80,30 @@ export function ProjectsFilters({
       onClearFilters={() => onChange({ ...INITIAL_PROJECT_FILTERS, search: value.search })}
       actions={
         <>
-          {onExport && (
-            <Button onClick={onExport} variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Exportar
-            </Button>
+          {(onExport || canExport) && (
+            <span title={onExport ? undefined : PENDING_ACTION_TITLE}>
+              <Button
+                onClick={onExport}
+                disabled={!onExport || isExporting}
+                variant="outline"
+                className="gap-2"
+              >
+                {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                {isExporting ? 'Exportando…' : 'Exportar'}
+              </Button>
+            </span>
           )}
-          {onCreate && (
-            <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
-              <Plus className="h-4 w-4" />
-              Nuevo Proyecto
-            </Button>
+          {(onCreate || canCreate) && (
+            <span title={onCreate ? undefined : PENDING_ACTION_TITLE}>
+              <Button
+                onClick={onCreate}
+                disabled={!onCreate}
+                className="gap-2 bg-lime-500 hover:bg-lime-600"
+              >
+                <Plus className="h-4 w-4" />
+                Nuevo Proyecto
+              </Button>
+            </span>
           )}
         </>
       }
