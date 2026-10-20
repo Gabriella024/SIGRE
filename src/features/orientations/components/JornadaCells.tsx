@@ -1,4 +1,4 @@
-import { AlertCircle, CheckCircle2, CheckSquare, UserPlus } from "lucide-react";
+import { CheckSquare, UserPlus } from "lucide-react";
 
 import { NullableText } from "@/components/ui/nullable-text";
 
@@ -53,18 +53,4 @@ export function PendingValue({ label = PENDING_MIGRATION_LABEL }: { label?: stri
   );
 }
 
-export function FeedbackMessage({ type, message }: { type: "success" | "error"; message: string }) {
-  return (
-    <div
-      role={type === "error" ? "alert" : "status"}
-      className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
-        type === "error"
-          ? "border-rose-200 bg-rose-50 text-rose-800"
-          : "border-emerald-200 bg-emerald-50 text-emerald-800"
-      }`}
-    >
-      {type === "error" ? <AlertCircle className="h-4 w-4 shrink-0" /> : <CheckCircle2 className="h-4 w-4 shrink-0" />}
-      {message}
-    </div>
-  );
-}
+export { FeedbackMessage } from "@/components/ui/feedback-message";

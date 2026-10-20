@@ -1,4 +1,4 @@
-import { matchesOption, matchesSearch } from "@/lib/format";
+import { matchesOption, matchesSearch, normalizeText } from "@/lib/format";
 
 import type {
   EmprendedorInsert,
@@ -66,4 +66,8 @@ export function toEligibleEntrepreneurUser(row: UsuarioElegibleRow): EligibleEnt
     nombre: row.nombre_completo,
     correo: row.correo_electronico,
   };
+}
+
+export function isActiveEntrepreneur(row: Pick<Entrepreneur, "estado">): boolean {
+  return normalizeText(row.estado) === "activo";
 }

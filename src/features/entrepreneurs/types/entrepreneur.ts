@@ -21,3 +21,8 @@ export interface EligibleEntrepreneurUser {
   nombre: string;
   correo: string;
 }
+
+export type EntrepreneurScope =
+  | { kind: "all" }
+  | { kind: "assigned"; orientadorId: string }
+  | { kind: "own"; usuarioId: string };
