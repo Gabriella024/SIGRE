@@ -7,7 +7,6 @@ import { FunnelCard } from '@/features/dashboard/components/FunnelPanel'
 import { AttentionTable } from '@/features/dashboard/components/AttentionTable'
 import { useDashboard, type DashboardSection } from '@/features/dashboard/hooks/useDashboard'
 import { panelSubtitle } from '@/features/dashboard/utils/dashboardUtils'
-import { EdgeFunctionProbe } from '@/features/dashboard/dev/EdgeFunctionProbe'
 import type { ReactNode } from 'react'
 
 function SectionState<T>({
@@ -42,8 +41,6 @@ export function DashboardPage() {
           ¡Bienvenido al sistema de la ruta emprendedora!
         </p>
       </div>
-
-      <EdgeFunctionProbe />
 
       {access.isLoading ? (
         <LoadingState message="Verificando permisos..." />
