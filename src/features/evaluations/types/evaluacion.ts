@@ -1,12 +1,34 @@
 export type EstadoEvaluacion = 'Pendiente' | 'Completado'
 
+export interface Calificacion {
+    id: string
+    puntaje: number | null
+    resultado: string | null
+    observacion: string | null
+}
+
 export interface Evaluacion {
     id: string
-    codigoPitch: string
-    codigoProyecto: string
-    proyecto: string
-    emprendedor: string
-    fechaPitch: string
+    pitchId: string | null
+    proyecto: string | null
+    emprendedor: string | null
+    fechaPitch: string | null
+    estadoPitch: string | null
+    modalidad: string | null
     estado: EstadoEvaluacion
-    puntaje?: number
+    calificacion: Calificacion | null
+}
+
+export interface RegistrarCalificacionInput {
+    idAsignacion: string
+    puntaje: number
+    resultado: string
+    observacion: string | null
+}
+
+export interface EvaluationCapabilities {
+    evaluatorScoped: boolean
+    canGrade: boolean
+    canViewResults: boolean
+    canManageAssignments: boolean
 }

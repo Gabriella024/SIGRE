@@ -1,89 +1,58 @@
-import { Download, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { FiltersBar, type FilterConfig, type FilterActionHandlers } from '@/components/ui/filtersBar'
+import { FiltersBar, type FilterConfig, type FilterOption } from '@/components/ui/filtersBar'
+import { INITIAL_CHALLENGE_FILTERS } from "../utils/challengeUtils"
+import type { ChallengeFilters } from "../types/Challenge"
 
-type ChallengesFiltersProps = FilterActionHandlers & {
-  activeTab: string
-  onTabChange: (value: string) => void
-  showAddButton?: boolean
+type ChallengesFiltersProps = {
+  value: ChallengeFilters
+  onChange: (value: ChallengeFilters) => void
+  niveles: string[]
+  estadoOptions: FilterOption[]
+  onCreate?: () => void
 }
 
-type Filters = {
-  estado: string
-  fechaHoraAtencion: string
-}
+const ALL = "__todos__"
 
-const initialFilters: Filters = { estado: '', fechaHoraAtencion: '' }
-
-export function ChallengesFilters({ activeTab, onTabChange, showAddButton = true, onCreate, onExport }: ChallengesFiltersProps) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filters, setFilters] = useState<Filters>(initialFilters)
-
-  const setFilter = (key: keyof Filters) => (value: string) =>
-    setFilters((prev) => ({ ...prev, [key]: value }))
+export function ChallengesFilters({ value, onChange, niveles, estadoOptions, onCreate }: ChallengesFiltersProps) {
+  const set = (key: keyof ChallengeFilters) => (next: string) => onChange({ ...value, [key]: next })
 
   const filterConfig: FilterConfig[] = [
     {
       key: 'estado',
       label: 'Estado',
-      value: filters.estado,
+      value: value.estado,
       placeholder: 'Todos los estados',
-      onChange: setFilter('estado'),
-      options: [
-        { value: 'programado', label: 'Programado' },
-        { value: 'en curso', label: 'En curso' },
-        { value: 'finalizado', label: 'Finalizado' },
-        { value: 'cancelado', label: 'Cancelado' },
-      ],
-    },
-    {
-      key: 'fechaHoraAtencion',
-      label: 'Fecha y Hora',
-      type: 'datetime',
-      value: filters.fechaHoraAtencion,
-      onChange: setFilter('fechaHoraAtencion'),
+      onChange: set('estado'),
+      options: estadoOptions,
     },
   ]
 
   return (
     <div className="space-y-4">
-      <Tabs value={activeTab} onValueChange={onTabChange}>
+      <Tabs value={value.nivel || ALL} onValueChange={(next) => set('nivel')(next === ALL ? '' : next)}>
         <TabsList>
-          <TabsTrigger value="R1">R1</TabsTrigger>
-          <TabsTrigger value="R2">R2</TabsTrigger>
-          <TabsTrigger value="R3">R3</TabsTrigger>
-          <TabsTrigger value="R4" className="gap-1.5">
-            R4
-            <span className="text-[11px] text-slate-500 font-normal">
-              (Sustentación)
-            </span>
-          </TabsTrigger>
+          <TabsTrigger value={ALL}>Todos</TabsTrigger>
+          {niveles.map((nivel) => (
+            <TabsTrigger key={nivel} value={nivel}>{nivel}</TabsTrigger>
+          ))}
         </TabsList>
       </Tabs>
 
       <FiltersBar
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder="Buscar por código o sesión..."
+        searchTerm={value.search}
+        onSearchChange={set('search')}
+        searchPlaceholder="Buscar por título, descripción o nivel..."
         filters={filterConfig}
-        onClearFilters={() => setFilters(initialFilters)}
+        onClearFilters={() => onChange({ ...INITIAL_CHALLENGE_FILTERS, nivel: value.nivel })}
         actions={
-          <>
-            {onExport && (
-              <Button onClick={onExport} variant="outline" className="gap-2">
-                <Download className="h-4 w-4" />
-                Exportar
-              </Button>
-            )}
-            {showAddButton && onCreate && (
-              <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
-                <Plus className="h-4 w-4" />
-                Nuevo Reto
-              </Button>
-            )}
-          </>
+          onCreate && (
+            <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
+              <Plus className="h-4 w-4" />
+              Nuevo Reto
+            </Button>
+          )
         }
       />
     </div>

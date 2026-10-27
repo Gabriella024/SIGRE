@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { Challenge } from "@/features/challenges/types/Challenge";
-import { CHALLENGE_COLUMNS } from "@/features/challenges/columns";
+import { buildChallengeColumns } from "@/features/challenges/columns";
 
 export interface ChallengeTableProps {
   data: Challenge[];
+  onDetail: (challenge: Challenge) => void;
   onEdit?: (challenge: Challenge) => void;
-  onDelete?: (challenge: Challenge) => void;
 }
 
-export function ChallengesTable({ data, onEdit, onDelete }: ChallengeTableProps) {
+export function ChallengesTable({ data, onDetail, onEdit }: ChallengeTableProps) {
+  const columns = useMemo(() => buildChallengeColumns({ onDetail, onEdit }), [onDetail, onEdit]);
   const [dynamicPageSize, setDynamicPageSize] = useState(8);
 
   useEffect(() => {
@@ -29,13 +30,5 @@ export function ChallengesTable({ data, onEdit, onDelete }: ChallengeTableProps)
     return () => window.removeEventListener("resize", calculatePageSize);
   }, []);
 
-  return (
-    <MinimalTable<Challenge>
-      data={data}
-      columns={CHALLENGE_COLUMNS}
-      pageSize={dynamicPageSize}
-      onEdit={onEdit}
-      onDelete={onDelete}
-    />
-  )
+  return <MinimalTable<Challenge> data={data} columns={columns} pageSize={dynamicPageSize} />
 }

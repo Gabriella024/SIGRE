@@ -1,47 +1,48 @@
 import type { Column } from "@/components/ui/table/types"
-import type { EvaluationResults, ConsolidatedResult } from "./types/resultado"
+import { NullableText } from "@/components/ui/nullable-text"
+import { formatTimestamp } from "@/lib/format"
+import type { EvaluationResults } from "./types/resultado"
 import { ScoreBar } from '@/features/evaluations/components/ScoreBar'
 import { AvatarGroup } from '@/features/evaluations/components/AvatarGroup'
-
-function EstadoBadge({ estado }: { estado: ConsolidatedResult }) {
-  const styles: Record<ConsolidatedResult, string> = {
-    Completado: "bg-emerald-100 text-emerald-700",
-    Rechazado: "bg-rose-100 text-rose-800",
-    'En revisión': "bg-yellow-100 text-yellow-700"
-  };
-
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[estado]}`}>
-      {estado}
-    </span>
-  );
-}
-
+import { ResultBadge } from '@/features/evaluations/components/ResultBadge'
 
 export const RESULT_COLUMNS: Column<EvaluationResults>[] = [
- {
-    key: "codigo",
-    label: "CÓDIGO",
-    sortable: true,
-    render: (row) => (
-      <span className="font-semibold text-slate-900">{row.codigo}</span>
-    ),
-  },
   {
     key: "proyecto",
     label: "PROYECTO",
     sortable: true,
+    render: (row) => <NullableText value={row.proyecto} className="font-semibold text-slate-900" />,
+  },
+  {
+    key: "emprendedor",
+    label: "EMPRENDEDOR",
+    sortable: true,
+    render: (row) => <NullableText value={row.emprendedor} />,
   },
   {
     key: "fechaPitch",
     label: "FECHA PITCH",
     sortable: true,
+    render: (row) => <NullableText value={row.fechaPitch ? formatTimestamp(row.fechaPitch) : null} />,
   },
   {
     key: "evaluadores",
     label: "EVALUADORES",
-    sortable: true,
     render: (row) => <AvatarGroup evaluadores={row.evaluadores}/>
+  },
+  {
+    key: "calificados",
+    label: "CALIFICACIONES",
+    sortable: true,
+    align: "center",
+    render: (row) => `${row.calificados}/${row.asignados}`,
+  },
+  {
+    key: "votosAprobado",
+    label: "VOTOS",
+    sortable: true,
+    align: "center",
+    render: (row) => `${row.votosAprobado} aprob. · ${row.votosNoAprobado} no aprob.`,
   },
   {
     key: "puntajePromedio",
@@ -51,9 +52,8 @@ export const RESULT_COLUMNS: Column<EvaluationResults>[] = [
   },
   {
     key: "resultado",
-    label: "RESULTADO",
+    label: "ESTADO DE CALIFICACIÓN",
     sortable: true,
-    render: (row) => <EstadoBadge estado={row.resultado} />,
+    render: (row) => <ResultBadge estado={row.resultado} />,
   },
-
 ]

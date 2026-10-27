@@ -1,14 +1,12 @@
 import type { EvaluationResults } from '@/features/evaluations/types/resultado'
 
 const pillStyles: Record<string, string> = {
-  Completado: 'bg-green-100 text-green-700',
-  Rechazado: 'bg-red-100 text-red-600',
+  'Calificación completa': 'bg-sky-100 text-sky-700',
   'En revisión': 'bg-orange-100 text-orange-600',
 }
 
 const labels: Record<string, string> = {
-  Completado: 'Aprobados',
-  Rechazado: 'Rechazados',
+  'Calificación completa': 'Con calificación completa',
   'En revisión': 'En revisión',
 }
 
@@ -18,7 +16,7 @@ export function ResultsSummaryPills({ resultados }: { resultados: EvaluationResu
     return acc
   }, {})
 
-  const orden: (keyof typeof labels)[] = ['Completado', 'Rechazado', 'En revisión', 'Pendiente']
+  const orden: (keyof typeof labels)[] = ['Calificación completa', 'En revisión']
 
   return (
     <div className="flex flex-wrap gap-2">

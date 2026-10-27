@@ -1,15 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
-import type { Pitch } from "@/features/pitch/types/pitch";
-import { PITCH_COLUMNS } from "@/features/pitch/columns";
+import type { Pitch, PitchPreparation } from "@/features/pitch/types/pitch";
+import { PREPARATION_COLUMNS, buildPitchColumns } from "@/features/pitch/columns";
 
-export interface PitchTableProps {
-  data: Pitch[];
-  onEdit?: (pitch: Pitch) => void;
-  onDelete?: (pitch: Pitch) => void;
-}
-
-export function PitchTable({ data, onEdit, onDelete }: PitchTableProps) {
+function useDynamicPageSize() {
   const [dynamicPageSize, setDynamicPageSize] = useState(8);
 
   useEffect(() => {
@@ -29,14 +23,22 @@ export function PitchTable({ data, onEdit, onDelete }: PitchTableProps) {
     return () => window.removeEventListener("resize", calculatePageSize);
   }, []);
 
-  return (
-    <MinimalTable<Pitch>
-      data={data}
-      columns={PITCH_COLUMNS}
-      pageSize={dynamicPageSize}
-      onEdit={onEdit}
-      onDelete={onDelete}
-    />
-  );
+  return dynamicPageSize;
+}
 
+export interface PitchTableProps {
+  data: Pitch[];
+  onDetail: (pitch: Pitch) => void;
+  onEdit?: (pitch: Pitch) => void;
+}
+
+export function PitchTable({ data, onDetail, onEdit }: PitchTableProps) {
+  const columns = useMemo(() => buildPitchColumns({ onDetail, onEdit }), [onDetail, onEdit]);
+  const pageSize = useDynamicPageSize();
+  return <MinimalTable<Pitch> data={data} columns={columns} pageSize={pageSize} />;
+}
+
+export function PitchPreparationTable({ data }: { data: PitchPreparation[] }) {
+  const pageSize = useDynamicPageSize();
+  return <MinimalTable<PitchPreparation> data={data} columns={PREPARATION_COLUMNS} pageSize={pageSize} />;
 }

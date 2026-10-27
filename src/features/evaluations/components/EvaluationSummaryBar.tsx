@@ -1,22 +1,18 @@
 import { Button } from "@/components/ui/button";
-import type { Evaluacion } from "@/features/evaluations/types/evaluacion";
 
 type EvaluationSummaryBarProps = {
-  evaluaciones: Evaluacion[]
+  asignados: number
+  sinAsignar: number
+  completados: number
+  pendientes: number
   onAssign?: () => void
 }
 
-export function EvaluationSummaryBar({ evaluaciones, onAssign }: EvaluationSummaryBarProps) {
-  const totalAsignados = evaluaciones.length
-  const sinAsignar = 5
-  const completados = evaluaciones.filter((e) => e.estado === 'Completado').length
-  const pendientes = evaluaciones.filter((e) => e.estado === 'Pendiente').length
-
+export function EvaluationSummaryBar({ asignados, sinAsignar, completados, pendientes, onAssign }: EvaluationSummaryBarProps) {
   return (
-    <div className="flex items-center justify-between rounded-lg border bg-white px-4 py-3 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-lg border bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-slate-500">
-        {totalAsignados} pitches asignados · {sinAsignar} pitches sin asignar ·{' '}
-        {completados} completados · {pendientes} pendientes
+        {asignados} pitches asignados · {sinAsignar} pitches sin asignar · {completados} completados · {pendientes} pendientes
       </p>
       {onAssign && (
         <Button onClick={onAssign} className="bg-lime-500 hover:bg-lime-600">Realizar asignaciones</Button>

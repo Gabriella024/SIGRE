@@ -1,63 +1,41 @@
-import { useState } from 'react'
-import { Download } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { FiltersBar, type FilterConfig, type FilterActionHandlers } from '@/components/ui/filtersBar'
+import { FiltersBar, type FilterConfig } from '@/components/ui/filtersBar'
+import { INITIAL_RESULT_FILTERS } from '../utils/evaluationUtils'
+import type { ResultFiltersValue } from '../types/resultado'
 
-type Filters = {
-  resultado: string
-  fechaPitch: string
+type ResultFiltersProps = {
+  value: ResultFiltersValue
+  onChange: (value: ResultFiltersValue) => void
 }
 
-const initialFilters: Filters = { resultado: '', fechaPitch: '' }
-
-
-export function ResultFilters({ onExport }: Pick<FilterActionHandlers, 'onExport'>) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filters, setFilters] = useState<Filters>(initialFilters)
-
-  const setFilter = (key: keyof Filters) => (value: string) =>
-    setFilters((prev) => ({ ...prev, [key]: value }))
-
+export function ResultFilters({ value, onChange }: ResultFiltersProps) {
   const filterConfig: FilterConfig[] = [
     {
       key: 'resultado',
       label: 'Resultado',
-      value: filters.resultado,
-      placeholder: 'Todos los Resultado',
-      onChange: setFilter('resultado'),
+      value: value.resultado,
+      placeholder: 'Todos los resultados',
+      onChange: (resultado) => onChange({ ...value, resultado }),
       options: [
-        { value: 'completado', label: 'Completado' },
-        { value: 'rechazado', label: 'Rechazado' },
-        { value: 'en revión', label: 'En revión' },
+        { value: 'Calificación completa', label: 'Calificación completa' },
+        { value: 'En revisión', label: 'En revisión' },
       ],
     },
     {
-      key: 'fechaRegistro',
-      label: 'Fecha de Registro',
+      key: 'fechaPitch',
+      label: 'Fecha del pitch',
       type: 'date',
-      value: filters.fechaPitch,
-      onChange: setFilter('fechaPitch'),
+      value: value.fechaPitch,
+      onChange: (fechaPitch) => onChange({ ...value, fechaPitch }),
     }
   ]
 
   return (
     <FiltersBar
-      searchTerm={searchTerm}
-      onSearchChange={setSearchTerm}
-      searchPlaceholder="Buscar por código, nombre o evaluadores... "
+      searchTerm={value.search}
+      onSearchChange={(search) => onChange({ ...value, search })}
+      searchPlaceholder="Buscar por proyecto, emprendedor o evaluadores..."
       filters={filterConfig}
-      onClearFilters={() => setFilters(initialFilters)}
-      actions={
-        <>
-          {onExport && (
-            <Button onClick={onExport} variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Exportar
-            </Button>
-          )}
-
-        </>
-      }
+      onClearFilters={() => onChange(INITIAL_RESULT_FILTERS)}
     />
   )
 }

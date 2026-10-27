@@ -1,70 +1,86 @@
+import { Eye, Pencil } from "lucide-react"
+
 import type { Column } from "@/components/ui/table/types"
-import type { Pitch, PitchStatus, PitchModalities  } from "./types/pitch"
+import { NullableText } from "@/components/ui/nullable-text"
+import { StatusBadge } from "@/components/ui/status-badge"
+import { formatDateOnly, formatStatusLabel } from "@/lib/format"
+import { MAX_EVALUADORES_POR_PITCH, MIN_EVALUADORES_POR_PITCH } from "@/features/evaluators/utils/evaluatorUtils"
 
-function EstadoBadge({ estado }: { estado: PitchStatus }) {
-  const styles: Record<PitchStatus, string> = {
-    Programado: "bg-emerald-100 text-emerald-700",
-    Cerrado: "bg-indigo-100 text-indigo-700",
-    "En Evaluación": "bg-rose-100 text-rose-800",
-  };
+import type { Pitch, PitchPreparation } from "./types/pitch"
+import { formatDateTime } from "./utils/pitchUtils"
 
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[estado]}`}>
-      {estado}
-    </span>
-  );
+const iconButton =
+  "rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+
+interface PitchColumnOptions {
+  onDetail: (pitch: Pitch) => void
+  onEdit?: (pitch: Pitch) => void
 }
 
-function ModalidadBadge({modalidad}: {modalidad: PitchModalities}) {
-  const modalityStage: Record<PitchModalities, string> = {
-    Virtual: "bg-violet-100 text-violet-700",
-    Presencial: "bg-pink-100 text-pink-700",
-  };
-
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${modalityStage[modalidad]}`}>
-      {modalidad}
-    </span>
-  )
+export function buildPitchColumns({ onDetail, onEdit }: PitchColumnOptions): Column<Pitch>[] {
+  return [
+    {
+      key: "proyecto",
+      label: "PROYECTO",
+      sortable: true,
+      render: (row) => <NullableText value={row.proyecto} className="font-semibold text-slate-900" />,
+    },
+    { key: "emprendedor", label: "EMPRENDEDOR", sortable: true, render: (row) => <NullableText value={row.emprendedor} /> },
+    { key: "fechaHora", label: "FECHA Y HORA", sortable: true, render: (row) => <NullableText value={formatDateTime(row.fechaHora)} /> },
+    {
+      key: "modalidad",
+      label: "MODALIDAD",
+      sortable: true,
+      render: (row) => <NullableText value={row.modalidad ? formatStatusLabel(row.modalidad) : null} />,
+    },
+    { key: "lugarLink", label: "LUGAR Y LINK", render: (row) => <NullableText value={row.lugarLink} className="break-all" /> },
+    {
+      key: "totalEvaluadores",
+      label: "EVALUADORES",
+      sortable: true,
+      align: "center",
+      render: (row) => (
+        <span className={row.totalEvaluadores < MIN_EVALUADORES_POR_PITCH ? "font-semibold text-amber-600" : "text-slate-700"}>
+          {row.totalEvaluadores}/{MAX_EVALUADORES_POR_PITCH}
+        </span>
+      ),
+    },
+    { key: "estado", label: "ESTADO", sortable: true, render: (row) => <StatusBadge value={row.estado} /> },
+    {
+      key: "acciones",
+      label: "ACCIONES",
+      align: "right",
+      render: (row) => (
+        <div className="flex items-center justify-end gap-1">
+          <button type="button" className={iconButton} onClick={() => onDetail(row)} title="Ver detalle" aria-label="Ver detalle del pitch">
+            <Eye className="h-4 w-4" />
+          </button>
+          {onEdit && (
+            <button type="button" className={iconButton} onClick={() => onEdit(row)} title="Editar" aria-label="Editar pitch">
+              <Pencil className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      ),
+    },
+  ]
 }
 
-export const PITCH_COLUMNS: Column<Pitch>[] = [
+export const PREPARATION_COLUMNS: Column<PitchPreparation>[] = [
   {
-    key: "etapa",
-    label: "ETAPA",
+    key: "proyecto",
+    label: "PROYECTO",
     sortable: true,
-    render: (row) => (
-      <span className="font-semibold text-slate-900">{row.etapa}</span>
-    ),
+    render: (row) => <NullableText value={row.proyecto} className="font-semibold text-slate-900" />,
   },
+  { key: "emprendedor", label: "EMPRENDEDOR", sortable: true, render: (row) => <NullableText value={row.emprendedor} /> },
+  { key: "orientador", label: "ORIENTADOR", sortable: true, render: (row) => <NullableText value={row.orientador} /> },
   {
-    key: "nombre",
-    label: "SESIÓN",
+    key: "fecha",
+    label: "FECHA",
     sortable: true,
-    render: (row) => (
-      <span className="font-semibold text-slate-900">{row.nombre}</span>
-    ),
+    render: (row) => <NullableText value={row.fecha ? formatDateOnly(row.fecha.slice(0, 10)) : null} />,
   },
-  {
-    key: "fechayhora",
-    label: "FECHA Y HORA",
-    sortable: true,
-  },
-  {
-    key: "modalidad",
-    label: "MODALIDAD",
-    sortable: true,
-    render: (row) => <ModalidadBadge modalidad={row.modalidad}/>
-  },
-  {
-    key: "lugarylink",
-    label: "LUGAR Y LINK",
-    sortable: true,
-  },
-  {
-    key: "estado",
-    label: "ESTADO",
-    sortable: false,
-    render: (row) => <EstadoBadge estado={row.estado} />,
-  },
+  { key: "observacion", label: "OBSERVACIÓN", render: (row) => <NullableText value={row.observacion} /> },
+  { key: "estado", label: "ESTADO", sortable: true, render: (row) => <StatusBadge value={row.estado} /> },
 ]

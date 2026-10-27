@@ -1,6 +1,7 @@
 import { ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { StatusBadge } from '@/components/ui/status-badge'
 import type { Evaluacion } from '@/features/evaluations/types/evaluacion'
 
 const borderColor: Record<Evaluacion['estado'], string> = {
@@ -19,43 +20,39 @@ type EvaluationCardProps = {
 }
 
 export function EvaluationCard({ evaluacion, onGrade }: EvaluationCardProps) {
-  const fecha = new Date(evaluacion.fechaPitch)
-  const fechaStr = fecha.toLocaleDateString('es-CO')
-  const horaStr = fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })
+  const fecha = evaluacion.fechaPitch ? new Date(evaluacion.fechaPitch) : null
+  const valid = fecha !== null && !Number.isNaN(fecha.getTime())
 
   return (
     <div
       className={cn(
-        'flex items-center justify-between rounded-lg border border-l-4 bg-white p-4 shadow-sm',
+        'flex flex-col gap-3 rounded-lg border border-l-4 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between',
         borderColor[evaluacion.estado]
       )}
     >
       <div className="flex items-center gap-4">
-        <div className="w-24 shrink-0">
-          <p className="text-xs font-semibold text-slate-500">{evaluacion.codigoPitch}</p>
-          <span className="mt-1 inline-block rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">
-            {evaluacion.codigoProyecto}
-          </span>
+        <div className="w-28 shrink-0">
+          <StatusBadge value={evaluacion.estadoPitch} />
         </div>
         <div>
-          <p className="font-semibold text-slate-900">{evaluacion.proyecto}</p>
-          <p className="text-sm text-slate-500">{evaluacion.emprendedor}</p>
+          <p className="font-semibold text-slate-900">{evaluacion.proyecto ?? 'Proyecto no disponible'}</p>
+          <p className="text-sm text-slate-500">{evaluacion.emprendedor ?? 'Emprendedor no disponible'}</p>
         </div>
       </div>
 
       <div className="flex items-center gap-6">
         <div className="text-right text-xs text-slate-400">
           <p>FECHA PITCH</p>
-          <p className="text-slate-500">{fechaStr}</p>
-          <p className="text-slate-500">{horaStr}</p>
+          <p className="text-slate-500">{valid ? fecha.toLocaleDateString('es-CO') : 'Sin fecha'}</p>
+          {valid && <p className="text-slate-500">{fecha.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</p>}
         </div>
 
         <span className={cn('rounded-full px-2.5 py-0.5 text-xs font-medium', badgeStyles[evaluacion.estado])}>
           {evaluacion.estado}
         </span>
 
-        {evaluacion.estado === 'Completado' ? (
-          <span className="font-semibold text-slate-900">{evaluacion.puntaje}/100</span>
+        {evaluacion.calificacion ? (
+          <span className="font-semibold text-slate-900">{evaluacion.calificacion.puntaje ?? '—'}/100</span>
         ) : onGrade && (
           <Button size="sm" onClick={() => onGrade(evaluacion)} className="gap-1 bg-lime-500 hover:bg-lime-600">
             Calificación
