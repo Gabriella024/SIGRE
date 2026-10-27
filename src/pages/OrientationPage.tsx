@@ -53,6 +53,13 @@ export function OrientationPage() {
     []
   );
   const handleEnrolled = useCallback(() => setEnrollmentVersion((version) => version + 1), []);
+  const handleJornadaChanged = useCallback(
+    (message: string) => {
+      setEnrollmentVersion((version) => version + 1);
+      handleSaved(message);
+    },
+    [handleSaved]
+  );
 
   useEffect(() => {
     if (!notice) return;
@@ -129,14 +136,19 @@ export function OrientationPage() {
           onEnroll={access.enrollEntrepreneurs ? openEnrollment : undefined}
         />
       )}
-      {access.view === "emprendedor" && <EmprendedorOrientationsView query={query} />}
+      {access.view === "emprendedor" && access.userId && (
+        <EmprendedorOrientationsView query={query} userId={access.userId} onEnrolled={handleEnrolled} />
+      )}
 
       {access.view !== "emprendedor" && (
         <JornadaDetailModal
           jornadaId={detailId}
           view={access.view}
           canManageAttendance={access.canManageAttendanceFor}
+          canAssignOrientador={access.assignOrientador}
+          canClose={access.canCloseFor}
           refreshKey={enrollmentVersion}
+          onChanged={handleJornadaChanged}
           onClose={() => setDetailId(null)}
         />
       )}

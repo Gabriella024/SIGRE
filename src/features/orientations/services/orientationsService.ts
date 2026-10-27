@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import { supabase } from "@/lib/supabase";
 
+import { CLOSED_JORNADA_ESTADO, DEFAULT_JORNADA_ESTADO } from "../constants/jornada";
+
 import {
   ORIENTACION_COLUMNS,
   ORIENTACION_DETAIL_COLUMNS,
@@ -84,6 +86,39 @@ export async function createJornada(payload: JornadaInsert): Promise<string> {
   if (error) throw toJornadaError(error, "No fue posible crear la jornada.");
 
   return z.object({ id: z.string() }).parse(data).id;
+}
+
+export async function asignarOrientadorJornada(id: string, idOrientador: string | null): Promise<void> {
+  const { data, error } = await supabase
+    .from("orientaciones")
+    .update({ id_orientador_fk: idOrientador })
+    .eq("id", id)
+    .is("deleted_at", null)
+    .select("id");
+
+  if (error) throw toJornadaError(error, "No fue posible asignar el orientador.");
+
+  if (!data || data.length === 0) {
+    throw new Error("No tienes permisos para asignar el orientador de esta jornada o ya no está disponible.");
+  }
+}
+
+export async function cerrarJornada(id: string): Promise<void> {
+  const { data, error } = await supabase
+    .from("orientaciones")
+    .update({ estado: CLOSED_JORNADA_ESTADO })
+    .eq("id", id)
+    .eq("estado", DEFAULT_JORNADA_ESTADO)
+    .is("deleted_at", null)
+    .select("id");
+
+  if (error) throw toJornadaError(error, "No fue posible cerrar la jornada.");
+
+  if (!data || data.length === 0) {
+    throw new Error(
+      "La jornada ya no está programada, fue eliminada o no tienes permisos para cerrarla. Recarga la información."
+    );
+  }
 }
 
 export async function updateJornada(id: string, changes: JornadaChanges): Promise<void> {

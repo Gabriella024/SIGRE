@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { Stepper } from '../features/orientation-mass/components/Stepper';
 import { InfoOrientacionCard } from '../features/orientation-mass/components/InfoOrientacionCard';
 import { TemplateDownloadCard } from '../features/orientation-mass/components/TemplateDownloadCard';
@@ -14,9 +16,11 @@ import { HeaderConfirmado } from '../features/orientation-mass/components/Header
 import { TablaResultadosReadOnly } from '../features/orientation-mass/components/TablaResultadosReadOnly';
 
 import { useAsistentesCarga } from '@/features/orientation-mass/hooks/useOrientationUpload';
-import { useAccessControl } from '@/features/access-control/hooks/useAccessControl';
-import { SCREEN_CODES } from '@/features/access-control/constants/screens';
-import { PendingIntegrationNotice } from '@/components/ui/pending-integration';
+import { descargarPlantillaAsistentes } from '@/features/orientation-mass/services/massOrientationService';
+import { CatalogSelect, CatalogStatus } from '@/features/entrepreneurs/components/EntrepreneurProfileFields';
+import { MutationAlert } from '@/components/ui/mutation-alert';
+import { Label } from '@/components/ui/label';
+import { formatDateOnly, formatTime } from '@/lib/format';
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
@@ -26,21 +30,32 @@ function formatFileSize(bytes: number): string {
 export default function CargarAsistentesPage() {
   const {
     pasoActual,
-    setPasoActual,
     archivo,
+    archivoError,
+    jornadas,
+    jornadasQuery,
+    orientacionId,
     filasValidacion,
     infoOrientacion,
     filtroTab,
     setFiltroTab,
     resumenCounts,
     isProcessing,
+    canRegister,
+    registro,
     handleSeleccionarArchivo,
+    handleSeleccionarJornada,
     handleProcesarArchivo,
     handleConfirmar,
     handleReset,
+    handleVolverAPaso,
   } = useAsistentesCarga();
-  const { can } = useAccessControl();
-  const canRegister = can('orientacion_masiva', 'crear', SCREEN_CODES.orientacion_masiva);
+  const [plantillaError, setPlantillaError] = useState<string | null>(null);
+
+  const descargarPlantilla = () => {
+    setPlantillaError(null);
+    descargarPlantillaAsistentes().catch(() => setPlantillaError('No fue posible generar la plantilla.'));
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased pb-12">
@@ -60,19 +75,45 @@ export default function CargarAsistentesPage() {
             </div>
           </div>
         ) : (
-          <HeaderConfirmado fechaConfirmacion={infoOrientacion?.fechaCarga || '04/10/2026'} />
+          <HeaderConfirmado fechaConfirmacion={infoOrientacion?.fechaCarga ?? ''} />
         )}
 
-        <PendingIntegrationNotice title="Modo demostrativo">
-          Puedes seleccionar un archivo desde tu equipo, pero su contenido todavía no se lee.
-          La validación y el registro muestran datos de ejemplo y no guardan información en Supabase.
-        </PendingIntegrationNotice>
-
-        <Stepper currentStep={pasoActual} onSelectStep={(paso) => setPasoActual(paso)} />
+        <Stepper currentStep={pasoActual} onSelectStep={handleVolverAPaso} />
 
         {pasoActual === 1 && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
+              <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-4">
+                <Label htmlFor="carga-jornada">Jornada de orientación</Label>
+                <CatalogSelect
+                  id="carga-jornada"
+                  query={jornadasQuery}
+                  isEmpty={jornadas.length === 0}
+                  placeholders={{
+                    loading: 'Cargando jornadas...',
+                    failed: 'No fue posible cargar las jornadas',
+                    empty: 'No hay jornadas disponibles',
+                    ready: 'Selecciona la jornada',
+                  }}
+                  value={orientacionId}
+                  disabled={isProcessing}
+                  onChange={(event) => handleSeleccionarJornada(event.target.value)}
+                >
+                  {jornadas.map((row) => (
+                    <option key={row.id} value={row.id}>
+                      {`${row.tema} · ${formatDateOnly(row.fecha)} · ${formatTime(row.horaInicio)}`}
+                    </option>
+                  ))}
+                </CatalogSelect>
+                <CatalogStatus
+                  query={jornadasQuery}
+                  loadingMessage="Cargando jornadas..."
+                  isEmpty={jornadas.length === 0}
+                  empty={<p className="text-xs text-slate-500">No tienes jornadas visibles para asociar asistentes.</p>}
+                  description="Los asistentes del archivo se asociarán a esta jornada."
+                />
+              </div>
+
               {!archivo ? (
                 <Dropzone onSelectFile={handleSeleccionarArchivo} />
               ) : (
@@ -82,7 +123,18 @@ export default function CargarAsistentesPage() {
                   onRemove={handleReset}
                 />
               )}
-              <TemplateDownloadCard />
+              <TemplateDownloadCard onDownload={descargarPlantilla} />
+              {plantillaError && (
+                <p role="alert" className="text-xs font-medium text-rose-600">
+                  {plantillaError}
+                </p>
+              )}
+
+              {archivoError && (
+                <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+                  {archivoError}
+                </p>
+              )}
 
               {archivo && (
                 <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
@@ -95,11 +147,11 @@ export default function CargarAsistentesPage() {
                   </button>
                   <button
                     type="button"
-                    disabled={isProcessing}
-                    onClick={handleProcesarArchivo}
+                    disabled={isProcessing || orientacionId === ''}
+                    onClick={() => void handleProcesarArchivo()}
                     className="px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
                   >
-                    {isProcessing ? 'Procesando...' : 'Procesar (demostración)'}
+                    {isProcessing ? 'Validando...' : 'Validar archivo'}
                   </button>
                 </div>
               )}
@@ -123,7 +175,7 @@ export default function CargarAsistentesPage() {
                 { estado: 'valida', valor: resumenCounts.valida, etiqueta: 'Válidas para registrar' },
                 { estado: 'error', valor: resumenCounts.error, etiqueta: 'Con errores en datos' },
                 { estado: 'duplicada', valor: resumenCounts.duplicada, etiqueta: 'Duplicadas en archivo' },
-                { estado: 'existente', valor: resumenCounts.existente, etiqueta: 'Ya registradas previamente' },
+                { estado: 'existente', valor: resumenCounts.existente, etiqueta: 'Ya registradas (lo valida el servidor)' },
               ]}
             />
 
@@ -136,10 +188,13 @@ export default function CargarAsistentesPage() {
               onCambiarFiltro={(f) => setFiltroTab(f)}
             />
 
+            {canRegister && <MutationAlert feedback={registro} />}
+
             <div className="flex items-center justify-between pt-4 border-t border-slate-200">
               <button
                 type="button"
                 onClick={handleReset}
+                disabled={registro.isSubmitting}
                 className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg"
               >
                 Volver a cargar
@@ -147,11 +202,11 @@ export default function CargarAsistentesPage() {
               {canRegister ? (
                 <button
                   type="button"
-                  disabled={isProcessing || resumenCounts.valida === 0}
-                  onClick={handleConfirmar}
+                  disabled={registro.isSubmitting || registro.pendingBackend !== null || resumenCounts.valida === 0}
+                  onClick={() => void handleConfirmar()}
                   className="px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
                 >
-                  {isProcessing ? 'Confirmando...' : `Confirmar registro de demostración (${resumenCounts.valida})`}
+                  {registro.isSubmitting ? 'Registrando...' : `Confirmar registro (${resumenCounts.valida})`}
                 </button>
               ) : (
                 <p className="text-xs text-slate-500">

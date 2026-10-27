@@ -1,4 +1,5 @@
-import { Ban, Eye, Pencil, UserPlus } from "lucide-react";
+import type { ReactNode } from "react";
+import { Eye, Pencil } from "lucide-react";
 
 import type { Column } from "@/components/ui/table/types";
 import { NullableText } from "@/components/ui/nullable-text";
@@ -114,9 +115,6 @@ export function buildAdminColumns({
           )}
           <AttendanceButton className={iconButton} onClick={onAttendance && (() => onAttendance(row))} />
           {onEnroll && <EnrollButton className={iconButton} onClick={() => onEnroll(row)} />}
-          <button type="button" className={iconButton} disabled aria-label="Cancelar o cerrar" title="Cancelar/cerrar: pendiente de aprobación del catálogo de estados">
-            <Ban className="h-4 w-4" />
-          </button>
         </div>
       ),
     },
@@ -186,28 +184,22 @@ export function buildOrientadorColumns({
   ];
 }
 
-export function buildAvailableColumns(): Column<Orientacion>[] {
+export function buildAvailableColumns({
+  enrollCell,
+}: {
+  enrollCell: (row: Orientacion) => ReactNode;
+}): Column<Orientacion>[] {
   return [
     temaColumn,
     fechaHoraColumn,
     modalidadColumn,
     lugarColumn,
-    pendingColumn("cuposDisponibles", "CUPOS DISPONIBLES"),
+    cupoColumn,
     {
       key: "acciones",
       label: "INSCRIPCIÓN",
       align: "right",
-      render: () => (
-        <button
-          type="button"
-          disabled
-          title="Inscripción: pendiente de servicio y RLS"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-500 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <UserPlus className="h-3.5 w-3.5" />
-          Inscribirme
-        </button>
-      ),
+      render: enrollCell,
     },
   ];
 }

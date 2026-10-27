@@ -23,6 +23,20 @@ export interface OrientacionDetalle extends Orientacion {
   fuente: string | null;
 }
 
+export interface EntrepreneurOrientationHistoryItem {
+  orientacionId: string;
+  jornada: {
+    tema: string;
+    fecha: string;
+    horaInicio: string;
+    horaFin: string;
+    modalidad: string | null;
+    estado: string;
+  } | null;
+  inscripcion: { estado: string | null; origen: string | null; createdAt: string } | null;
+  asistencia: { estado: string | null; observacion: string | null; confirmadoAt: string | null } | null;
+}
+
 export interface OrientationFilters {
   search: string;
   estado: string;
@@ -45,6 +59,12 @@ export interface OrientationCapabilities {
   registerManualAttendee: boolean;
   exportOwnReport: boolean;
   enroll: boolean;
+}
+
+export interface OrientadorOption {
+  id: string;
+  nombre: string;
+  correo: string | null;
 }
 
 export interface InscritoAsistencia {

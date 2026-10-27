@@ -10,7 +10,7 @@ type DetailState = {
   error: string | null;
 };
 
-export function useJornadaDetail(id: string | null) {
+export function useJornadaDetail(id: string | null, version = 0) {
   const [state, setState] = useState<DetailState>({ id: null, data: null, error: null });
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export function useJornadaDetail(id: string | null) {
     return () => {
       active = false;
     };
-  }, [id]);
+  }, [id, version]);
 
   const isCurrent = id !== null && state.id === id;
 

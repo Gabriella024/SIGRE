@@ -1,7 +1,18 @@
 import { formatTime, matchesOption, matchesSearch, normalizeText } from "@/lib/format";
 
-import { DEFAULT_JORNADA_ESTADO, JORNADA_TIME_ZONE, MODALIDAD_OPTIONS } from "../constants/jornada";
+import {
+  CLOSED_JORNADA_ESTADO,
+  DEFAULT_JORNADA_ESTADO,
+  ESTADO_ASISTENCIA_OPTIONS,
+  JORNADA_TIME_ZONE,
+  MODALIDAD_OPTIONS,
+} from "../constants/jornada";
 import type { InscritoAsistenciaRow } from "../schemas/attendanceSchema";
+import type {
+  AsistenciaHistoryRow,
+  HistoryJornadaRow,
+  InscripcionHistoryRow,
+} from "../schemas/entrepreneurHistorySchema";
 import {
   JORNADA_WRITABLE_FIELDS,
   type JornadaFormValues,
@@ -9,6 +20,7 @@ import {
   type OrientacionRow,
 } from "../schemas/orientationSchema";
 import type {
+  EntrepreneurOrientationHistoryItem,
   InscritoAsistencia,
   JornadaChanges,
   JornadaInsert,
@@ -81,6 +93,73 @@ export function toInscritoAsistencia(row: InscritoAsistenciaRow): InscritoAsiste
   };
 }
 
+export function asistenciaLabel(value: string | null): string | null {
+  if (!value?.trim()) return null;
+  const match = ESTADO_ASISTENCIA_OPTIONS.find((option) => option.value === normalizeText(value));
+  return match?.label ?? value;
+}
+
+function toHistoryJornada(row: HistoryJornadaRow | null): EntrepreneurOrientationHistoryItem["jornada"] {
+  if (!row) return null;
+  return {
+    tema: row.tema,
+    fecha: row.fecha,
+    horaInicio: row.hora_inicio,
+    horaFin: row.hora_fin,
+    modalidad: row.modalidad,
+    estado: row.estado,
+  };
+}
+
+function isDeletedJornada(row: { orientacion: HistoryJornadaRow | null }): boolean {
+  return row.orientacion?.deleted_at != null;
+}
+
+export function buildEntrepreneurOrientationHistory(
+  inscripciones: readonly InscripcionHistoryRow[],
+  asistencias: readonly AsistenciaHistoryRow[]
+): EntrepreneurOrientationHistoryItem[] {
+  const items = new Map<string, EntrepreneurOrientationHistoryItem>();
+
+  const itemFor = (orientacionId: string, jornada: HistoryJornadaRow | null) => {
+    const existing = items.get(orientacionId);
+    if (existing) {
+      existing.jornada ??= toHistoryJornada(jornada);
+      return existing;
+    }
+    const created: EntrepreneurOrientationHistoryItem = {
+      orientacionId,
+      jornada: toHistoryJornada(jornada),
+      inscripcion: null,
+      asistencia: null,
+    };
+    items.set(orientacionId, created);
+    return created;
+  };
+
+  const latestFirst = [...inscripciones].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  for (const row of latestFirst) {
+    if (isDeletedJornada(row)) continue;
+    const item = itemFor(row.id_orientacion_fk, row.orientacion);
+    item.inscripcion ??= { estado: row.estado, origen: row.origen, createdAt: row.created_at };
+  }
+
+  for (const row of asistencias) {
+    if (isDeletedJornada(row)) continue;
+    const item = itemFor(row.id_orientacion_fk, row.orientacion);
+    item.asistencia ??= {
+      estado: row.estado_asistencia,
+      observacion: row.observacion,
+      confirmadoAt: row.confirmado_at,
+    };
+  }
+
+  const sortKey = (item: EntrepreneurOrientationHistoryItem) =>
+    item.jornada ? `${item.jornada.fecha}T${item.jornada.horaInicio}` : "";
+
+  return [...items.values()].sort((a, b) => sortKey(b).localeCompare(sortKey(a)));
+}
+
 export function isUrl(value: string): boolean {
   return /^https?:\/\//i.test(value.trim());
 }
@@ -120,9 +199,35 @@ export function nowInJornadaTimeZone(): string {
   return JORNADA_CLOCK.format(new Date());
 }
 
+function jornadaKey(fecha: string, hora: string): string {
+  const time = hora.length === 5 ? `${hora}:00` : hora.slice(0, 8);
+  return `${fecha} ${time}`;
+}
+
 function jornadaStartKey(jornada: Pick<Orientacion, "fecha" | "horaInicio">): string {
-  const time = jornada.horaInicio.length === 5 ? `${jornada.horaInicio}:00` : jornada.horaInicio.slice(0, 8);
-  return `${jornada.fecha} ${time}`;
+  return jornadaKey(jornada.fecha, jornada.horaInicio);
+}
+
+export function isClosedJornada(jornada: Pick<Orientacion, "estado">): boolean {
+  return normalizeText(jornada.estado) === CLOSED_JORNADA_ESTADO;
+}
+
+export function getClosureBlocker(
+  jornada: Pick<Orientacion, "estado" | "fecha" | "horaFin">,
+  now: string
+): string | null {
+  if (normalizeText(jornada.estado) !== DEFAULT_JORNADA_ESTADO) {
+    return "Solo se pueden cerrar jornadas programadas.";
+  }
+  if (jornadaKey(jornada.fecha, jornada.horaFin) > now) {
+    return "La jornada aún no ha terminado (hora de Bogotá).";
+  }
+  return null;
+}
+
+export function isActiveEnrollment(estado: string | null): boolean {
+  const value = normalizeText(estado);
+  return value !== "cancelada" && value !== "anulada";
 }
 
 export function getEnrollmentBlocker(

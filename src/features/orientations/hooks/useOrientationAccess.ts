@@ -34,13 +34,13 @@ export function useOrientationAccess() {
       view,
       createJornada: isAdmin && can("orientaciones", "crear", screen),
       editJornada: isAdmin && canEdit,
-      assignOrientador: false,
-      closeJornadas: false,
+      assignOrientador: isAdmin && canEdit,
+      closeJornadas: manageAssigned,
       manageAttendance: manageAssigned,
       enrollEntrepreneurs: manageAssigned,
       registerManualAttendee: false,
       exportOwnReport: false,
-      enroll: false,
+      enroll: view === "emprendedor",
     };
   }, [roles, can]);
 
@@ -60,5 +60,10 @@ export function useOrientationAccess() {
     [capabilities.enrollEntrepreneurs, isInScope]
   );
 
-  return { userId, ...capabilities, canManageAttendanceFor, canEnrollFor };
+  const canCloseFor = useCallback(
+    (jornada: Pick<Orientacion, "idOrientador">): boolean => capabilities.closeJornadas && isInScope(jornada),
+    [capabilities.closeJornadas, isInScope]
+  );
+
+  return { userId, ...capabilities, canManageAttendanceFor, canEnrollFor, canCloseFor };
 }

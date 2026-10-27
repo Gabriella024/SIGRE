@@ -9,19 +9,23 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { formatDateOnly, formatTime } from "@/lib/format";
 
 import { AttendancePanel } from "./AttendancePanel";
+import { JornadaManagementPanel } from "./JornadaManagementPanel";
 import { LugarLink, PendingValue } from "./JornadaCells";
 import { useJornadaDetail } from "../hooks/useJornadaDetail";
 import { modalidadLabel } from "../utils/orientationUtils";
 
 import type { Orientacion, OrientacionDetalle, OrientationRoleView } from "../types/orientations";
 
-type AttendanceGuard = (jornada: Orientacion) => boolean;
+type JornadaGuard = (jornada: Orientacion) => boolean;
 
 interface JornadaDetailModalProps {
   jornadaId: string | null;
   view: OrientationRoleView;
-  canManageAttendance: AttendanceGuard;
+  canManageAttendance: JornadaGuard;
+  canAssignOrientador: boolean;
+  canClose: JornadaGuard;
   refreshKey: number;
+  onChanged: (message: string) => void;
   onClose: () => void;
 }
 
@@ -58,11 +62,22 @@ function DisabledActions({ labels }: { labels: string[] }) {
 interface JornadaDetailProps {
   jornada: OrientacionDetalle;
   view: OrientationRoleView;
-  canManageAttendance: AttendanceGuard;
+  canManageAttendance: JornadaGuard;
+  canAssignOrientador: boolean;
+  canClose: JornadaGuard;
   refreshKey: number;
+  onChanged: (message: string) => void;
 }
 
-function JornadaDetail({ jornada, view, canManageAttendance, refreshKey }: JornadaDetailProps) {
+function JornadaDetail({
+  jornada,
+  view,
+  canManageAttendance,
+  canAssignOrientador,
+  canClose,
+  refreshKey,
+  onChanged,
+}: JornadaDetailProps) {
   const manageAttendance = canManageAttendance(jornada);
   const hasLegacy = Boolean(jornada.descripcion || jornada.fuente || jornada.audiencia);
 
@@ -82,7 +97,12 @@ function JornadaDetail({ jornada, view, canManageAttendance, refreshKey }: Jorna
             {jornada.idOrientador ? "Asignado" : <span className="text-slate-500">Sin asignar</span>}
           </Field>
         </dl>
-        {view === "administrador" && <DisabledActions labels={["Asignar orientador"]} />}
+        <JornadaManagementPanel
+          jornada={jornada}
+          canAssign={canAssignOrientador}
+          canClose={canClose(jornada)}
+          onChanged={onChanged}
+        />
       </Section>
 
       {hasLegacy && (
@@ -129,10 +149,13 @@ export function JornadaDetailModal({
   jornadaId,
   view,
   canManageAttendance,
+  canAssignOrientador,
+  canClose,
   refreshKey,
+  onChanged,
   onClose,
 }: JornadaDetailModalProps) {
-  const { data, error, isLoading } = useJornadaDetail(jornadaId);
+  const { data, error, isLoading } = useJornadaDetail(jornadaId, refreshKey);
 
   return (
     <Modal
@@ -151,7 +174,10 @@ export function JornadaDetailModal({
           jornada={data}
           view={view}
           canManageAttendance={canManageAttendance}
+          canAssignOrientador={canAssignOrientador}
+          canClose={canClose}
           refreshKey={refreshKey}
+          onChanged={onChanged}
         />
       ) : null}
     </Modal>

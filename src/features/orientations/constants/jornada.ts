@@ -1,5 +1,9 @@
 export const DEFAULT_JORNADA_ESTADO = "programada";
 
+export const CLOSED_JORNADA_ESTADO = "finalizada";
+
+export const ORIENTADOR_ROLE = "orientador";
+
 export const JORNADA_TIME_ZONE = "America/Bogota";
 
 export const MODALIDAD_OPTIONS = [
