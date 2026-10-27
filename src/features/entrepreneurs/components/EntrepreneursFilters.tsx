@@ -1,4 +1,5 @@
-import { Download, Plus } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Download, Loader2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   FiltersBar,
@@ -6,7 +7,7 @@ import {
   type FilterConfig,
   type FilterOption,
 } from '@/components/ui/filtersBar'
-import { INITIAL_ENTREPRENEUR_FILTERS } from '../utils/entrepreneurUtils'
+import { INITIAL_ENTREPRENEUR_FILTERS, ORIENTADOR_FILTER_OPTIONS } from '../utils/entrepreneurUtils'
 import type { EntrepreneurFilters } from '../types/entrepreneur'
 
 type EntrepreneursFiltersProps = FilterActionHandlers & {
@@ -14,6 +15,11 @@ type EntrepreneursFiltersProps = FilterActionHandlers & {
   onChange: (value: EntrepreneurFilters) => void
   estadoOptions: FilterOption[]
   centroOptions: FilterOption[]
+  nivelOptions: FilterOption[]
+  tipoOptions: FilterOption[]
+  viewToggle?: ReactNode
+  isExporting?: boolean
+  showOrientadorFilter?: boolean
 }
 
 export function EntrepreneursFilters({
@@ -21,6 +27,11 @@ export function EntrepreneursFilters({
   onChange,
   estadoOptions,
   centroOptions,
+  nivelOptions,
+  tipoOptions,
+  viewToggle,
+  isExporting = false,
+  showOrientadorFilter = true,
   onCreate,
   onExport,
 }: EntrepreneursFiltersProps) {
@@ -44,21 +55,49 @@ export function EntrepreneursFilters({
       onChange: setFilter('centro'),
       options: centroOptions,
     },
+    {
+      key: 'nivelFormacion',
+      label: 'Nivel de formación',
+      value: value.nivelFormacion,
+      placeholder: 'Todos los niveles',
+      onChange: setFilter('nivelFormacion'),
+      options: nivelOptions,
+    },
+    {
+      key: 'tipo',
+      label: 'Tipo de emprendedor',
+      value: value.tipo,
+      placeholder: 'Todos los tipos',
+      onChange: setFilter('tipo'),
+      options: tipoOptions,
+    },
   ]
+
+  if (showOrientadorFilter) {
+    filterConfig.push({
+      key: 'orientador',
+      label: 'Orientador',
+      value: value.orientador,
+      placeholder: 'Todos',
+      onChange: setFilter('orientador'),
+      options: ORIENTADOR_FILTER_OPTIONS,
+    })
+  }
 
   return (
     <FiltersBar
       searchTerm={value.search}
       onSearchChange={setFilter('search')}
-      searchPlaceholder="Buscar por nombre, centro o programa..."
+      searchPlaceholder="Buscar por nombre, centro, programa, nivel, tipo u orientador..."
       filters={filterConfig}
       onClearFilters={() => onChange({ ...INITIAL_ENTREPRENEUR_FILTERS, search: value.search })}
       actions={
         <>
+          {viewToggle}
           {onExport && (
-            <Button onClick={onExport} variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Exportar
+            <Button onClick={onExport} variant="outline" className="gap-2" disabled={isExporting} aria-busy={isExporting}>
+              {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              {isExporting ? 'Exportando…' : 'Exportar'}
             </Button>
           )}
           {onCreate && (

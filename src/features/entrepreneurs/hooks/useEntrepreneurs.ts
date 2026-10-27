@@ -1,7 +1,13 @@
+import { useCallback } from "react";
+
 import { useUserScopedQuery } from "@/hooks/useUserScopedQuery";
 
-import { getEntrepreneurs } from "../services/entrepreneursService";
+import { getAllEntrepreneurs } from "../services/entrepreneursService";
+import { ALL_ENTREPRENEURS_SCOPE } from "../utils/entrepreneurUtils";
 
-export function useEntrepreneurs() {
-  return useUserScopedQuery(getEntrepreneurs);
+import type { EntrepreneurScope } from "../types/entrepreneur";
+
+export function useEntrepreneurs(scope: EntrepreneurScope = ALL_ENTREPRENEURS_SCOPE) {
+  const fetcher = useCallback(() => getAllEntrepreneurs(scope), [scope]);
+  return useUserScopedQuery(fetcher);
 }

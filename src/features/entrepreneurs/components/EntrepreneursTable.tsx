@@ -1,41 +1,28 @@
-import { useEffect, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
-import type { Entrepreneur } from "@/features/entrepreneurs/types/entrepreneur";
+import type { TableSort } from "@/components/ui/table/types";
+import type { Entrepreneur, EntrepreneurSort } from "@/features/entrepreneurs/types/entrepreneur";
 import { ENTREPRENEUR_COLUMNS } from "@/features/entrepreneurs/columns";
+import { isEntrepreneurSortKey } from "@/features/entrepreneurs/utils/entrepreneurUtils";
 
 export interface EntrepreneurTableProps {
-  data: Entrepreneur[];
-  onEdit?: (entrepreneur: Entrepreneur) => void;
-  onDelete?: (entrepreneur: Entrepreneur) => void;
+  rows: Entrepreneur[];
+  sort: EntrepreneurSort;
+  onSortChange: (sort: EntrepreneurSort) => void;
 }
 
-export function EntrepreneursTable({ data, onEdit, onDelete }: EntrepreneurTableProps) {
-  const [dynamicPageSize, setDynamicPageSize] = useState(8);
-
-  useEffect(() => {
-    const calculatePageSize = () => {
-      const windowHeight = window.innerHeight;
-      if (windowHeight > 1000) {
-        setDynamicPageSize(12);
-      } else if (windowHeight > 800) {
-        setDynamicPageSize(8);
-      } else {
-        setDynamicPageSize(5);
-      }
-    };
-
-    calculatePageSize();
-    window.addEventListener("resize", calculatePageSize);
-    return () => window.removeEventListener("resize", calculatePageSize);
-  }, []);
+export function EntrepreneursTable({ rows, sort, onSortChange }: EntrepreneurTableProps) {
+  const handleSortChange = ({ key, dir }: TableSort) => {
+    if (isEntrepreneurSortKey(key)) onSortChange({ key, dir });
+  };
 
   return (
     <MinimalTable<Entrepreneur>
-      data={data}
+      data={rows}
       columns={ENTREPRENEUR_COLUMNS}
-      pageSize={dynamicPageSize}
-      onEdit={onEdit}
-      onDelete={onDelete}
+      sort={sort}
+      onSortChange={handleSortChange}
+      paginated={false}
+      selectable={false}
     />
-  )
+  );
 }

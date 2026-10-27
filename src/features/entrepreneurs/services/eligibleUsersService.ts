@@ -3,20 +3,21 @@ import { z } from "zod";
 import { supabase } from "@/lib/supabase";
 
 import { usuarioElegibleRowSchema } from "../schemas/entrepreneursSchema";
+import { isNetworkError, NETWORK_ERROR_MESSAGE, type DbError } from "../utils/dbError";
 import { toEligibleEntrepreneurUser } from "../utils/entrepreneurUtils";
 
 import type { EligibleEntrepreneurUser } from "../types/entrepreneur";
 
-type DbError = { code?: string; message: string };
-
 function toEligibleUsersError(error: DbError): Error {
+  if (isNetworkError(error)) return new Error(NETWORK_ERROR_MESSAGE);
+
   switch (error.code) {
     case "42501":
       return new Error("No tienes autorización para consultar usuarios elegibles.");
     case "PGRST202":
       return new Error("La función de usuarios elegibles no está disponible en la base de datos.");
     default:
-      return new Error(`No fue posible cargar los usuarios elegibles. ${error.message}`);
+      return new Error("No fue posible cargar los usuarios elegibles.");
   }
 }
 

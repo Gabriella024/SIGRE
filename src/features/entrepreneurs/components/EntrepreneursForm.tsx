@@ -1,21 +1,16 @@
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PendingIntegrationNotice } from "@/components/ui/pending-integration";
 
+import { CatalogSelect, CatalogStatus, EntrepreneurProfileFields, RequiredLabel } from "./EntrepreneurProfileFields";
+import { useCentrosSena } from "../hooks/useCentrosSena";
 import { useEligibleEntrepreneurUsers } from "../hooks/useEligibleEntrepreneurUsers";
 import {
   DEFAULT_EMPRENDEDOR_ESTADO,
@@ -24,36 +19,13 @@ import {
   type EntrepreneurFormValues,
 } from "../schemas/entrepreneursSchema";
 
-const selectClass =
-  "h-8 w-full min-w-0 rounded-2xl border border-transparent bg-input/50 px-2.5 text-base outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive md:text-sm";
-
-type TextFieldName = Extract<
-  keyof EntrepreneurFormValues,
-  "centro_sena" | "programa_formacion" | "nivel_formacion" | "tipo_emprendedor" | "segmentacion"
->;
-
-const TEXT_FIELDS: { name: TextFieldName; label: string; placeholder: string }[] = [
-  { name: "centro_sena", label: "Centro SENA", placeholder: "Nombre del centro" },
-  { name: "programa_formacion", label: "Programa de formación", placeholder: "Programa cursado" },
-  { name: "nivel_formacion", label: "Nivel de formación", placeholder: "Nivel" },
-  { name: "tipo_emprendedor", label: "Tipo de emprendedor", placeholder: "Tipo" },
-  { name: "segmentacion", label: "Segmentación", placeholder: "Segmento" },
-];
+import type { EntrepreneurCreateResult } from "../types/entrepreneur";
 
 interface EntrepreneursFormProps {
   isSubmitting?: boolean;
   submitError?: string | null;
-  onSubmit?: (values: EntrepreneurFormValues) => void;
+  onSubmit?: (values: EntrepreneurFormValues) => Promise<EntrepreneurCreateResult>;
   onCancel: () => void;
-}
-
-function RequiredLabel({ children, required }: { children: string; required?: boolean }) {
-  return (
-    <FormLabel>
-      {children}
-      {required && <span className="text-rose-600">*</span>}
-    </FormLabel>
-  );
 }
 
 export function EntrepreneursForm({
@@ -67,27 +39,42 @@ export function EntrepreneursForm({
     defaultValues: EMPTY_ENTREPRENEUR_FORM,
     mode: "onTouched",
   });
+  const autoNameRef = useRef("");
 
   const eligibleUsers = useEligibleEntrepreneurUsers();
-  const users = eligibleUsers.data ?? [];
-  const userPlaceholder = eligibleUsers.isLoading
-    ? "Cargando usuarios..."
-    : eligibleUsers.error
-      ? "No fue posible cargar los usuarios"
-      : users.length === 0
-        ? "No hay usuarios elegibles disponibles"
-        : "Selecciona un usuario";
+  const users = eligibleUsers.data;
+  const userList = users ?? [];
+  const centros = useCentrosSena();
 
-  const canSave = Boolean(onSubmit) && !isSubmitting;
+  useEffect(() => {
+    if (!users) return;
+    const current = form.getValues("usuario_id");
+    if (current && !users.some((user) => user.id === current)) {
+      form.setValue("usuario_id", "", { shouldValidate: true });
+    }
+  }, [users, form]);
+
+  const autocompleteName = (usuarioId: string) => {
+    const user = userList.find((item) => item.id === usuarioId);
+    const current = form.getValues("nombre_completo");
+    if (!user || (current.trim() !== "" && current !== autoNameRef.current)) return;
+    autoNameRef.current = user.nombre;
+    form.setValue("nombre_completo", user.nombre, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const submit = async (values: EntrepreneurFormValues) => {
+    if (!onSubmit) return;
+    const result = await onSubmit(values);
+    if (result.success) return;
+    if (result.reason === "usuario") eligibleUsers.reload();
+    if (result.reason === "centro") centros.reload();
+  };
+
+  const canSave = Boolean(onSubmit) && !isSubmitting && form.formState.isValid;
 
   return (
     <Form {...form}>
-      <form
-        noValidate
-        onSubmit={form.handleSubmit((values) => onSubmit?.(values))}
-        className="space-y-4"
-        aria-busy={isSubmitting}
-      >
+      <form noValidate onSubmit={form.handleSubmit(submit)} className="space-y-4" aria-busy={isSubmitting}>
         <fieldset disabled={isSubmitting} className="space-y-4">
           <FormField
             control={form.control}
@@ -96,121 +83,59 @@ export function EntrepreneursForm({
               <FormItem>
                 <RequiredLabel required>Usuario</RequiredLabel>
                 <FormControl>
-                  <select
-                    className={selectClass}
-                    disabled={eligibleUsers.isLoading || users.length === 0}
+                  <CatalogSelect
+                    query={eligibleUsers}
+                    isEmpty={userList.length === 0}
+                    placeholders={{
+                      loading: "Cargando usuarios...",
+                      failed: "No fue posible cargar los usuarios",
+                      empty: "No hay usuarios elegibles disponibles",
+                      ready: "Selecciona un usuario",
+                    }}
                     {...field}
+                    onChange={(event) => {
+                      field.onChange(event);
+                      autocompleteName(event.target.value);
+                    }}
                   >
-                    <option value="">{userPlaceholder}</option>
-                    {users.map((user) => (
+                    {userList.map((user) => (
                       <option key={user.id} value={user.id}>
                         {user.nombre} — {user.correo}
                       </option>
                     ))}
-                  </select>
+                  </CatalogSelect>
                 </FormControl>
-                {eligibleUsers.isLoading ? (
-                  <FormDescription className="flex items-center gap-2">
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Consultando usuarios elegibles...
-                  </FormDescription>
-                ) : eligibleUsers.error ? (
-                  <div role="alert" className="flex flex-wrap items-center gap-2 text-sm text-rose-700">
-                    <span>{eligibleUsers.error}</span>
-                    <Button type="button" variant="outline" size="sm" onClick={eligibleUsers.reload}>
-                      Reintentar
-                    </Button>
-                  </div>
-                ) : users.length === 0 ? (
-                  <PendingIntegrationNotice title="No hay usuarios elegibles">
-                    Primero debe crearse una cuenta activa con rol Emprendedor que no tenga un registro de
-                    emprendedor asociado.
-                  </PendingIntegrationNotice>
-                ) : (
-                  <FormDescription>
-                    Cuentas activas con rol Emprendedor sin registro de emprendedor asociado.
-                  </FormDescription>
-                )}
+                <CatalogStatus
+                  query={eligibleUsers}
+                  loadingMessage="Consultando usuarios elegibles..."
+                  isEmpty={userList.length === 0}
+                  empty={
+                    <PendingIntegrationNotice title="No hay usuarios elegibles">
+                      Primero debe crearse una cuenta activa con rol Emprendedor que no tenga un registro de
+                      emprendedor asociado.
+                    </PendingIntegrationNotice>
+                  }
+                  description="Cuentas activas con rol Emprendedor sin registro de emprendedor asociado."
+                />
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="nombre_completo"
-            render={({ field }) => (
-              <FormItem>
-                <RequiredLabel required>Nombre completo</RequiredLabel>
-                <FormControl>
-                  <Input placeholder="Nombres y apellidos" autoFocus {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {TEXT_FIELDS.map(({ name, label, placeholder }) => (
-              <FormField
-                key={name}
-                control={form.control}
-                name={name}
-                render={({ field }) => (
-                  <FormItem>
-                    <RequiredLabel>{label}</RequiredLabel>
-                    <FormControl>
-                      <Input placeholder={placeholder} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
-
+          <EntrepreneurProfileFields
+            centros={centros}
+            nombreDescription="Se completa con el nombre del usuario seleccionado. Puedes corregirlo."
+          >
             <div className="grid gap-2">
               <Label htmlFor="emprendedor-estado">Estado</Label>
               <Input id="emprendedor-estado" value={DEFAULT_EMPRENDEDOR_ESTADO} readOnly disabled />
               <p className="text-muted-foreground text-sm">Se asigna automáticamente al registrar.</p>
             </div>
-
-            <FormField
-              control={form.control}
-              name="id_orientador_fk"
-              render={({ field }) => (
-                <FormItem>
-                  <RequiredLabel>Orientador asignado</RequiredLabel>
-                  <FormControl>
-                    <select className={selectClass} disabled {...field}>
-                      <option value="">Catálogo no disponible</option>
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="id_centro_sena_fk"
-              render={({ field }) => (
-                <FormItem>
-                  <RequiredLabel>Centro SENA (catálogo)</RequiredLabel>
-                  <FormControl>
-                    <select className={selectClass} disabled {...field}>
-                      <option value="">Catálogo no disponible</option>
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          </EntrepreneurProfileFields>
 
           {!onSubmit && (
-            <PendingIntegrationNotice title="Registro deshabilitado">
-              El guardado se habilitará cuando esté disponible el servicio de creación de emprendedores.
-              No se crean cuentas desde esta pantalla.
+            <PendingIntegrationNotice title="Registro no disponible">
+              No tienes autorización para registrar emprendedores.
             </PendingIntegrationNotice>
           )}
         </fieldset>
