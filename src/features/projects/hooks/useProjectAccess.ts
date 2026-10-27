@@ -36,13 +36,23 @@ export function useProjectAccess(): ProjectCapabilities {
     const screen = SCREEN_CODES.proyectos;
     const canCreate = can("proyectos", "crear", screen);
     const canEdit = can("proyectos", "editar", screen);
+    const canDelete = can("proyectos", "eliminar", screen);
     const managesObservations = roles.includes("administrador") || roles.includes("orientador");
+    const view = resolveProjectView(roles);
+    const canManage = view === "administrador";
+    const granted = [
+      canCreate && "crear",
+      canEdit && "editar",
+      canDelete && "eliminar",
+    ].filter((action): action is string => Boolean(action));
 
     return {
-      view: resolveProjectView(roles),
+      view,
+      canManage,
+      grantedWithoutBackend: canManage ? [] : granted,
       canCreate,
       canEdit,
-      canDelete: can("proyectos", "eliminar", screen),
+      canDelete,
       canManageObservations: managesObservations && (canCreate || canEdit),
       entrepreneurScope: canCreate ? resolveEntrepreneurScope(roles) : null,
     };

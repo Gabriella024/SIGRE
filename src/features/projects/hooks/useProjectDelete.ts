@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { missingBackendMessage } from "@/lib/adminOperation";
+import { isBackendAvailable } from "@/lib/backendContract";
 
 import { ProjectConflictError, eliminarProyectoAdmin } from "../services/proyectsService";
 import {
@@ -12,11 +14,9 @@ import {
 
 import type { ProjectCapabilities, ProjectDeleteTarget } from "../types/proyect";
 
-export const PROJECT_DELETE_RPC_ENABLED =
-  import.meta.env.DEV && import.meta.env.VITE_ENABLE_PROJECT_DELETE_RPC === "true";
+export const PROJECT_DELETE_RPC_ENABLED = isBackendAvailable("sigre_admin_eliminar_proyecto");
 
-export const PROJECT_DELETE_BLOCKED_MESSAGE =
-  "La eliminación de proyectos está bloqueada temporalmente. No se envió ninguna solicitud.";
+export const PROJECT_DELETE_BLOCKED_MESSAGE = missingBackendMessage("Eliminar proyecto");
 
 export function useProjectDelete(access: Pick<ProjectCapabilities, "view" | "canDelete">) {
   const { session } = useAuth();

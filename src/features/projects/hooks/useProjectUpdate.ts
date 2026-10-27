@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { missingBackendMessage } from "@/lib/adminOperation";
+import { isBackendAvailable } from "@/lib/backendContract";
 
 import { projectEditFormSchema, type ProjectFormValues } from "../schemas/proyectSchema";
 import { ProjectConflictError, editarProyectoAdmin } from "../services/proyectsService";
@@ -14,11 +16,9 @@ import { toEditarProyectoAdminInput } from "../utils/proyectUtils";
 
 import type { ProjectCapabilities, ProjectEditTarget } from "../types/proyect";
 
-export const PROJECT_EDIT_RPC_ENABLED =
-  import.meta.env.DEV && import.meta.env.VITE_ENABLE_PROJECT_EDIT_RPC === "true";
+export const PROJECT_EDIT_RPC_ENABLED = isBackendAvailable("sigre_admin_editar_proyecto");
 
-export const PROJECT_EDIT_BLOCKED_MESSAGE =
-  "La edición de proyectos está bloqueada temporalmente. No se envió ninguna solicitud.";
+export const PROJECT_EDIT_BLOCKED_MESSAGE = missingBackendMessage("Editar proyecto");
 
 export function useProjectUpdate(access: Pick<ProjectCapabilities, "view" | "canEdit">) {
   const { session } = useAuth();

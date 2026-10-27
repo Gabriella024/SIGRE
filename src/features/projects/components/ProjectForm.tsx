@@ -32,6 +32,7 @@ import {
 import type {
   ProjectEditorMode,
   ProjectEntrepreneurScope,
+  ProjectFixedEntrepreneur,
   ProjectFormContext,
   ProjectFormSubmission,
 } from "../types/proyect";
@@ -53,6 +54,7 @@ interface ProjectFormProps {
   context: ProjectFormContext;
   showObservaciones: boolean;
   entrepreneurScope: ProjectEntrepreneurScope | null;
+  fixedEntrepreneur?: ProjectFixedEntrepreneur | null;
   submission?: ProjectFormSubmission;
   onCancel: () => void;
 }
@@ -81,6 +83,7 @@ export function ProjectForm({
   context,
   showObservaciones,
   entrepreneurScope,
+  fixedEntrepreneur,
   submission,
   onCancel,
 }: ProjectFormProps) {
@@ -104,7 +107,7 @@ export function ProjectForm({
       <form noValidate onSubmit={handleSubmit} className="space-y-4">
         <fieldset disabled={isSubmitting} className="space-y-4">
           {mode === "create" ? (
-            <ProjectEntrepreneurField scope={entrepreneurScope} />
+            <ProjectEntrepreneurField scope={entrepreneurScope} fixedEntrepreneur={fixedEntrepreneur} />
           ) : (
             <FormField
               control={form.control}
@@ -203,7 +206,7 @@ export function ProjectForm({
             </PendingIntegrationNotice>
           ) : (
             submission.blocked && (
-              <PendingIntegrationNotice title="Guardado bloqueado temporalmente">
+              <PendingIntegrationNotice title="Pendiente de backend">
                 {blockedMessage}
               </PendingIntegrationNotice>
             )

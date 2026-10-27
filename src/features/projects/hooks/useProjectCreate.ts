@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { missingBackendMessage } from "@/lib/adminOperation";
+import { isBackendAvailable } from "@/lib/backendContract";
 
 import { projectFormSchema, type ProjectFormValues } from "../schemas/proyectSchema";
 import { crearProyectoAdmin } from "../services/proyectsService";
@@ -14,11 +16,9 @@ import { toCrearProyectoAdminInput } from "../utils/proyectUtils";
 
 import type { ProjectCapabilities } from "../types/proyect";
 
-export const PROJECT_CREATE_RPC_ENABLED =
-  import.meta.env.DEV && import.meta.env.VITE_ENABLE_PROJECT_CREATE_RPC === "true";
+export const PROJECT_CREATE_RPC_ENABLED = isBackendAvailable("sigre_admin_crear_proyecto");
 
-export const PROJECT_CREATE_BLOCKED_MESSAGE =
-  "La creación de proyectos está bloqueada temporalmente. No se envió ninguna solicitud.";
+export const PROJECT_CREATE_BLOCKED_MESSAGE = missingBackendMessage("Crear proyecto");
 
 export function useProjectCreate(access: Pick<ProjectCapabilities, "view" | "canCreate">) {
   const { session } = useAuth();

@@ -7,6 +7,7 @@ import type { ProjectFormValues } from "../schemas/proyectSchema";
 import type {
   ProjectEditorMode,
   ProjectEntrepreneurScope,
+  ProjectFixedEntrepreneur,
   ProjectFormContext,
   ProjectFormSubmission,
 } from "../types/proyect";
@@ -21,6 +22,7 @@ interface ProjectFormModalProps {
   loadError: string | null;
   showObservaciones: boolean;
   entrepreneurScope: ProjectEntrepreneurScope | null;
+  fixedEntrepreneur?: ProjectFixedEntrepreneur | null;
   submission?: ProjectFormSubmission;
   onClose: () => void;
 }
@@ -35,6 +37,7 @@ export function ProjectFormModal({
   loadError,
   showObservaciones,
   entrepreneurScope,
+  fixedEntrepreneur,
   submission,
   onClose,
 }: ProjectFormModalProps) {
@@ -59,6 +62,7 @@ export function ProjectFormModal({
           context={context}
           showObservaciones={showObservaciones}
           entrepreneurScope={entrepreneurScope}
+          fixedEntrepreneur={fixedEntrepreneur}
           submission={submission}
           onCancel={onClose}
         />

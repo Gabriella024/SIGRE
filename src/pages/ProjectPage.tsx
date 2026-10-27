@@ -14,6 +14,7 @@ import { ProjectsFilters } from "@/features/projects/components/ProjectsFilters"
 import { useProjects } from "@/features/projects/hooks/useProyects";
 import { INITIAL_PROJECT_FILTERS, filterProjects } from "@/features/projects/utils/proyectUtils";
 import { EmptyState, ErrorState, LoadingState } from "@/components/ui/query-state";
+import { PendingIntegrationNotice, ReadOnlyBadge } from "@/components/ui/pending-integration";
 import { distinctOptions } from "@/lib/format";
 import type {
   Project,
@@ -56,7 +57,7 @@ export function ProjectsPage() {
   const [filters, setFilters] = useState(INITIAL_PROJECT_FILTERS);
   const [detailId, setDetailId] = useState<string | null>(null);
   const access = useProjectAccess();
-  const isAdmin = access.view === "administrador";
+  const isAdmin = access.canManage;
   const canCreateProjects = isAdmin && access.canCreate;
   const canEditProjects = isAdmin && access.canEdit;
   const editor = useProjectEditor({ canCreate: canCreateProjects, canEdit: canEditProjects });
@@ -228,7 +229,18 @@ export function ProjectsPage() {
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-800">Gestión de Proyectos</h1>
+      <h1 className="text-2xl font-bold text-slate-800">
+        {isAdmin ? "Gestión de Proyectos" : "Proyectos"}
+        {!isAdmin && <ReadOnlyBadge />}
+      </h1>
+
+      {access.grantedWithoutBackend.length > 0 && (
+        <PendingIntegrationNotice title="Acciones pendientes de backend para tu rol">
+          Tu perfil tiene permiso para {access.grantedWithoutBackend.join(", ")} proyectos, pero las RPC existentes
+          (sigre_admin_crear_proyecto, sigre_admin_editar_proyecto, sigre_admin_eliminar_proyecto) son administrativas.
+          Estas acciones se habilitarán cuando el servidor autorice tu rol. No se envía ninguna solicitud.
+        </PendingIntegrationNotice>
+      )}
 
       <ProjectsFilters
         value={filters}

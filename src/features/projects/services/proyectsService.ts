@@ -45,11 +45,19 @@ function toProjectError(error: DbError, fallback: string): Error {
   return new Error(known ?? fallback);
 }
 
-async function getProjectsPage(from: number, to: number): Promise<PageResult<ProjectExportRow>> {
-  const { data, error, count } = await supabase
+async function getProjectsPage(
+  from: number,
+  to: number,
+  emprendedorId?: string
+): Promise<PageResult<ProjectExportRow>> {
+  let query = supabase
     .from("proyectos")
     .select(PROYECTO_EXPORT_COLUMNS, { count: "exact" })
-    .is("deleted_at", null)
+    .is("deleted_at", null);
+
+  if (emprendedorId) query = query.eq("id_emprendedor_fk", emprendedorId);
+
+  const { data, error, count } = await query
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
     .range(from, to);
@@ -73,6 +81,10 @@ export function getProjectsForExport(): Promise<ProjectExportRow[]> {
   return fetchAllPages(getProjectsPage);
 }
 
+export function getProjectsByEntrepreneur(emprendedorId: string): Promise<Project[]> {
+  return fetchAllPagesWithRetry((from, to) => getProjectsPage(from, to, emprendedorId));
+}
+
 function toCreateProjectError(error: DbError): Error {
   if (isNetworkError(error)) return new Error(NETWORK_ERROR_MESSAGE);
 
@@ -82,7 +94,9 @@ function toCreateProjectError(error: DbError): Error {
     case "23503":
       return new Error("El emprendedor seleccionado no existe o no está activo.");
     case "23514":
-      return new Error("Los datos del proyecto no cumplen las reglas de validación.");
+      return new Error(
+        "Los datos del proyecto no cumplen las reglas de validación o el emprendedor no está activo. Si el emprendedor fue desactivado, debe reactivarse antes de crear proyectos."
+      );
     case "22023":
       return new Error("Los datos enviados para crear el proyecto no son válidos.");
     case "PGRST202":

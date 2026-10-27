@@ -37,6 +37,8 @@ export type ProjectEntrepreneurScope = "all" | "assigned" | "own";
 
 export interface ProjectCapabilities {
   view: ProjectRoleView | null;
+  canManage: boolean;
+  grantedWithoutBackend: string[];
   canCreate: boolean;
   canEdit: boolean;
   canDelete: boolean;
@@ -45,6 +47,11 @@ export interface ProjectCapabilities {
 }
 
 export type ProjectEditorMode = "create" | "edit";
+
+export interface ProjectFixedEntrepreneur {
+  id: string;
+  nombre: string;
+}
 
 export interface ProjectFormContext {
   emprendedor: string | null;

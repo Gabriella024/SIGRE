@@ -20,7 +20,7 @@ import { matchesSearch } from "@/lib/format";
 import { useProjectEntrepreneurOptions } from "../hooks/useProjectEntrepreneurOptions";
 
 import type { ProjectFormValues } from "../schemas/proyectSchema";
-import type { ProjectEntrepreneurScope } from "../types/proyect";
+import type { ProjectEntrepreneurScope, ProjectFixedEntrepreneur } from "../types/proyect";
 
 const SEARCH_THRESHOLD = 8;
 
@@ -190,7 +190,38 @@ function SelectableEntrepreneurField({ scope }: { scope: Exclude<ProjectEntrepre
   );
 }
 
-export function ProjectEntrepreneurField({ scope }: { scope: ProjectEntrepreneurScope | null }) {
+function FixedEntrepreneurField({ entrepreneur }: { entrepreneur: ProjectFixedEntrepreneur }) {
+  const form = useFormContext<ProjectFormValues>();
+
+  useEffect(() => {
+    if (form.getValues("id_emprendedor_fk") !== entrepreneur.id) {
+      form.setValue("id_emprendedor_fk", entrepreneur.id, { shouldValidate: true });
+    }
+  }, [form, entrepreneur.id]);
+
+  return (
+    <FormField
+      control={form.control}
+      name="id_emprendedor_fk"
+      render={() => (
+        <FormItem>
+          <Label />
+          <div className="flex min-h-8 items-center text-sm font-medium text-slate-800">{entrepreneur.nombre}</div>
+          <FormDescription>El proyecto quedará asociado a este emprendedor y no se puede cambiar aquí.</FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+interface ProjectEntrepreneurFieldProps {
+  scope: ProjectEntrepreneurScope | null;
+  fixedEntrepreneur?: ProjectFixedEntrepreneur | null;
+}
+
+export function ProjectEntrepreneurField({ scope, fixedEntrepreneur }: ProjectEntrepreneurFieldProps) {
+  if (fixedEntrepreneur) return <FixedEntrepreneurField entrepreneur={fixedEntrepreneur} />;
   if (scope === "own") return <OwnEntrepreneurField />;
   if (scope) return <SelectableEntrepreneurField scope={scope} />;
 
