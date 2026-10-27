@@ -1,264 +1,164 @@
 import { useMemo, useState } from "react";
-import {
-  Pencil,
-  Power,
-  Search,
-  UserPlus,
-} from "lucide-react";
+import { Search, ShieldCheck } from "lucide-react";
 
 import { ReadOnlyBadge } from "@/components/ui/pending-integration";
-import { MOCK_USERS } from "../mocks/accessControlMocks";
-import type { AccessUser, UserStatus } from "../types/types";
+import { PaginationBar } from "@/components/ui/pagination-bar";
+import { EmptyState, ErrorState, LoadingState } from "@/components/ui/query-state";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { RoleBadge } from "@/features/users/components/RoleBadge";
+import { normalizeText, matchesSearch } from "@/lib/format";
+import { slicePage } from "@/lib/pagination";
+
+import type { User } from "@/features/users/types/users";
 
 interface UsuariosSectionProps {
-  initialData?: AccessUser[];
-  onCreate?: () => void;
-  onEdit?: (user: AccessUser) => void;
-  onToggleActive?: (user: AccessUser) => void;
+  users: User[] | null;
+  isLoading: boolean;
+  error: string | null;
+  onRetry: () => void;
+  onEditRoles?: (user: User) => void;
 }
 
-const normalize = (value: string) =>
-  value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+const PAGE_SIZE = 10;
 
-function StatusPill({ active }: { active: boolean }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${active
-          ? "bg-green-100 text-green-800"
-          : "bg-slate-100 text-slate-600"
-        }`}
-    >
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${active ? "bg-green-600" : "bg-slate-400"
-          }`}
-      />
-
-      {active ? "Activo" : "Inactivo"}
-    </span>
-  );
-}
-
-export default function UsuariosSection({
-  initialData = MOCK_USERS,
-  onCreate,
-  onEdit,
-  onToggleActive,
-}: UsuariosSectionProps) {
-  const [users, setUsers] = useState<AccessUser[]>(initialData);
+export default function UsuariosSection({ users, isLoading, error, onRetry, onEditRoles }: UsuariosSectionProps) {
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<"all" | UserStatus>("all");
-  const hasActions = Boolean(onEdit || onToggleActive);
+  const [status, setStatus] = useState<"all" | "activo" | "inactivo">("all");
+  const [page, setPage] = useState(1);
 
-  const filteredUsers = useMemo(() => {
-    const search = normalize(query.trim());
-
-    return users.filter((user) => {
-      const matchesSearch =
-        search === "" ||
-        normalize(user.name).includes(search) ||
-        normalize(user.email).includes(search) ||
-        normalize(user.role).includes(search);
-
-      const matchesStatus =
-        status === "all" || user.status === status;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [users, query, status]);
-
-  const toggleUser = (user: AccessUser) => {
-    setUsers((current) =>
-      current.map((item) =>
-        item.id === user.id
-          ? {
-            ...item,
-            status:
-              item.status === "active"
-                ? "inactive"
-                : "active",
-          }
-          : item,
+  const filteredUsers = useMemo(
+    () =>
+      (users ?? []).filter(
+        (user) =>
+          matchesSearch(query, user.nombre, user.correo, ...user.roles.map((role) => role.rol)) &&
+          (status === "all" || normalizeText(user.estado) === status)
       ),
-    );
-
-    onToggleActive?.(user);
-  };
+    [users, query, status]
+  );
+  const slice = slicePage(filteredUsers, page, PAGE_SIZE);
 
   return (
-    <section
-      id="usuarios"
-      className="scroll-mt-6"
-    >
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-semibold text-[#0f2f4a]">
-            Usuarios
-            {!onCreate && !hasActions && <ReadOnlyBadge />}
-          </h2>
-
-          <p className="mt-0.5 text-sm text-slate-500">
-            Administra los usuarios y controla su acceso al sistema.
-          </p>
-        </div>
-
-        {onCreate && (
-          <button
-            type="button"
-            onClick={onCreate}
-            className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f8f00] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39a900] focus-visible:ring-offset-2"
-          >
-            <UserPlus className="h-4 w-4" />
-            Nuevo usuario
-          </button>
-        )}
+    <section id="usuarios" className="scroll-mt-6">
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold text-[#0f2f4a]">
+          Usuarios y roles
+          {!onEditRoles && <ReadOnlyBadge />}
+        </h2>
+        <p className="mt-0.5 text-sm text-slate-500">Consulta los roles asignados a cada usuario del sistema.</p>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        {/* Filtros */}
+      {isLoading ? (
+        <LoadingState message="Cargando usuarios..." />
+      ) : error ? (
+        <ErrorState message="No fue posible cargar los usuarios." detail={error} onRetry={onRetry} />
+      ) : !users || users.length === 0 ? (
+        <EmptyState message="No hay usuarios registrados o visibles para tu usuario." />
+      ) : (
+        <div className="space-y-3">
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="flex flex-col gap-3 border-b border-slate-200 bg-slate-50/70 p-4 sm:flex-row sm:items-center">
+              <div className="relative w-full sm:max-w-md">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                    setPage(1);
+                  }}
+                  placeholder="Buscar usuario, correo o rol"
+                  className="h-10 w-full rounded-md border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none transition focus:border-[#39a900] focus:ring-2 focus:ring-green-100"
+                />
+              </div>
 
-        <div className="flex flex-col gap-3 border-b border-slate-200 bg-slate-50/70 p-4 sm:flex-row sm:items-center">
-          <div className="relative w-full sm:max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                Estado
+                <select
+                  value={status}
+                  onChange={(event) => {
+                    setStatus(event.target.value as typeof status);
+                    setPage(1);
+                  }}
+                  className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm font-normal text-slate-700 outline-none focus:border-[#39a900]"
+                >
+                  <option value="all">Todos</option>
+                  <option value="activo">Activos</option>
+                  <option value="inactivo">Inactivos</option>
+                </select>
+              </label>
+            </div>
 
-            <input
-              type="search"
-              value={query}
-              onChange={(event) =>
-                setQuery(event.target.value)
-              }
-              placeholder="Buscar usuario, correo o rol"
-              className="h-10 w-full rounded-md border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none transition focus:border-[#39a900] focus:ring-2 focus:ring-green-100"
-            />
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] border-collapse text-sm">
+                <thead className="border-b border-slate-200 bg-slate-50">
+                  <tr>
+                    {["Usuario", "Correo", "Roles", "Estado"].map((label) => (
+                      <th
+                        key={label}
+                        className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                      >
+                        {label}
+                      </th>
+                    ))}
+                    {onEditRoles && (
+                      <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Acciones
+                      </th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {slice.rows.map((user) => (
+                    <tr key={user.id} className="border-b border-slate-100 last:border-b-0">
+                      <td className="px-4 py-4 font-semibold text-slate-900">{user.nombre}</td>
+                      <td className="px-4 py-4 text-slate-600">{user.correo ?? "—"}</td>
+                      <td className="px-4 py-4">
+                        {user.roles.length === 0 ? (
+                          <span className="text-xs text-slate-400">Sin roles</span>
+                        ) : (
+                          <div className="flex flex-wrap gap-1.5">
+                            {user.roles.map((role) => (
+                              <RoleBadge key={role.id} rol={role.rol} />
+                            ))}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-4">
+                        <StatusBadge value={user.estado} />
+                      </td>
+                      {onEditRoles && (
+                        <td className="px-4 py-4">
+                          <div className="flex justify-end">
+                            <button
+                              type="button"
+                              onClick={() => onEditRoles(user)}
+                              aria-label={`Editar roles de ${user.nombre}`}
+                              title="Editar roles"
+                              className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
+                            >
+                              <ShieldCheck className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+
+                  {slice.rows.length === 0 && (
+                    <tr>
+                      <td colSpan={onEditRoles ? 5 : 4} className="px-4 py-10 text-center text-sm text-slate-400">
+                        No se encontraron usuarios.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <label className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-            Estado
-
-            <select
-              value={status}
-              onChange={(event) =>
-                setStatus(
-                  event.target.value as "all" | UserStatus,
-                )
-              }
-              className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm font-normal text-slate-700 outline-none focus:border-[#39a900]"
-            >
-              <option value="all">Todos</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
-            </select>
-          </label>
+          <PaginationBar {...slice} onPageChange={setPage} />
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] border-collapse text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Usuario
-                </th>
-
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Correo
-                </th>
-
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Rol
-                </th>
-
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Estado
-                </th>
-
-                {hasActions && (
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Acciones
-                  </th>
-                )}
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredUsers.map((user) => (
-                <tr
-                  key={user.id}
-                  className="border-b border-slate-100 last:border-b-0"
-                >
-                  <td className="px-4 py-4 font-semibold text-slate-900">
-                    {user.name}
-                  </td>
-
-                  <td className="px-4 py-4 text-slate-600">
-                    {user.email}
-                  </td>
-
-                  <td className="px-4 py-4">
-                    <span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
-                      {user.role}
-                    </span>
-                  </td>
-
-                  <td className="px-4 py-4">
-                    <StatusPill active={user.status === "active"} />
-                  </td>
-
-                  {hasActions && (
-                    <td className="px-4 py-4">
-                      <div className="flex justify-end gap-1">
-                        {onEdit && (
-                          <button
-                            type="button"
-                            onClick={() => onEdit(user)}
-                            aria-label={`Editar ${user.name}`}
-                            className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </button>
-                        )}
-
-                        {onToggleActive && (
-                          <button
-                            type="button"
-                            onClick={() => toggleUser(user)}
-                            aria-label={`${user.status === "active"
-                                ? "Desactivar"
-                                : "Activar"
-                              } ${user.name}`}
-                            className={`rounded-md p-2 ${user.status === "active"
-                                ? "text-red-500 hover:bg-red-50"
-                                : "text-green-600 hover:bg-green-50"
-                              }`}
-                          >
-                            <Power className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  )}
-                </tr>
-              ))}
-
-              {filteredUsers.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={hasActions ? 5 : 4}
-                    className="px-4 py-10 text-center text-sm text-slate-400"
-                  >
-                    No se encontraron usuarios.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="border-t border-slate-200 px-4 py-3 text-xs text-slate-500">
-          Mostrando {filteredUsers.length} de {users.length} usuarios
-        </div>
-      </div>
+      )}
     </section>
   );
 }

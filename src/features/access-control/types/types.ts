@@ -1,34 +1,38 @@
-export type UserStatus = "active" | "inactive";
-
-export interface AccessUser {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  status: UserStatus;
-}
-
 export interface AccessRole {
-  id: string;
+  id: number;
   name: string;
-  description: string;
-  usersCount: number;
-  active: boolean;
+  status: string | null;
 }
 
-export type PermissionAction =
-  | "view"
-  | "create"
-  | "edit"
-  | "delete";
-
-export interface PermissionModule {
+export interface ScreenActionEntry {
   id: string;
-  name: string;
-  view: boolean;
-  create: boolean;
-  edit: boolean;
-  delete: boolean;
+  moduleCode: string;
+  moduleName: string;
+  screenId: string;
+  screenCode: string;
+  screenName: string;
+  screenOrder: number | null;
+  actionCode: string;
+  actionName: string;
+}
+
+export interface RolePermissionEntry {
+  id: string;
+  roleId: number;
+  screenActionId: string;
+  level: string;
+  status: string | null;
+}
+
+export interface PermissionChange {
+  screenActionId: string;
+  level: AccessLevel;
+}
+
+export interface AsignarRolesUsuarioInput {
+  idUsuario: string;
+  updatedAtEsperado: string;
+  idsRoles: number[];
 }
 
 export type SigreRole =

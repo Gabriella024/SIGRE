@@ -1,124 +1,77 @@
 import { useMemo, useState } from "react";
+import { Loader2, Pencil, Plus, Power, Search } from "lucide-react";
 
-import {
-  ChevronLeft,
-  ChevronRight,
-  Pencil,
-  Plus,
-  Power,
-  Search,
-} from "lucide-react";
+import { MutationAlert } from "@/components/ui/mutation-alert";
+import { PaginationBar } from "@/components/ui/pagination-bar";
+import { EmptyState, ErrorState, LoadingState } from "@/components/ui/query-state";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { matchesSearch } from "@/lib/format";
+import { slicePage } from "@/lib/pagination";
 
 import ConfigSection from "./ConfigSection";
-import { MOCK_MUNICIPALITIES } from "../mocks/SettingsMocks";
+import { CatalogFormModal, type CatalogField } from "./CatalogFormModal";
+import { useMunicipios, useSettingsAccess, useSettingsMutations } from "../hooks/useSettings";
+import { municipioFormSchema, type MunicipioFormValues } from "../schemas/settingsSchema";
 
-import type {
-  Municipality,
-  MunicipalityStatusFilter,
-} from "../types/types";
+import type { Municipality } from "../types/types";
 
-interface MunicipiosSectionProps {
-  initialData?: Municipality[];
-  pageSize?: number;
-  onCreate?: () => void;
-  onEdit?: (municipality: Municipality) => void;
-  onToggleActive?: (municipality: Municipality) => void;
-}
+const PAGE_SIZE = 10;
 
-const normalize = (value: string): string =>
-  value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+const FIELDS: readonly CatalogField<keyof MunicipioFormValues>[] = [
+  { name: "nombre", label: "Municipio", placeholder: "Nombre del municipio" },
+  { name: "departamento", label: "Departamento", placeholder: "Departamento" },
+];
 
-function StatusPill({ active }: { active: boolean }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${active
-        ? "bg-green-100 text-green-800"
-        : "bg-slate-100 text-slate-600"
-        }`}
-    >
-      <span
-        className={`h-1.5 w-1.5 rounded-full ${active ? "bg-green-600" : "bg-slate-400"
-          }`}
-      />
+type Editing = { target: Municipality | null } | null;
 
-      {active ? "Activo" : "Inactivo"}
-    </span>
-  );
-}
-
-export default function MunicipiosSection({
-  initialData = MOCK_MUNICIPALITIES,
-  pageSize = 5,
-  onCreate,
-  onEdit,
-  onToggleActive,
-}: MunicipiosSectionProps) {
-  const [items, setItems] = useState<Municipality[]>(initialData);
+export default function MunicipiosSection() {
+  const { data, error, isLoading, reload } = useMunicipios();
+  const { canCreate, canEdit } = useSettingsAccess();
+  const { municipio: mutation, estadoMunicipio } = useSettingsMutations();
   const [query, setQuery] = useState("");
-  const [status, setStatus] =
-    useState<MunicipalityStatusFilter>("all");
   const [page, setPage] = useState(1);
-  const hasActions = Boolean(onEdit || onToggleActive);
+  const [editing, setEditing] = useState<Editing>(null);
+  const [togglingId, setTogglingId] = useState<number | null>(null);
 
-  const filtered = useMemo(() => {
-    const needle = normalize(query.trim());
+  const filtered = useMemo(
+    () => (data ?? []).filter((item) => matchesSearch(query, item.name, item.department)),
+    [data, query]
+  );
+  const slice = slicePage(filtered, page, PAGE_SIZE);
 
-    return items.filter((item) => {
-      const matchesText =
-        needle === "" ||
-        normalize(item.name).includes(needle) ||
-        normalize(item.department).includes(needle);
+  const open = (target: Municipality | null) => {
+    mutation.reset();
+    setEditing({ target });
+  };
 
-      const matchesStatus =
-        status === "all" ||
-        (status === "active" && item.active) ||
-        (status === "inactive" && !item.active);
-
-      return matchesText && matchesStatus;
+  const submit = async (values: MunicipioFormValues) => {
+    const result = await mutation.run({
+      id: editing?.target?.id ?? null,
+      nombre: values.nombre,
+      departamento: values.departamento,
     });
-  }, [items, query, status]);
+    if (result.success) reload();
+    return result;
+  };
 
-  const pageCount = Math.max(
-    1,
-    Math.ceil(filtered.length / pageSize)
-  );
-
-  const currentPage = Math.min(page, pageCount);
-
-  const rows = filtered.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
-
-  const toggleActive = (municipality: Municipality) => {
-    setItems((current) =>
-      current.map((item) =>
-        item.id === municipality.id
-          ? {
-            ...item,
-            active: !item.active,
-          }
-          : item
-      )
-    );
-
-    onToggleActive?.(municipality);
+  const toggle = async (item: Municipality) => {
+    setTogglingId(item.id);
+    const result = await estadoMunicipio.run({ id: item.id, estaActivo: !item.active });
+    setTogglingId(null);
+    if (result.success) reload();
   };
 
   return (
     <ConfigSection
       id="municipios"
       title="Municipios"
-      readOnly={!onCreate && !hasActions}
+      readOnly={!canCreate && !canEdit}
       description="Administra los municipios disponibles para el registro de usuarios."
       action={
-        onCreate && (
+        canCreate && (
           <button
             type="button"
-            onClick={onCreate}
+            onClick={() => open(null)}
             className="inline-flex items-center gap-2 rounded-lg bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f8f00] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#39a900] focus-visible:ring-offset-2"
           >
             <Plus className="h-4 w-4" />
@@ -127,183 +80,125 @@ export default function MunicipiosSection({
         )
       }
     >
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        {/* Filtros */}
-        <div className="flex flex-col gap-3 border-b border-slate-200 bg-slate-50/70 p-4 sm:flex-row sm:items-center">
-          <div className="relative w-full sm:max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setPage(1);
-              }}
-              placeholder="Buscar municipio o departamento"
-              className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 pl-9 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-[#39a900] focus:ring-2 focus:ring-[#39a900]/20"
-            />
-          </div>
-
-          <label className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-            Estado
-
-            <select
-              value={status}
-              onChange={(event) => {
-                setStatus(
-                  event.target.value as MunicipalityStatusFilter
-                );
-                setPage(1);
-              }}
-              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm font-normal text-slate-700 outline-none focus:border-[#39a900] focus:ring-2 focus:ring-[#39a900]/20"
-            >
-              <option value="all">Todos</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
-            </select>
-          </label>
+      {canEdit && (
+        <div className="mb-3">
+          <MutationAlert feedback={estadoMunicipio} onReload={reload} />
         </div>
+      )}
 
-        {/* Tabla */}
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px] border-collapse text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
-                  Municipio
-                </th>
+      {isLoading ? (
+        <LoadingState message="Cargando municipios..." />
+      ) : error ? (
+        <ErrorState message="No fue posible cargar los municipios." detail={error} onRetry={reload} />
+      ) : data?.length === 0 ? (
+        <EmptyState message="No hay municipios registrados o visibles para tu usuario." />
+      ) : (
+        <div className="space-y-3">
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50/70 p-4">
+              <div className="relative w-full sm:max-w-md">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                    setPage(1);
+                  }}
+                  placeholder="Buscar municipio o departamento"
+                  className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 pl-9 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-[#39a900] focus:ring-2 focus:ring-[#39a900]/20"
+                />
+              </div>
+            </div>
 
-                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
-                  Departamento
-                </th>
-
-                <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
-                  Estado
-                </th>
-
-                {hasActions && (
-                  <th className="px-4 py-3 text-right text-[11px] font-bold uppercase tracking-wide text-slate-500">
-                    Acciones
-                  </th>
-                )}
-              </tr>
-            </thead>
-
-            <tbody>
-              {rows.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={hasActions ? 4 : 3}
-                    className="px-4 py-10 text-center text-sm text-slate-400"
-                  >
-                    No se encontraron municipios.
-                  </td>
-                </tr>
-              ) : (
-                rows.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-slate-100 last:border-b-0"
-                  >
-                    <td className="px-4 py-4 font-semibold text-slate-900">
-                      {item.name}
-                    </td>
-
-                    <td className="px-4 py-4 text-slate-600">
-                      {item.department}
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <StatusPill active={item.active} />
-                    </td>
-
-                    {hasActions && (
-                      <td className="px-4 py-4">
-                        <div className="flex items-center justify-end gap-1">
-                          {onEdit && (
-                            <button
-                              type="button"
-                              onClick={() => onEdit(item)}
-                              aria-label={`Editar ${item.name}`}
-                              className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </button>
-                          )}
-
-                          {onToggleActive && (
-                            <button
-                              type="button"
-                              onClick={() => toggleActive(item)}
-                              aria-label={`${item.active ? "Desactivar" : "Activar"
-                                } ${item.name}`}
-                              title={
-                                item.active
-                                  ? "Desactivar"
-                                  : "Activar"
-                              }
-                              className={`rounded-md p-2 ${item.active
-                                ? "text-red-500 hover:bg-red-50"
-                                : "text-green-600 hover:bg-green-50"
-                                }`}
-                            >
-                              <Power className="h-4 w-4" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px] border-collapse text-sm">
+                <thead className="border-b border-slate-200 bg-slate-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      Municipio
+                    </th>
+                    <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      Departamento
+                    </th>
+                    <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      Estado
+                    </th>
+                    {canEdit && (
+                      <th className="px-4 py-3 text-right text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                        Acciones
+                      </th>
                     )}
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Paginación */}
-        <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-xs text-slate-500">
-          <span>
-            Mostrando {rows.length} de {filtered.length} municipios
-          </span>
-
-          <div className="flex items-center gap-2">
-            <span>
-              Página {currentPage} de {pageCount}
-            </span>
-
-            {pageCount > 1 && (
-              <>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPage(Math.max(1, currentPage - 1))
-                  }
-                  disabled={currentPage === 1}
-                  className="rounded-md border border-slate-200 p-1 disabled:opacity-40"
-                  aria-label="Página anterior"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPage(
-                      Math.min(pageCount, currentPage + 1)
-                    )
-                  }
-                  disabled={currentPage === pageCount}
-                  className="rounded-md border border-slate-200 p-1 disabled:opacity-40"
-                  aria-label="Página siguiente"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </>
-            )}
+                </thead>
+                <tbody>
+                  {slice.rows.length === 0 ? (
+                    <tr>
+                      <td colSpan={canEdit ? 4 : 3} className="px-4 py-10 text-center text-sm text-slate-400">
+                        No se encontraron municipios con la búsqueda actual.
+                      </td>
+                    </tr>
+                  ) : (
+                    slice.rows.map((item) => (
+                      <tr key={item.id} className="border-b border-slate-100 last:border-b-0">
+                        <td className="px-4 py-4 font-semibold text-slate-900">{item.name}</td>
+                        <td className="px-4 py-4 text-slate-600">{item.department}</td>
+                        <td className="px-4 py-4">
+                          <StatusBadge value={item.active ? "activo" : "inactivo"} />
+                        </td>
+                        {canEdit && (
+                          <td className="px-4 py-4">
+                            <div className="flex justify-end gap-1">
+                              <button
+                                type="button"
+                                onClick={() => open(item)}
+                                aria-label={`Editar ${item.name}`}
+                                className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void toggle(item)}
+                                disabled={estadoMunicipio.isSubmitting || estadoMunicipio.pendingBackend !== null}
+                                aria-label={`${item.active ? "Inactivar" : "Activar"} ${item.name}`}
+                                title={estadoMunicipio.pendingBackend ?? (item.active ? "Inactivar" : "Activar")}
+                                className={`rounded-md p-2 disabled:opacity-40 ${
+                                  item.active ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"
+                                }`}
+                              >
+                                {togglingId === item.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Power className="h-4 w-4" />
+                                )}
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          <PaginationBar {...slice} onPageChange={setPage} />
         </div>
-      </div>
+      )}
+
+      <CatalogFormModal
+        open={editing !== null}
+        title={editing?.target ? "Editar municipio" : "Nuevo municipio"}
+        fields={FIELDS}
+        initialValues={{ nombre: editing?.target?.name ?? "", departamento: editing?.target?.department ?? "" }}
+        schema={municipioFormSchema}
+        feedback={mutation}
+        onSubmit={submit}
+        onClose={() => setEditing(null)}
+        onReload={reload}
+      />
     </ConfigSection>
   );
 }

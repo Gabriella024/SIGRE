@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
 import type { User } from "@/features/users/types/users";
-import { USER_COLUMNS } from "@/features/users/columns";
+import { createUserColumns, type UserRowActions } from "@/features/users/columns";
 
-export interface UserTableProps {
+export interface UserTableProps extends UserRowActions {
   data: User[];
-  onEdit?: (user: User) => void;
-  onDelete?: (user: User) => void;
 }
 
-export function UsersTable({ data, onEdit, onDelete }: UserTableProps) {
+export function UsersTable({ data, onView, onEdit, onToggleStatus }: UserTableProps) {
   const [dynamicPageSize, setDynamicPageSize] = useState(8);
+  const columns = useMemo(
+    () => createUserColumns({ onView, onEdit, onToggleStatus }),
+    [onView, onEdit, onToggleStatus]
+  );
 
   useEffect(() => {
     const calculatePageSize = () => {
@@ -32,10 +34,9 @@ export function UsersTable({ data, onEdit, onDelete }: UserTableProps) {
   return (
     <MinimalTable<User>
           data={data}
-          columns={USER_COLUMNS}
+          columns={columns}
           pageSize={dynamicPageSize}
-          onEdit={onEdit}
-          onDelete={onDelete}
+          selectable={false}
         />
   )
 }

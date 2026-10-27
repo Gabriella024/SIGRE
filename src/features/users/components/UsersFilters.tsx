@@ -1,23 +1,21 @@
-import { Plus, Download } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
-import { FiltersBar, type FilterConfig, type FilterActionHandlers } from '@/components/ui/filtersBar'
+import { FiltersBar, type FilterConfig, type FilterOption } from '@/components/ui/filtersBar'
 
+import { INITIAL_USER_FILTERS } from '../utils/userUtils'
 
-type Filters = {
-  estado: string
-  fechaCreacion: string
-  fechaUltimoAcceso: string
+import type { UserFilters } from '../types/users'
+
+interface UsersFiltersProps {
+  filters: UserFilters
+  onChange: (filters: UserFilters) => void
+  estadoOptions: FilterOption[]
+  rolOptions: FilterOption[]
+  onCreate?: () => void
 }
 
-const initialFilters: Filters = { estado: '', fechaCreacion: '', fechaUltimoAcceso: '' }
-
-export function UsersFilters({ onCreate, onExport }: FilterActionHandlers) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filters, setFilters] = useState<Filters>(initialFilters)
-
-  const setFilter = (key: keyof Filters) => (value: string) =>
-    setFilters((prev) => ({ ...prev, [key]: value }))
+export function UsersFilters({ filters, onChange, estadoOptions, rolOptions, onCreate }: UsersFiltersProps) {
+  const setFilter = (key: keyof UserFilters) => (value: string) => onChange({ ...filters, [key]: value })
 
   const filterConfig: FilterConfig[] = [
     {
@@ -26,54 +24,47 @@ export function UsersFilters({ onCreate, onExport }: FilterActionHandlers) {
       value: filters.estado,
       placeholder: 'Todos los estados',
       onChange: setFilter('estado'),
-      options: [
-        { value: 'activo', label: 'Activo' },
-        { value: 'inactivo', label: 'Inactivo' },
-        { value: 'finalizado', label: 'Finalizado' },
-      ],
+      options: estadoOptions,
+    },
+    {
+      key: 'rol',
+      label: 'Rol',
+      value: filters.rol,
+      placeholder: 'Todos los roles',
+      onChange: setFilter('rol'),
+      options: rolOptions,
     },
     {
       key: 'fechaCreacion',
       label: 'Fecha de Creación',
-      type: 'datetime',
+      type: 'date',
       value: filters.fechaCreacion,
       onChange: setFilter('fechaCreacion'),
     },
     {
-      key: 'fechaUltimoAcceso',
+      key: 'ultimoAcceso',
       label: 'Último acceso',
-      type: 'datetime',
-      value: filters.fechaUltimoAcceso,
-      onChange: setFilter('fechaUltimoAcceso'),
+      type: 'date',
+      value: filters.ultimoAcceso,
+      onChange: setFilter('ultimoAcceso'),
     },
   ]
 
   return (
-
-
     <FiltersBar
-      searchTerm={searchTerm}
-      onSearchChange={setSearchTerm}
+      searchTerm={filters.search}
+      onSearchChange={setFilter('search')}
       searchPlaceholder="Buscar por nombre, documento o correo..."
       filters={filterConfig}
-      onClearFilters={() => setFilters(initialFilters)}
+      onClearFilters={() => onChange({ ...INITIAL_USER_FILTERS, search: filters.search })}
       actions={
-        <>
-          {onExport && (
-            <Button onClick={onExport} variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Exportar
-            </Button>
-          )}
-          {onCreate && (
-            <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
-              <Plus className="h-4 w-4" />
-              Nuevo Pitch
-            </Button>
-          )}
-        </>
+        onCreate && (
+          <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
+            <UserPlus className="h-4 w-4" />
+            Invitar usuario
+          </Button>
+        )
       }
     />
-
   )
 }

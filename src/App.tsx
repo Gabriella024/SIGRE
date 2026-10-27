@@ -11,6 +11,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { EntrepreneursPage } from "./pages/EntrepreneurPage";
+import { EntrepreneurDetailPage } from "./pages/EntrepreneurDetailPage";
 import { OrientationPage } from "./pages/OrientationPage";
 import { UsersPage } from "./pages/UserPage";
 import { PitchPage } from "./pages/PitchPage";
@@ -70,6 +71,18 @@ function App() {
                   screenCode={SCREEN_CODES.emprendedores}
                 >
                   <EntrepreneursPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/emprendedores/:id"
+              element={
+                <ProtectedRoute
+                  moduleCode="emprendedores"
+                  screenCode={SCREEN_CODES.emprendedores}
+                >
+                  <EntrepreneurDetailPage />
                 </ProtectedRoute>
               }
             />

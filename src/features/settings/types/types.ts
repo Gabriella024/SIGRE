@@ -1,40 +1,62 @@
 export interface Municipality {
-  id: string;
+  id: number;
   name: string;
   department: string;
   active: boolean;
 }
 
-export type MunicipalityStatusFilter = "all" | "active" | "inactive";
+export type CatalogStatus = "activo" | "inactivo";
 
-export type EmailTemplateId =
-  | "bienvenida"
-  | "inscripcion"
-  | "recordatorio"
-  | "evaluador"
-  | "pitch"
-  | "password";
-
-export type TemplateVariable = "nombre" | "fecha" | "enlace";
-
-export interface EmailTemplate {
-  id: EmailTemplateId;
+export interface SenaCenter {
+  id: string;
+  regionalId: string;
+  code: string | null;
   name: string;
-  trigger: string;
-  subject: string;
-  body: string;
-  enabled: boolean;
+  status: string | null;
+  updatedAt: string | null;
 }
 
-export type ModuleIconKey = "users" | "folder" | "calendar" | "target" | "mic" | "chart";
-
-export interface SystemModule {
+export interface SystemScreen {
   id: string;
-  module: string;
+  moduleCode: string;
+  moduleName: string;
   code: string;
-  screenName: string;
-  route: string;
-  order: number;
-  icon: ModuleIconKey;
-  active: boolean;
+  name: string;
+  description: string | null;
+  route: string | null;
+  order: number | null;
+  status: string | null;
+  updatedAt: string | null;
+}
+
+export interface GuardarMunicipioInput {
+  id: number | null;
+  nombre: string;
+  departamento: string;
+}
+
+export interface CambiarEstadoMunicipioInput {
+  id: number;
+  estaActivo: boolean;
+}
+
+export interface GuardarCentroSenaInput {
+  id: string | null;
+  updatedAt: string | null;
+  idRegional: string;
+  codigo: string;
+  nombre: string;
+}
+
+export interface CambiarEstadoCentroSenaInput {
+  id: string;
+  updatedAt: string;
+  estadoNuevo: CatalogStatus;
+}
+
+export interface ScreenChange {
+  id: string;
+  updatedAt: string;
+  orden: number;
+  estado: CatalogStatus;
 }

@@ -1,174 +1,92 @@
-import { useState } from "react";
-import {
-  Pencil,
-  Plus,
-  Users,
-} from "lucide-react";
+import { useMemo } from "react";
+import { Users } from "lucide-react";
 
-import ToggleSwitch from "./ToggleSwitch";
 import { ReadOnlyBadge } from "@/components/ui/pending-integration";
-import { MOCK_ROLES } from "../mocks/accessControlMocks";
+import { EmptyState, ErrorState, LoadingState } from "@/components/ui/query-state";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { RoleBadge } from "@/features/users/components/RoleBadge";
+
+import { isSigreRole } from "../utils/accessControlUtils";
+
+import type { User } from "@/features/users/types/users";
 import type { AccessRole } from "../types/types";
 
 interface RolesSectionProps {
-  initialData?: AccessRole[];
-  onCreate?: () => void;
-  onEdit?: (role: AccessRole) => void;
-  onSave?: (roles: AccessRole[]) => void;
+  roles: AccessRole[] | null;
+  users: User[] | null;
+  isLoading: boolean;
+  error: string | null;
+  onRetry: () => void;
 }
 
-export default function RolesSection({
-  initialData = MOCK_ROLES,
-  onCreate,
-  onEdit,
-  onSave,
-}: RolesSectionProps) {
-  const [roles, setRoles] =
-    useState<AccessRole[]>(initialData);
-
-  const updateRole = (
-    id: string,
-    changes: Partial<AccessRole>,
-  ) => {
-    setRoles((current) =>
-      current.map((role) =>
-        role.id === id
-          ? { ...role, ...changes }
-          : role,
-      ),
-    );
-  };
-
+export default function RolesSection({ roles, users, isLoading, error, onRetry }: RolesSectionProps) {
+  const counts = useMemo(() => {
+    const result = new Map<number, number>();
+    for (const user of users ?? []) {
+      for (const role of user.roles) result.set(role.rolId, (result.get(role.rolId) ?? 0) + 1);
+    }
+    return result;
+  }, [users]);
 
   return (
-    <section
-      id="roles"
-      className="scroll-mt-6"
-    >
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-semibold text-[#0f2f4a]">
-            Roles
-            {!onCreate && !onEdit && !onSave && <ReadOnlyBadge />}
-          </h2>
-
-          <p className="mt-0.5 text-sm text-slate-500">
-            Define los perfiles que determinan el nivel de acceso de cada usuario.
-          </p>
-        </div>
-
-        {onCreate && (
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onCreate}
-              className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
-            >
-              <Plus className="h-4 w-4" />
-              Nuevo rol
-            </button>
-          </div>
-        )}
+    <section id="roles" className="scroll-mt-6">
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold text-[#0f2f4a]">
+          Roles
+          <ReadOnlyBadge />
+        </h2>
+        <p className="mt-0.5 text-sm text-slate-500">
+          SIGRE opera con cinco roles fijos que determinan el nivel de acceso de cada usuario.
+        </p>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] border-collapse text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Rol
-                </th>
-
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Descripción
-                </th>
-
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Usuarios
-                </th>
-
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Estado
-                </th>
-
-                {onEdit && (
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Acciones
-                  </th>
-                )}
-              </tr>
-            </thead>
-
-            <tbody>
-              {roles.map((role) => (
-                <tr
-                  key={role.id}
-                  className="border-b border-slate-100 last:border-b-0"
-                >
-                  <td className="px-4 py-4 font-semibold text-slate-900">
-                    {role.name}
-                  </td>
-
-                  <td className="max-w-md px-4 py-4 text-slate-600">
-                    {role.description}
-                  </td>
-
-                  <td className="px-4 py-4">
-                    <span className="inline-flex items-center gap-1.5 text-slate-600">
-                      <Users className="h-4 w-4" />
-                      {role.usersCount}
-                    </span>
-                  </td>
-
-                  <td className="px-4 py-4">
-                    <ToggleSwitch
-                      checked={role.active}
-                      onChange={(next) =>
-                        updateRole(role.id, {
-                          active: next,
-                        })
-                      }
-                      label={`${role.active
-                          ? "Desactivar"
-                          : "Activar"
-                        } rol ${role.name}`}
-                      disabled={!onSave}
-                    />
-                  </td>
-
-                  {onEdit && (
-                    <td className="px-4 py-4">
-                      <div className="flex justify-end">
-                        <button
-                          type="button"
-                          onClick={() => onEdit(role)}
-                          aria-label={`Editar ${role.name}`}
-                          className="rounded-md p-2 text-slate-600 hover:bg-slate-100"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  )}
+      {isLoading ? (
+        <LoadingState message="Cargando roles..." />
+      ) : error ? (
+        <ErrorState message="No fue posible cargar los roles." detail={error} onRetry={onRetry} />
+      ) : !roles || roles.length === 0 ? (
+        <EmptyState message="No hay roles registrados o visibles para tu usuario." />
+      ) : (
+        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px] border-collapse text-sm">
+              <thead className="border-b border-slate-200 bg-slate-50">
+                <tr>
+                  {["Rol", "Usuarios con el rol", "Estado"].map((label) => (
+                    <th
+                      key={label}
+                      className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"
+                    >
+                      {label}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {onSave && (
-          <div className="flex justify-end border-t border-slate-200 p-4">
-            <button
-              type="button"
-              onClick={() => onSave(roles)}
-              className="rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00]"
-            >
-              Guardar cambios
-            </button>
+              </thead>
+              <tbody>
+                {roles.map((role) => (
+                  <tr key={role.id} className="border-b border-slate-100 last:border-b-0">
+                    <td className="px-4 py-4">
+                      <RoleBadge rol={role.name} />
+                      {!isSigreRole(role.name) && (
+                        <span className="ml-2 text-xs text-amber-700">No reconocido por los permisos de SIGRE</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className="inline-flex items-center gap-1.5 text-slate-600">
+                        <Users className="h-4 w-4" />
+                        {users ? (counts.get(role.id) ?? 0) : "—"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <StatusBadge value={role.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }
