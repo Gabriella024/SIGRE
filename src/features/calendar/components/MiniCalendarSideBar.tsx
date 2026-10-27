@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Clock, MapPin, User, Users, Video } from "lucide-react";
 import {
   addMonths,
@@ -26,10 +26,12 @@ export default function MiniCalendarSidebar({
   onSelectDate,
 }: MiniCalendarSidebarProps) {
   const [visibleMonth, setVisibleMonth] = useState<Date>(selectedDate);
+  const [syncedDate, setSyncedDate] = useState<Date>(selectedDate);
 
-  useEffect(() => {
+  if (syncedDate !== selectedDate) {
+    setSyncedDate(selectedDate);
     setVisibleMonth(selectedDate);
-  }, [selectedDate]);
+  }
 
   const today = useMemo(() => new Date(), []);
   const matrix = useMemo(() => getMonthMatrix(visibleMonth), [visibleMonth]);
