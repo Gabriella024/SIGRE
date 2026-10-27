@@ -17,7 +17,13 @@ export interface Column<T> {
   label: string;
   sortable?: boolean;
   align?: ColumnAlign;
+  className?: string;
   render?: (item: T) => React.ReactNode;
+}
+
+export interface TableSort {
+  key: string;
+  dir: SortDirection;
 }
 
 export interface MinimalTableProps<T extends { id: RowId }> {
@@ -27,6 +33,10 @@ export interface MinimalTableProps<T extends { id: RowId }> {
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   onSelectionChange?: (selectedIds: RowId[]) => void;
+  sort?: TableSort | null;
+  onSortChange?: (sort: TableSort) => void;
+  paginated?: boolean;
+  selectable?: boolean;
 }
 
 export type UserStatus = "Activo" | "Inactivo" | "Pendiente";

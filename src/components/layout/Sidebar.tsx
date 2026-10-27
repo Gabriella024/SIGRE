@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SCREEN_CODES } from '@/features/access-control/constants/screens';
+import { entrepreneurSectionLabel, resolveEntrepreneurView } from '@/features/entrepreneurs/hooks/useEntrepreneurAccess';
 
 const mainNav = [
   { to: '/dashboard', moduleCode: 'panel', screenCode: SCREEN_CODES.panel, label: 'Inicio', icon: LayoutGrid },
@@ -63,23 +64,24 @@ function NavItem({ to, label, icon: Icon }: NavItemProps) {
 }
 
 export function Sidebar() {
-  const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
-  const { can } = useAccessControl();
+  const [openedAt, setOpenedAt] = useState<string | null>(null);
+  const open = openedAt === pathname;
+  const setOpen = useCallback((next: boolean) => setOpenedAt(next ? pathname : null), [pathname]);
+  const { can, roles } = useAccessControl();
+  const entrepreneursLabel = entrepreneurSectionLabel(resolveEntrepreneurView(roles));
 
-  const visibleMainNav = mainNav.filter((item) => can(item.moduleCode, 'ver', item.screenCode));
+  const visibleMainNav = mainNav
+    .filter((item) => can(item.moduleCode, 'ver', item.screenCode))
+    .map((item) => (item.to === '/emprendedores' ? { ...item, label: entrepreneursLabel } : item));
   const visibleAdminNav = adminNav.filter((item) => can(item.moduleCode, 'ver', item.screenCode));
-
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [open, setOpen]);
 
   return (
     <>

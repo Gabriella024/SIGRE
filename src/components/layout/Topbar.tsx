@@ -4,6 +4,7 @@ import { Bell, LogOut } from "lucide-react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
+import { entrepreneurSectionLabel, resolveEntrepreneurView } from "@/features/entrepreneurs/hooks/useEntrepreneurAccess";
 
 const breadcrumbMap: Record<string, string> = {
   "/dashboard": "Inicio",
@@ -20,6 +21,16 @@ const breadcrumbMap: Record<string, string> = {
   "/control-accesos": "Control de accesos",
   "/configuracion": "Configuración",
 };
+
+const ENTREPRENEUR_DETAIL_PREFIX = "/emprendedores/";
+
+function resolveBreadcrumb(pathname: string, entrepreneursLabel: string): string {
+  if (pathname === "/emprendedores") return entrepreneursLabel;
+  if (pathname.startsWith(ENTREPRENEUR_DETAIL_PREFIX) && pathname.length > ENTREPRENEUR_DETAIL_PREFIX.length) {
+    return entrepreneursLabel === "Mi ficha" ? entrepreneursLabel : `${entrepreneursLabel} / Ficha`;
+  }
+  return breadcrumbMap[pathname] ?? "";
+}
 
 export function Topbar() {
   const { user, logout } = useAuth();
@@ -48,7 +59,7 @@ export function Topbar() {
     }
   }
 
-  const breadcrumb = breadcrumbMap[location.pathname] ?? "";
+  const breadcrumb = resolveBreadcrumb(location.pathname, entrepreneurSectionLabel(resolveEntrepreneurView(roles)));
 
   const initials =
     user?.email?.slice(0, 2).toUpperCase() ?? "??";
