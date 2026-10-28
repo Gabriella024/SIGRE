@@ -4,7 +4,7 @@ export const ORIENTACION_COLUMNS =
   "id, tema, fecha, hora_inicio, hora_fin, modalidad, lugar_link, audiencia_esperada, estado, id_orientador_fk, cupo";
 
 export const ORIENTACION_DETAIL_COLUMNS =
-  "id, tema, descripcion, fecha, hora_inicio, hora_fin, modalidad, lugar_link, fuente, audiencia_esperada, estado, id_orientador_fk, cupo";
+  "id, tema, descripcion, fecha, hora_inicio, hora_fin, modalidad, lugar_link, fuente, audiencia_esperada, estado, id_orientador_fk, cupo, id_centro_sena_fk, observaciones, centro:sena_centros(nombre)";
 
 export const JORNADA_WRITABLE_FIELDS = [
   "tema",
@@ -13,6 +13,9 @@ export const JORNADA_WRITABLE_FIELDS = [
   "hora_inicio",
   "hora_fin",
   "lugar_link",
+  "cupo",
+  "id_centro_sena_fk",
+  "observaciones",
 ] as const;
 
 export const orientacionRowSchema = z.object({
@@ -32,6 +35,9 @@ export const orientacionRowSchema = z.object({
 export const orientacionDetailRowSchema = orientacionRowSchema.extend({
   descripcion: z.string().nullable(),
   fuente: z.string().nullable(),
+  id_centro_sena_fk: z.string().nullable(),
+  observaciones: z.string().nullable(),
+  centro: z.object({ nombre: z.string() }).nullable(),
 });
 
 export type OrientacionRow = z.infer<typeof orientacionRowSchema>;
@@ -82,7 +88,7 @@ export const jornadaFormSchema = z
         (value) => value === "" || /^[1-9]\d*$/.test(value),
         "El cupo debe ser un número entero positivo."
       ),
-    centro: z.string().trim(),
+    id_centro_sena_fk: z.string().trim(),
     observaciones: z.string().trim(),
   })
   .refine(

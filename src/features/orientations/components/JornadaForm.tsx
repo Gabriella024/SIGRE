@@ -16,7 +16,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PendingIntegrationNotice } from "@/components/ui/pending-integration";
 
-import { MODALIDAD_OPTIONS, PENDING_MIGRATION_LABEL } from "../constants/jornada";
+import { useCentrosSena } from "@/features/entrepreneurs/hooks/useCentrosSena";
+
+import { MODALIDAD_OPTIONS } from "../constants/jornada";
 import { jornadaFormSchema, type JornadaFormValues } from "../schemas/orientationSchema";
 import type { OrientationEditorMode } from "../types/orientations";
 
@@ -60,9 +62,30 @@ export function JornadaForm({
       ? defaultValues.modalidad
       : null;
 
+  const centros = useCentrosSena();
+  const initialCentro = defaultValues.id_centro_sena_fk;
+  const inactiveCentro =
+    initialCentro && centros.data && !centros.data.some((centro) => centro.id === initialCentro)
+      ? initialCentro
+      : null;
+  const centroPlaceholder = centros.isLoading
+    ? "Cargando centros..."
+    : centros.data?.length === 0
+      ? "No hay centros SENA activos"
+      : "Sin centro asignado";
+
+  const handleValid = (values: JornadaFormValues) => {
+    const centro = values.id_centro_sena_fk;
+    if (centro && centro !== initialCentro && !centros.data?.some((item) => item.id === centro)) {
+      form.setError("id_centro_sena_fk", { message: "Selecciona un centro SENA activo." });
+      return;
+    }
+    onSubmit(values);
+  };
+
   return (
     <Form {...form}>
-      <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" aria-busy={isSubmitting}>
+      <form noValidate onSubmit={form.handleSubmit(handleValid)} className="space-y-4" aria-busy={isSubmitting}>
         <fieldset disabled={isSubmitting} className="space-y-4">
           <FormField
             control={form.control}
@@ -168,9 +191,9 @@ export function JornadaForm({
                 <FormItem>
                   <RequiredLabel>Cupo</RequiredLabel>
                   <FormControl>
-                    <Input type="number" min={1} step={1} inputMode="numeric" disabled {...field} />
+                    <Input type="number" min={1} step={1} inputMode="numeric" placeholder="Ej. 30" {...field} />
                   </FormControl>
-                  <FormDescription>{PENDING_MIGRATION_LABEL}</FormDescription>
+                  <FormDescription>Necesario para habilitar inscripciones.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -178,16 +201,22 @@ export function JornadaForm({
 
             <FormField
               control={form.control}
-              name="centro"
+              name="id_centro_sena_fk"
               render={({ field }) => (
                 <FormItem>
                   <RequiredLabel>Centro SENA</RequiredLabel>
                   <FormControl>
-                    <select className={selectClass} disabled {...field}>
-                      <option value="">Catálogo no disponible</option>
+                    <select className={selectClass} {...field} disabled={centros.isLoading}>
+                      <option value="">{centroPlaceholder}</option>
+                      {centros.data?.map((centro) => (
+                        <option key={centro.id} value={centro.id}>
+                          {centro.codigo ? `${centro.nombre} (${centro.codigo})` : centro.nombre}
+                        </option>
+                      ))}
+                      {inactiveCentro && <option value={inactiveCentro}>Centro no activo (valor anterior)</option>}
                     </select>
                   </FormControl>
-                  <FormDescription>{PENDING_MIGRATION_LABEL}</FormDescription>
+                  {centros.error && <FormDescription>{centros.error}</FormDescription>}
                   <FormMessage />
                 </FormItem>
               )}
@@ -201,9 +230,8 @@ export function JornadaForm({
               <FormItem>
                 <RequiredLabel>Observaciones</RequiredLabel>
                 <FormControl>
-                  <Textarea rows={3} disabled {...field} />
+                  <Textarea rows={3} {...field} />
                 </FormControl>
-                <FormDescription>{PENDING_MIGRATION_LABEL}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

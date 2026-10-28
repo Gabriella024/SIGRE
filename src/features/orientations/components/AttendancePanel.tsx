@@ -11,11 +11,12 @@ import { FeedbackMessage } from "./JornadaCells";
 import { ESTADO_ASISTENCIA_OPTIONS, SIN_REGISTRAR_LABEL, type EstadoAsistencia } from "../constants/jornada";
 import { useJornadaAttendance } from "../hooks/useJornadaAttendance";
 import { attendanceFormSchema, type AttendanceFormValues } from "../schemas/attendanceSchema";
+import { getAttendanceBlocker, nowInJornadaTimeZone } from "../utils/orientationUtils";
 
-import type { InscritoAsistencia } from "../types/orientations";
+import type { InscritoAsistencia, Orientacion } from "../types/orientations";
 
 interface AttendancePanelProps {
-  orientacionId: string;
+  jornada: Pick<Orientacion, "id" | "fecha" | "horaInicio">;
   canManage: boolean;
   refreshKey?: number;
 }
@@ -139,10 +140,18 @@ function AttendanceRow({ inscrito, saving, disabled, onSubmit }: AttendanceRowPr
   );
 }
 
-export function AttendancePanel({ orientacionId, canManage, refreshKey = 0 }: AttendancePanelProps) {
-  const attendance = useJornadaAttendance({ orientacionId, canManage, refreshKey });
+export function AttendancePanel({ jornada, canManage, refreshKey = 0 }: AttendancePanelProps) {
+  const attendance = useJornadaAttendance({ orientacionId: jornada.id, canManage, refreshKey });
   const rows = attendance.data;
   const metrics = useMemo(() => summarize(rows ?? []), [rows]);
+  const [blocker, setBlocker] = useState(() => getAttendanceBlocker(jornada, nowInJornadaTimeZone()));
+
+  const registrar = async (inscrito: InscritoAsistencia, values: AttendanceFormValues) => {
+    const currentBlocker = getAttendanceBlocker(jornada, nowInJornadaTimeZone());
+    setBlocker(currentBlocker);
+    if (currentBlocker) return false;
+    return attendance.registrar(inscrito, values);
+  };
 
   if (attendance.isLoading) return <LoadingState message="Cargando inscritos..." />;
 
@@ -159,7 +168,7 @@ export function AttendancePanel({ orientacionId, canManage, refreshKey = 0 }: At
   if (!rows) return null;
 
   const { feedback } = attendance;
-  const locked = !canManage || attendance.isSaving || attendance.isRefreshing;
+  const locked = !canManage || blocker !== null || attendance.isSaving || attendance.isRefreshing;
 
   return (
     <div className="space-y-3">
@@ -171,6 +180,8 @@ export function AttendancePanel({ orientacionId, canManage, refreshKey = 0 }: At
           </div>
         ))}
       </dl>
+
+      {blocker && <FeedbackMessage type="info" message={blocker} />}
 
       {feedback && <FeedbackMessage type={feedback.type} message={feedback.message} />}
 
@@ -191,7 +202,7 @@ export function AttendancePanel({ orientacionId, canManage, refreshKey = 0 }: At
               inscrito={inscrito}
               saving={attendance.savingId === inscrito.emprendedorId}
               disabled={locked}
-              onSubmit={attendance.registrar}
+              onSubmit={registrar}
             />
           ))}
         </ul>

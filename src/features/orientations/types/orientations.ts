@@ -21,6 +21,9 @@ export interface Orientacion {
 export interface OrientacionDetalle extends Orientacion {
   descripcion: string | null;
   fuente: string | null;
+  idCentroSena: string | null;
+  centroNombre: string | null;
+  observaciones: string | null;
 }
 
 export interface EntrepreneurOrientationHistoryItem {
@@ -91,7 +94,9 @@ export interface InscribirEmprendedorInput {
 
 export type JornadaWritableField = (typeof JORNADA_WRITABLE_FIELDS)[number];
 
-export type JornadaChanges = Partial<Record<JornadaWritableField, string | null>>;
+export type JornadaChanges = {
+  [K in JornadaWritableField]?: K extends "cupo" ? number | null : string | null;
+};
 
 export type JornadaInsert = JornadaChanges & {
   tema: string;

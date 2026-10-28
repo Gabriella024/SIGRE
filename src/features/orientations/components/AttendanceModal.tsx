@@ -42,7 +42,7 @@ export function AttendanceModal({ jornada, canManage, refreshKey, onEnroll, onCl
                 </Button>
               </div>
             )}
-            <AttendancePanel orientacionId={jornada.id} canManage={canManage} refreshKey={refreshKey} />
+            <AttendancePanel jornada={jornada} canManage={canManage} refreshKey={refreshKey} />
           </div>
         ) : (
           <PendingIntegrationNotice title="Registro de asistencia no habilitado">

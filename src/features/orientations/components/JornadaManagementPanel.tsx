@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { CatalogSelect, CatalogStatus } from "@/features/entrepreneurs/components/EntrepreneurProfileFields";
+import { CatalogSelect } from "@/features/entrepreneurs/components/EntrepreneurProfileFields";
 
 import { useJornadaMutation } from "../hooks/useJornadaMutation";
 import { useOrientadores } from "../hooks/useOrientadores";
@@ -24,6 +24,36 @@ function ActionError({ message }: { message: string | null }) {
       {message}
     </p>
   );
+}
+
+function OrientadoresStatus({
+  query,
+  isEmpty,
+  description,
+}: {
+  query: ReturnType<typeof useOrientadores>;
+  isEmpty: boolean;
+  description: string;
+}) {
+  if (query.isLoading) {
+    return (
+      <p className="flex items-center gap-2 text-xs text-slate-500">
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        Cargando orientadores...
+      </p>
+    );
+  }
+  if (query.error) {
+    return (
+      <div role="alert" className="flex flex-wrap items-center gap-2 text-sm text-rose-700">
+        <span>{query.error}</span>
+        <Button type="button" variant="outline" size="sm" onClick={query.reload}>
+          Reintentar
+        </Button>
+      </div>
+    );
+  }
+  return <p className="text-xs text-slate-500">{isEmpty ? "No hay usuarios activos con rol orientador." : description}</p>;
 }
 
 function AssignOrientadorForm({ jornada, onChanged }: ActionProps) {
@@ -80,11 +110,9 @@ function AssignOrientadorForm({ jornada, onChanged }: ActionProps) {
           {mutation.isSubmitting ? "Guardando..." : "Asignar"}
         </Button>
       </div>
-      <CatalogStatus
+      <OrientadoresStatus
         query={orientadores}
-        loadingMessage="Cargando orientadores..."
         isEmpty={options.length === 0}
-        empty={<p className="text-xs text-slate-500">No hay usuarios activos con rol orientador.</p>}
         description={
           currentListed
             ? "Solo se listan usuarios activos con rol orientador."

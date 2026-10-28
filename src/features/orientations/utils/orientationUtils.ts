@@ -45,7 +45,7 @@ export const EMPTY_JORNADA_FORM: JornadaFormValues = {
   hora_fin: "",
   lugar_link: "",
   cupo: "",
-  centro: "",
+  id_centro_sena_fk: "",
   observaciones: "",
 };
 
@@ -78,6 +78,9 @@ export function toOrientacionDetalle(row: OrientacionDetailRow): OrientacionDeta
     ...toOrientacion(row),
     descripcion: row.descripcion,
     fuente: row.fuente,
+    idCentroSena: row.id_centro_sena_fk,
+    centroNombre: row.centro?.nombre ?? null,
+    observaciones: row.observaciones,
   };
 }
 
@@ -225,6 +228,16 @@ export function getClosureBlocker(
   return null;
 }
 
+export function getAttendanceBlocker(
+  jornada: Pick<Orientacion, "fecha" | "horaInicio">,
+  now: string
+): string | null {
+  if (jornadaStartKey(jornada) > now) {
+    return "La asistencia se habilita cuando inicie la jornada (hora de Bogotá).";
+  }
+  return null;
+}
+
 export function isActiveEnrollment(estado: string | null): boolean {
   const value = normalizeText(estado);
   return value !== "cancelada" && value !== "anulada";
@@ -284,6 +297,9 @@ export function toJornadaFormValues(row: OrientacionDetalle): JornadaFormValues 
     hora_inicio: formatTime(row.horaInicio),
     hora_fin: formatTime(row.horaFin),
     lugar_link: row.lugarLink ?? "",
+    cupo: row.cupo === null ? "" : String(row.cupo),
+    id_centro_sena_fk: row.idCentroSena ?? "",
+    observaciones: row.observaciones ?? "",
   };
 }
 
@@ -298,6 +314,9 @@ export function buildJornadaInsert(values: JornadaFormValues): JornadaInsert {
 
   if (values.modalidad) payload.modalidad = values.modalidad;
   if (values.lugar_link) payload.lugar_link = values.lugar_link;
+  if (values.cupo) payload.cupo = Number(values.cupo);
+  if (values.id_centro_sena_fk) payload.id_centro_sena_fk = values.id_centro_sena_fk;
+  if (values.observaciones) payload.observaciones = values.observaciones;
 
   return payload;
 }
@@ -312,7 +331,8 @@ export function buildJornadaChanges(
     const value = values[field].trim();
     if (value === initial[field].trim()) continue;
 
-    if (value) changes[field] = value;
+    if (field === "cupo") changes.cupo = value ? Number(value) : null;
+    else if (value) changes[field] = value;
     else if (!NON_CLEARABLE_FIELDS.has(field)) changes[field] = null;
   }
 

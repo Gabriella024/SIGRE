@@ -10,7 +10,7 @@ import { formatDateOnly, formatTime } from "@/lib/format";
 
 import { AttendancePanel } from "./AttendancePanel";
 import { JornadaManagementPanel } from "./JornadaManagementPanel";
-import { LugarLink, PendingValue } from "./JornadaCells";
+import { LugarLink } from "./JornadaCells";
 import { useJornadaDetail } from "../hooks/useJornadaDetail";
 import { modalidadLabel } from "../utils/orientationUtils";
 
@@ -92,10 +92,15 @@ function JornadaDetail({
           <Field label="Modalidad"><NullableText value={modalidadLabel(jornada.modalidad)} /></Field>
           <Field label="Lugar o enlace"><LugarLink value={jornada.lugarLink} /></Field>
           <Field label="Cupo"><NullableText value={jornada.cupo === null ? null : String(jornada.cupo)} /></Field>
-          <Field label="Centro SENA"><PendingValue /></Field>
+          <Field label="Centro SENA">
+            <NullableText value={jornada.centroNombre ?? (jornada.idCentroSena ? "Centro no disponible" : null)} />
+          </Field>
           <Field label="Orientador responsable">
             {jornada.idOrientador ? "Asignado" : <span className="text-slate-500">Sin asignar</span>}
           </Field>
+          <div className="sm:col-span-2">
+            <Field label="Observaciones"><NullableText value={jornada.observaciones} /></Field>
+          </div>
         </dl>
         <JornadaManagementPanel
           jornada={jornada}
@@ -118,7 +123,7 @@ function JornadaDetail({
       {(view === "administrador" || view === "orientador") && (
         <Section title="Inscritos y asistencia">
           {manageAttendance ? (
-            <AttendancePanel orientacionId={jornada.id} canManage={manageAttendance} refreshKey={refreshKey} />
+            <AttendancePanel jornada={jornada} canManage={manageAttendance} refreshKey={refreshKey} />
           ) : (
             <PendingIntegrationNotice title="Registro de asistencia no habilitado">
               No tienes permiso para registrar la asistencia de esta jornada.
