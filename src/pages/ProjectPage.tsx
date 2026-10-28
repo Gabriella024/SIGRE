@@ -66,6 +66,7 @@ export function ProjectsPage() {
   const deleter = useProjectDelete(access);
   const exporter = useProjectExport();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleteFromList, setDeleteFromList] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const { openEdit, openCreate, close: closeEditor } = editor;
   const { crear, reset: resetCreator, isSubmitting: isCreating } = creator;
@@ -184,6 +185,7 @@ export function ProjectsPage() {
   const requestDelete = useCallback(() => {
     resetDeleter();
     setNotice(null);
+    setDeleteFromList(false);
     setConfirmingDelete(true);
   }, [resetDeleter]);
 
@@ -191,6 +193,7 @@ export function ProjectsPage() {
     (project: Project) => {
       setDetailId(project.id);
       requestDelete();
+      setDeleteFromList(true);
     },
     [requestDelete]
   );
@@ -199,7 +202,8 @@ export function ProjectsPage() {
     if (isDeleting) return;
     resetDeleter();
     setConfirmingDelete(false);
-  }, [isDeleting, resetDeleter]);
+    if (deleteFromList) setDetailId(null);
+  }, [isDeleting, resetDeleter, deleteFromList]);
 
   const confirmDelete = useCallback(
     async (target: ProjectDeleteTarget) => {
