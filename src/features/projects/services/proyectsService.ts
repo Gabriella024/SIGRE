@@ -35,8 +35,17 @@ const DB_ERROR_MESSAGES: Record<string, string> = {
 const NETWORK_ERROR_MESSAGE =
   "No fue posible conectar con el servidor. Revisa tu conexión e inténtalo nuevamente.";
 
+const MUTATION_TIMEOUT_MS = 20_000;
+
+const TIMEOUT_ERROR_MESSAGE =
+  "El servidor no respondió a tiempo. Recarga la información del proyecto para comprobar si el cambio se aplicó antes de intentarlo de nuevo.";
+
 function isNetworkError(error: DbError): boolean {
   return !error.code && /fetch|network/i.test(error.message);
+}
+
+function isTimeoutError(error: DbError): boolean {
+  return !error.code && /TimeoutError|AbortError/.test(error.message);
 }
 
 function toProjectError(error: DbError, fallback: string): Error {
@@ -131,6 +140,7 @@ export async function crearProyectoAdmin(input: CrearProyectoAdminInput): Promis
 export class ProjectConflictError extends Error {}
 
 function toEditProjectError(error: DbError): Error {
+  if (isTimeoutError(error)) return new Error(TIMEOUT_ERROR_MESSAGE);
   if (isNetworkError(error)) return new Error(NETWORK_ERROR_MESSAGE);
 
   switch (error.code) {
@@ -138,6 +148,7 @@ function toEditProjectError(error: DbError): Error {
       return new Error("No tienes autorización para editar proyectos.");
     case "P0002":
       return new Error("El proyecto no existe o fue eliminado.");
+    case "PT409":
     case "40001":
       return new ProjectConflictError(
         "Otra persona modificó este proyecto después de que lo abriste. Cierra el formulario y vuelve a abrirlo para cargar la versión actual."
@@ -170,7 +181,7 @@ export async function editarProyectoAdmin(input: EditarProyectoAdminInput): Prom
     p_problema_oportunidad: valid.data.problemaOportunidad,
     p_propuesta_valor: valid.data.propuestaValor,
     p_observaciones: valid.data.observaciones,
-  });
+  }).abortSignal(AbortSignal.timeout(MUTATION_TIMEOUT_MS));
 
   if (error) throw toEditProjectError(error);
 
@@ -184,6 +195,7 @@ export async function editarProyectoAdmin(input: EditarProyectoAdminInput): Prom
 }
 
 function toDeleteProjectError(error: DbError): Error {
+  if (isTimeoutError(error)) return new Error(TIMEOUT_ERROR_MESSAGE);
   if (isNetworkError(error)) return new Error(NETWORK_ERROR_MESSAGE);
 
   switch (error.code) {
@@ -193,6 +205,7 @@ function toDeleteProjectError(error: DbError): Error {
       return new Error("Los datos de la solicitud no son válidos o el proyecto ya fue eliminado.");
     case "P0002":
       return new Error("El proyecto no existe.");
+    case "PT409":
     case "40001":
       return new ProjectConflictError(
         "El proyecto fue modificado después de que lo abriste. Actualiza la información antes de volver a intentar la eliminación."
@@ -216,7 +229,7 @@ export async function eliminarProyectoAdmin(input: EliminarProyectoAdminInput): 
   const { data, error } = await supabase.rpc("sigre_admin_eliminar_proyecto", {
     p_id_proyecto: valid.data.idProyecto,
     p_updated_at_esperado: valid.data.updatedAtEsperado,
-  });
+  }).abortSignal(AbortSignal.timeout(MUTATION_TIMEOUT_MS));
 
   if (error) throw toDeleteProjectError(error);
 
