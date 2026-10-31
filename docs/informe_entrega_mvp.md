@@ -85,6 +85,10 @@ usuario, y el enlace ya no admite una segunda respuesta.
      permitido: con un correo DEMO existente, 409 sin invitar; y una invitación real solo con un correo controlado,
      después de resolver el pendiente 2.
 
+5. **«Último acceso» siempre aparece como «Nunca».** Ningún proceso escribe `usuarios.ultimo_acceso`; Auth solo
+   actualiza `auth.users.last_sign_in_at`. Diagnóstico y opciones en
+   `supabase/proposals/usuarios_ultimo_acceso_diagnostico.md`. No implementado.
+
 ## 5. Reconstrucción desde el repositorio
 
 ### Línea base (resuelto)
@@ -130,8 +134,10 @@ Las diferencias tienen explicación:
   esta diferencia desaparece.
 - Fin de línea: STAGING guarda algunos cuerpos de función con CRLF y git los normaliza (`core.autocrlf`). La
   definición es la misma y solo cambian los saltos de línea; el verificador lo informa aparte.
-- `municipios`: el único registro de STAGING es dato DEMO y está mal codificado, así que se excluyó de la semilla a
-  propósito.
+- `municipios`: el único registro de STAGING («Barranquilla, Atlántico») se creó durante la DEMO y se excluyó a
+  propósito de la semilla; los municipios se cargan desde la fuente institucional. El registro está bien codificado
+  en STAGING. El carácter extraño que se vio al revisarlo venía de la exportación CSV, no de la base de datos
+  (corrección del 2026-10-30).
 
 ### Requisitos externos que PostgreSQL local no reproduce
 
