@@ -1,5 +1,6 @@
 -- A5-11: control de documentos duplicados en invitaciones abiertas.
--- Destino exclusivo: STAGING (febelffifcqzvnttpued). No ejecutar en PRODUCTION.
+-- PENDIENTE en STAGING: verificado el 2026-10-30 que la columna numero_documento no existe allí (la Edge Function
+-- A5 versionada la usa). Aplicarla en cualquier entorno requiere autorización expresa.
 -- No elimina ni modifica registros existentes.
 
 BEGIN;

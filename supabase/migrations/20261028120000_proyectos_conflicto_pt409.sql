@@ -1,4 +1,5 @@
--- SIGRE - Destino exclusivo: STAGING (febelffifcqzvnttpued). Prohibido en PRODUCTION.
+-- SIGRE - Aplicada en STAGING el 2026-10-28 (no reaplicar allí). Portable: parte de la línea base 20261001000000,
+-- que conserva la versión previa con ERRCODE '40001'. Aplicarla en otro entorno requiere autorización expresa.
 -- Problema: sigre_admin_editar_proyecto / sigre_admin_eliminar_proyecto senalan el conflicto de version
 -- con ERRCODE = '40001' (serialization_failure). PostgREST trata 40001 como transitorio y reintenta la
 -- transaccion sin fin, por lo que la peticion nunca responde.
@@ -25,11 +26,6 @@ DECLARE
     v_nueva  text;
     v_total  int := 0;
 BEGIN
-    -- Guarda de entorno: la cuenta Auth DEMO solo existe en STAGING.
-    IF NOT EXISTS (SELECT 1 FROM auth.users WHERE id = 'bbd440b7-717e-416c-a2e7-0a33ee1d1320') THEN
-        RAISE EXCEPTION 'ABORTADO: este proyecto no es STAGING';
-    END IF;
-
     IF (SELECT count(*) FROM _pt409_antes) <> 2 THEN
         RAISE EXCEPTION 'ABORTADO: se esperaban exactamente 2 funciones de proyectos';
     END IF;
