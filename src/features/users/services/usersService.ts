@@ -122,6 +122,7 @@ const INVITE_ERROR_MESSAGES: Record<string, string> = {
   AUTH_NO_CONFIRMADO: `No se pudo confirmar el envío de la invitación. ${REVIEW_NOTICE}`,
   REGISTRO_INCOMPLETO: `La invitación se envió, pero el registro en SIGRE no se completó. ${REVIEW_NOTICE}`,
   SEGUIMIENTO_INCOMPLETO: `El usuario quedó registrado, pero la invitación no se cerró. ${REVIEW_NOTICE}`,
+  ACTIVACION_NO_CONFIGURADA: "La activación de cuentas no está configurada. No se envió ninguna invitación.",
 };
 
 async function toInviteError(error: unknown, copy: AdminErrorCopy): Promise<AdminOperationError> {

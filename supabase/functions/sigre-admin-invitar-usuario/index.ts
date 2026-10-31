@@ -24,6 +24,17 @@ const allowedOrigins = (
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+// Página pública de SIGRE que recibe el enlace de invitación (/activar-cuenta).
+// Debe estar en las Redirect URLs de Auth; sin ella no se envían invitaciones.
+const activationUrl = (() => {
+  try {
+    const url = new URL(Deno.env.get("SIGRE_ACTIVATION_URL") ?? "");
+    return ["https:", "http:"].includes(url.protocol) ? url.toString() : null;
+  } catch {
+    return null;
+  }
+})();
+
 const MENSAJE_INVITACION_ABIERTA =
   "Ya existe una invitación en curso o en revisión para este correo";
 
@@ -174,6 +185,18 @@ Deno.serve(async (request) => {
     return jsonResponse(
       403,
       { error: "Origen no autorizado" },
+      origin,
+    );
+  }
+
+  if (!activationUrl) {
+    console.error("A5: falta SIGRE_ACTIVATION_URL válida");
+    return jsonResponse(
+      503,
+      {
+        error: "La activación de cuentas no está configurada",
+        codigo: "ACTIVACION_NO_CONFIGURADA",
+      },
       origin,
     );
   }
@@ -462,7 +485,9 @@ Deno.serve(async (request) => {
 
     try {
       const { data, error } =
-        await admin.auth.admin.inviteUserByEmail(correo);
+        await admin.auth.admin.inviteUserByEmail(correo, {
+          redirectTo: activationUrl,
+        });
       invitedUserId = data?.user?.id ?? null;
       invitationError = error;
     } catch (error) {

@@ -8,6 +8,7 @@ import { AuthProvider } from "./features/auth/context/AuthContext";
 
 import { ProjectsPage } from "./pages/ProjectPage";
 import { LoginPage } from "./pages/LoginPage";
+import { ActivarCuentaPage } from "./pages/ActivarCuentaPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { EntrepreneursPage } from "./pages/EntrepreneurPage";
@@ -32,6 +33,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/invitacion/:token" element={<InvitacionRutaPage />} />
+          <Route path="/activar-cuenta" element={<ActivarCuentaPage />} />
           <Route path="/" element={<HomeRedirect />} />
 
           <Route
