@@ -69,12 +69,11 @@ usuario, y el enlace ya no admite una segunda respuesta.
    resultado.
 2. **Activación de usuarios reales con A5:** propuesta mínima en `supabase/proposals/a5_activacion_usuarios_propuesta.md`.
    Sin aplicar.
-3. **Migración A5-11 sin aplicar en STAGING.** Verificado en solo lectura el 2026-10-30:
-   - `sigre_invitaciones` no tiene la columna `numero_documento`, ni la restricción
-     `sigre_invitaciones_documento_valido`, ni el índice `sigre_invitaciones_documento_abierto_uk`;
-   - la Edge Function A5 versionada sí los usa, así que una invitación A5 en STAGING fallaría al registrarse;
-   - el repositorio ya está bien; falta aplicar `20261026120000` en STAGING, con autorización expresa. Detalle, efecto y
-     reversión en `supabase/proposals/a5_11_aplicacion_staging_pendiente.md`.
+3. **Migración A5-11: aplicada en STAGING el 2026-10-30,** con autorización independiente.
+   - Postflight 10/10, pruebas de duplicados 7/7 revertidas, y usuarios, roles, invitaciones y Auth sin cambios.
+   - Pendiente opcional: probar de extremo a extremo la Edge Function A5 con una sesión de administrador en
+     `http://localhost:5173`, que es el único origen permitido.
+   - Detalle en `supabase/proposals/a5_11_aplicacion_staging_pendiente.md`.
 
 ## 5. Reconstrucción desde el repositorio
 
@@ -117,7 +116,8 @@ Se usó una base PostgreSQL desechable en memoria (PGlite, PostgreSQL 16.4) que 
 | Funciones recompiladas con validación de cuerpos | 75/75 |
 
 Las diferencias tienen explicación:
-- `sigre_invitaciones`: el repositorio incluye A5-11 y STAGING no (pendiente 3).
+- `sigre_invitaciones`: el repositorio incluía A5-11 y STAGING no; ya está aplicada (pendiente 3), así que
+  esta diferencia desaparece.
 - Fin de línea: STAGING guarda algunos cuerpos de función con CRLF y git los normaliza (`core.autocrlf`). La
   definición es la misma y solo cambian los saltos de línea; el verificador lo informa aparte.
 - `municipios`: el único registro de STAGING es dato DEMO y está mal codificado, así que se excluyó de la semilla a
@@ -145,7 +145,7 @@ Las diferencias tienen explicación:
 6. **Sin historial de migraciones en STAGING:** todo se aplicó desde el SQL Editor. Para adoptar la CLI sin
    reejecutar nada:
    `supabase migration repair --status applied 20261001000000 20261001000100 20261025000000 20261028120000 20261028200000 20261028200100 20261029170000 20261029190000 20261029203000 20261030090000 20261030120000 20261030150000 20261030150100`.
-   La versión `20261026120000` (A5-11) queda pendiente.
+   Incluir también `20261026120000` (A5-11), aplicada el 2026-10-30.
 
 ### Orden de despliegue en un entorno nuevo (con autorización)
 
@@ -163,7 +163,7 @@ Las diferencias tienen explicación:
 | 20261001000000 | Línea base del esquema public (estructura previa a las migraciones del MVP) |
 | 20261001000100 | Catálogos: roles, módulos, acciones, pantallas y matriz de permisos |
 | 20261025000000 | RPC administrativas: A5, usuarios, municipios, centros, pantallas, permisos y roles |
-| 20261026120000 | A5: número de documento en invitaciones (**pendiente en STAGING**) |
+| 20261026120000 | A5: número de documento en invitaciones (aplicada en STAGING el 2026-10-30) |
 | 20261028120000 | Proyectos: conflicto de versión PT409 |
 | 20261028200000 – 20261029203000 | Orientaciones (5): RLS de inscripciones, inicio de jornada, orientador, visibilidad, mismo centro |
 | 20261030090000 | Orientación masiva: carga, prospectos, invitaciones |

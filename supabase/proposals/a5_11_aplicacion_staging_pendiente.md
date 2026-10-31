@@ -1,8 +1,8 @@
-# SIGRE · A5-11 en STAGING · Pendiente de autorización independiente (NO APLICADA)
+# SIGRE · A5-11 en STAGING · APLICADA el 2026-10-30 (autorización independiente)
 
 Migración: `supabase/migrations/20261026120000_a5_11_invitaciones_numero_documento.sql`.
 
-## Estado verificado (solo lectura, 2026-10-30)
+## Estado antes de aplicarla (solo lectura, 2026-10-30)
 
 `public.sigre_invitaciones` en STAGING **no** tiene:
 - la columna `numero_documento`;
@@ -11,7 +11,7 @@ Migración: `supabase/migrations/20261026120000_a5_11_invitaciones_numero_docume
 
 Sí existe `sigre_invitaciones_correo_abierto_uk`, que impide abrir dos invitaciones para el mismo correo.
 
-## Efecto actual
+## Efecto que tenía antes de aplicarla
 
 La Edge Function A5 versionada (`supabase/functions/sigre-admin-invitar-usuario/index.ts`) usa esa columna en dos
 momentos:
@@ -19,7 +19,7 @@ momentos:
   responde error y A5 devuelve 500: «No se pudieron verificar duplicados».
 - **Al registrar el seguimiento**, inserta `numero_documento`.
 
-Hoy, por lo tanto, una invitación A5 en STAGING falla antes de crear la cuenta. No crea usuarios a medias.
+Por eso, una invitación A5 en STAGING fallaba antes de crear la cuenta. No crea usuarios a medias.
 `sigre_invitaciones` tiene 0 filas.
 
 ## Qué hace la migración
@@ -33,12 +33,12 @@ Hoy, por lo tanto, una invitación A5 en STAGING falla antes de crear la cuenta.
 
 Es una migración idempotente, que corre en una sola transacción y no borra ni cambia datos.
 
-## Verificación previa a ejecutarla
+## Verificación previa
 
 Debe reconstruir sin errores con `supabase/scripts/verificar_reconstruccion.mjs`, cosa que ya se comprobó: la
 reconstrucción local incluye A5-11.
 
-## Para aplicarla (requiere autorización expresa)
+## Procedimiento seguido (autorizado el 2026-10-30)
 
 1. En el SQL Editor de STAGING, ejecutar el archivo completo una sola vez.
 2. Verificar en solo lectura que existen la columna, la restricción y el índice.
@@ -49,3 +49,30 @@ reconstrucción local incluye A5-11.
 **Reversión** (solo si no hay invitaciones con documento):
 `DROP INDEX public.sigre_invitaciones_documento_abierto_uk;`,
 `ALTER TABLE public.sigre_invitaciones DROP CONSTRAINT sigre_invitaciones_documento_valido, DROP COLUMN numero_documento;`.
+
+## Resultado de la aplicación (2026-10-30)
+
+- **Preflight:** proyecto SIGRE-STAGING; la columna, la restricción y el índice estaban ausentes; 0 invitaciones.
+  Se tomaron huellas md5 de `usuarios` (8), `usuario_roles` (8), `roles` y de los id y correos de `auth.users` (8).
+- **Archivo ejecutado:** idéntico al versionado en el commit `455b2c4`. SHA-256 `447889af…6426`, comprobado en el
+  editor antes de ejecutar. Se ejecutó una sola vez, con resultado «Success».
+- **Postflight:** 10/10.
+  - Columna `numero_documento text` que admite NULL, restricción CHECK con `btrim`, índice único parcial y comentario.
+  - RLS y FORCE sin cambios; 0 invitaciones.
+  - Huellas de usuarios, roles asignados, roles y Auth idénticas a las del preflight.
+- **Pruebas mínimas**, en un bloque que siempre se revierte (termina en `RAISE EXCEPTION`): 7/7.
+  - Inserción con documento: correcta.
+  - Documento duplicado en una invitación abierta: 23505 sobre `sigre_invitaciones_documento_abierto_uk`, el índice
+    que A5 traduce a `DOCUMENTO_INVITACION_ABIERTA`.
+  - Documento con espacios o vacío: 23514.
+  - Documento nulo: permitido.
+  - Consulta de duplicados de A5: 1 fila.
+  - Volver a invitar después de cerrar la invitación anterior: permitido.
+  - Después de las pruebas: 0 filas, sin restos.
+- **Diferencia con el repositorio:** ninguna en la estructura. El encabezado del archivo todavía dice «PENDIENTE en
+  STAGING»; se conserva para que el archivo siga siendo idéntico a lo aplicado.
+- **Sin verificar de extremo a extremo:** la llamada a la Edge Function A5. Solo admite el origen
+  `http://localhost:5173` (`SIGRE_ALLOWED_ORIGINS`) y requiere una sesión de administrador en ese origen. La prueba
+  segura es invitar un correo que ya existe en `usuarios` (por ejemplo, un evaluador DEMO): A5 responde 409 antes
+  de invitar, tanto en la versión del repositorio como en la original. Sin enviar invitaciones ni crear cuentas.
+- **Registro para la CLI:** `supabase migration repair --status applied 20261026120000`.
