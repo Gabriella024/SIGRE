@@ -36,7 +36,7 @@ export const miAsignacionRowSchema = z.object({
       proyecto: proyectoEmbedSchema,
     })
   ),
-  calificaciones_pitch: z.array(calificacionRowSchema).nullable(),
+  calificaciones_pitch: embeddedOne(calificacionRowSchema),
 });
 
 export type MiAsignacionRow = z.infer<typeof miAsignacionRowSchema>;
@@ -54,7 +54,7 @@ export const resultadoPitchRowSchema = z.object({
         id: z.string(),
         deleted_at: z.string().nullable(),
         evaluador: embeddedOne(z.object({ usuario: embeddedOne(personaRowSchema) })),
-        calificaciones_pitch: z.array(calificacionRowSchema).nullable(),
+        calificaciones_pitch: embeddedOne(calificacionRowSchema),
       })
     )
     .nullable(),

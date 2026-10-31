@@ -1,12 +1,13 @@
 import { normalizeText } from '@/lib/format';
 import type { ExcelColumn } from '@/lib/excel';
 
-import { ASISTENTE_COLUMNS, MAX_FILAS_CARGA, asistenteRowSchema } from '../schemas/orientacionMasivaSchema';
+import { ASISTENTE_COLUMNS, MAX_FILAS_CARGA, asistenteRowSchema, toIsoDate } from '../schemas/orientacionMasivaSchema';
 
 import type {
   AsistenteField,
   AsistenteRow,
   EstadoValidacion,
+  FilaRechazada,
   FilaRegistro,
   ResultadoCarga,
 } from '../types/cargaMasiva';
@@ -14,7 +15,7 @@ import type {
 export class EstructuraArchivoError extends Error {}
 
 function headerKey(value: string): string {
-  return normalizeText(value).replace(/[_\s.]+/g, ' ').trim();
+  return normalizeText(value).replace(/\*/g, '').replace(/[_\s.]+/g, ' ').trim();
 }
 
 const HEADER_LOOKUP = new Map<string, AsistenteField>(
@@ -35,7 +36,7 @@ function mapHeaders(header: readonly string[]): Map<AsistenteField, number> {
     positions.set(field, index);
   });
 
-  const missing = ASISTENTE_COLUMNS.filter((column) => !positions.has(column.field)).map((column) => column.header);
+  const missing = ASISTENTE_COLUMNS.filter((column) => column.required && !positions.has(column.field)).map((column) => column.header);
   if (missing.length > 0) {
     throw new EstructuraArchivoError(
       `Faltan columnas obligatorias: ${missing.join(', ')}. Descarga la plantilla y conserva sus encabezados.`
@@ -46,16 +47,12 @@ function mapHeaders(header: readonly string[]): Map<AsistenteField, number> {
 }
 
 function toAsistenteRow(cells: readonly string[], positions: Map<AsistenteField, number>): AsistenteRow {
-  const value = (field: AsistenteField) => (cells[positions.get(field) ?? -1] ?? '').trim();
-  return {
-    tipo_documento: value('tipo_documento'),
-    numero_documento: value('numero_documento'),
-    nombres: value('nombres'),
-    apellidos: value('apellidos'),
-    correo: value('correo'),
-    telefono: value('telefono'),
-  };
+  return Object.fromEntries(
+    ASISTENTE_COLUMNS.map(({ field }) => [field, (cells[positions.get(field) ?? -1] ?? '').trim()])
+  ) as AsistenteRow;
 }
+
+const orNull = (value: string): string | null => (value === '' ? null : value);
 
 function validateRow(fila: number, row: AsistenteRow): FilaRegistro {
   const nombre = [row.nombres, row.apellidos].filter(Boolean).join(' ');
@@ -78,17 +75,27 @@ function validateRow(fila: number, row: AsistenteRow): FilaRegistro {
     fila,
     doc: data.numero_documento,
     nombre: `${data.nombres} ${data.apellidos}`,
-    correo: data.correo,
+    correo: data.correo || '—',
     estado: 'valida',
-    mensaje: 'Lista para registrar',
+    mensaje: data.correo ? 'Lista para registrar' : 'Lista para registrar (sin correo: no recibirá invitación)',
     asistente: {
       fila,
-      tipo_documento: data.tipo_documento.toUpperCase(),
-      numero_documento: data.numero_documento,
       nombres: data.nombres,
       apellidos: data.apellidos,
-      correo: data.correo.toLowerCase(),
-      telefono: data.telefono === '' ? null : data.telefono,
+      departamento: orNull(data.departamento),
+      municipio: orNull(data.municipio),
+      tipo_documento: data.tipo_documento.toUpperCase(),
+      numero_documento: data.numero_documento.toUpperCase(),
+      fecha_nacimiento: data.fecha_nacimiento ? toIsoDate(data.fecha_nacimiento) : null,
+      edad: orNull(data.edad),
+      genero: orNull(data.genero),
+      nacionalidad: orNull(data.nacionalidad),
+      correo: data.correo ? data.correo.toLowerCase() : null,
+      clasificacion_poblacional: orNull(data.clasificacion_poblacional),
+      tipo_emprendedor: orNull(data.tipo_emprendedor),
+      nivel_formacion: orNull(data.nivel_formacion),
+      celular: orNull(data.celular),
+      segmentacion: orNull(data.segmentacion),
     },
   };
 }
@@ -100,10 +107,10 @@ function markDuplicates(filas: FilaRegistro[]): FilaRegistro[] {
   return filas.map((fila) => {
     if (!fila.asistente) return fila;
 
-    const documento = `${fila.asistente.tipo_documento}:${fila.asistente.numero_documento.toUpperCase()}`;
+    const documento = `${fila.asistente.tipo_documento}:${fila.asistente.numero_documento}`;
     const correo = fila.asistente.correo;
     const previousDoc = byDocumento.get(documento);
-    const previousMail = byCorreo.get(correo);
+    const previousMail = correo ? byCorreo.get(correo) : undefined;
 
     if (previousDoc !== undefined || previousMail !== undefined) {
       const reasons = [
@@ -114,7 +121,7 @@ function markDuplicates(filas: FilaRegistro[]): FilaRegistro[] {
     }
 
     byDocumento.set(documento, fila.fila);
-    byCorreo.set(correo, fila.fila);
+    if (correo) byCorreo.set(correo, fila.fila);
     return fila;
   });
 }
@@ -141,6 +148,15 @@ export function validarHojaAsistentes(sheet: readonly (readonly string[])[]): Fi
   return markDuplicates(body.map(({ cells, fila }) => validateRow(fila, toAsistenteRow(cells, positions))));
 }
 
+export function filasRechazadas(filas: readonly FilaRegistro[]): FilaRechazada[] {
+  const texto = (value: string) => (value === '—' ? null : value);
+  return filas.flatMap((fila) =>
+    fila.estado === 'error' || fila.estado === 'duplicada'
+      ? [{ fila: fila.fila, estado: fila.estado, numero_documento: texto(fila.doc), nombre: texto(fila.nombre), correo: texto(fila.correo), mensaje: fila.mensaje }]
+      : []
+  );
+}
+
 export function contarPorEstado(filas: readonly FilaRegistro[]): Record<EstadoValidacion, number> {
   const counts: Record<EstadoValidacion, number> = { valida: 0, error: 0, duplicada: 0, existente: 0 };
   for (const fila of filas) counts[fila.estado] += 1;
@@ -164,7 +180,7 @@ export function aplicarResultadoCarga(filas: readonly FilaRegistro[], resultado:
 }
 
 export const PLANTILLA_COLUMNS: readonly ExcelColumn<never>[] = ASISTENTE_COLUMNS.map((column) => ({
-  header: column.header,
+  header: column.required ? `${column.header} *` : column.header,
   type: 'text',
   width: 24,
   value: () => null,

@@ -6,6 +6,7 @@ import { distinctOptions } from "@/lib/format";
 
 import { OrientationTable } from "../components/OrientationsTable";
 import { OrientationsFilters } from "../components/OrientationsFilters";
+import { useJornadaMetricas } from "../hooks/useJornadaMetricas";
 import { buildOrientadorColumns } from "../jornadaColumns";
 import { INITIAL_ORIENTATION_FILTERS, filterOrientations } from "../utils/orientationUtils";
 import { QueryContent, type OrientationsQuery } from "./shared";
@@ -34,11 +35,12 @@ export function OrientadorOrientationsView({
     [query.data, userId]
   );
   const filtered = useMemo(() => filterOrientations(assigned, filters), [assigned, filters]);
+  const metricas = useJornadaMetricas(assigned);
   const estadoOptions = useMemo(() => distinctOptions(assigned.map((row) => row.estado)), [assigned]);
   const modalidadOptions = useMemo(() => distinctOptions(assigned.map((row) => row.modalidad)), [assigned]);
   const columns = useMemo(
-    () => buildOrientadorColumns({ onDetail, onAttendance, onEnroll }),
-    [onDetail, onAttendance, onEnroll]
+    () => buildOrientadorColumns({ onDetail, onAttendance, onEnroll, metricas }),
+    [onDetail, onAttendance, onEnroll, metricas]
   );
 
   return (

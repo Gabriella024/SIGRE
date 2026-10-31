@@ -61,3 +61,17 @@ export interface AsignarRetoProyectoInput {
   idProyecto: string
   fechaEntrega: string | null
 }
+
+export interface RegistrarAvanceRetoInput {
+  idCumplimiento: string
+  evidencia: string | null
+  observacion: string | null
+}
+
+export type ResultadoRevisionReto = 'aprobado' | 'requiere_ajustes' | 'no_aprobado'
+
+export interface RevisarRetoInput {
+  idCumplimiento: string
+  resultado: ResultadoRevisionReto
+  observacion: string | null
+}

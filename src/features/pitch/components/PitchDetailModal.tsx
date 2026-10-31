@@ -22,7 +22,7 @@ import { formatStatusLabel } from "@/lib/format";
 import type { MutationHandle } from "@/hooks/useAdminMutation";
 
 import { PITCH_ESTADOS } from "../schemas/pitchSchema";
-import { canAssignMoreEvaluators, formatDateTime, pitchEstadoBlockReason } from "../utils/pitchUtils";
+import { canAssignMoreEvaluators, canRemoveEvaluators, formatDateTime, pitchEstadoBlockReason, pitchEstadoLabel } from "../utils/pitchUtils";
 import type {
   AsignarEvaluadorPitchInput,
   CambiarEstadoPitchInput,
@@ -123,7 +123,7 @@ function AssignEvaluatorForm({ pitch, mutation, onDone }: { pitch: Pitch; mutati
 }
 
 function PitchDetailBody({ pitch, management, onChanged }: { pitch: Pitch; management?: PitchManagement; onChanged: () => void }) {
-  const retirar = management?.retirar;
+  const retirar = canRemoveEvaluators(pitch) ? management?.retirar : undefined;
   const remove = useCallback(
     async (idAsignacion: string, updatedAt: string | null) => {
       if (!retirar || !updatedAt) return;
@@ -152,7 +152,7 @@ function PitchDetailBody({ pitch, management, onChanged }: { pitch: Pitch; manag
           <NullableText value={pitch.lugarLink} className="break-all" />
         </DetailField>
         <DetailField label="Estado">
-          <StatusBadge value={pitch.estado} />
+          <StatusBadge value={pitch.estado} label={pitchEstadoLabel(pitch.estado)} />
         </DetailField>
         <DetailField label="Observación">
           <NullableText value={pitch.observacion} />

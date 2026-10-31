@@ -54,7 +54,10 @@ function ChallengeForm({ challenge, feedback, onSubmit, onClose, onReload }: Omi
       orden: Number(parsed.data.orden),
       estado: parsed.data.estado,
     });
-    if (result.success) onClose();
+    if (result.success) {
+      onReload();
+      onClose();
+    }
   };
 
   return (

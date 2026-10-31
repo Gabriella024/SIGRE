@@ -12,7 +12,7 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/ui/query-stat
 import { FieldError, SelectField } from "@/components/ui/select-field";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useProjects } from "@/features/projects/hooks/useProyects";
-import { formatDateOnly } from "@/lib/format";
+import { formatDateOnly, localDateKey } from "@/lib/format";
 import { nullableTrim } from "@/lib/formErrors";
 
 import type { MutationHandle } from "@/hooks/useAdminMutation";
@@ -25,17 +25,99 @@ import type {
   CambiarEstadoRetoInput,
   Challenge,
   ChallengeCompliance,
+  RegistrarAvanceRetoInput,
+  ResultadoRevisionReto,
+  RevisarRetoInput,
 } from "../types/Challenge";
 
 interface ChallengeDetailModalProps {
   challenge: Challenge | null;
   estadoMutation?: MutationHandle<CambiarEstadoRetoInput>;
   assignMutation?: MutationHandle<AsignarRetoProyectoInput>;
+  avanceMutation?: MutationHandle<RegistrarAvanceRetoInput>;
+  revisarMutation?: MutationHandle<RevisarRetoInput>;
   onClose: () => void;
   onChanged: () => void;
 }
 
-function ComplianceList({ rows }: { rows: ChallengeCompliance[] }) {
+const REVISION_OPTIONS = [
+  { value: "aprobado", label: "Aprobar" },
+  { value: "requiere_ajustes", label: "Solicitar ajustes" },
+  { value: "no_aprobado", label: "No aprobar" },
+] as const;
+
+function ComplianceActions({
+  row,
+  avance,
+  revisar,
+  onDone,
+}: {
+  row: ChallengeCompliance;
+  avance?: MutationHandle<RegistrarAvanceRetoInput>;
+  revisar?: MutationHandle<RevisarRetoInput>;
+  onDone: () => void;
+}) {
+  const [evidencia, setEvidencia] = useState("");
+  const [observacion, setObservacion] = useState("");
+  const [resultado, setResultado] = useState<ResultadoRevisionReto>("aprobado");
+  const puedeEntregar = avance && (row.estado === "asignado" || row.estado === "requiere_ajustes" || row.estado === null);
+  const puedeRevisar = revisar && row.estado === "entregado";
+  if (!puedeEntregar && !puedeRevisar) return null;
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    const result = puedeRevisar && revisar
+      ? await revisar.run({ idCumplimiento: row.id, resultado, observacion: nullableTrim(observacion) })
+      : avance
+        ? await avance.run({ idCumplimiento: row.id, evidencia: nullableTrim(evidencia), observacion: nullableTrim(observacion) })
+        : null;
+    if (result?.success) {
+      setEvidencia("");
+      setObservacion("");
+      onDone();
+    }
+  };
+  const mutation = puedeRevisar ? revisar : avance;
+
+  return (
+    <form onSubmit={(event) => void submit(event)} className="mt-2 space-y-2 rounded-md bg-slate-50 p-2">
+      <fieldset disabled={mutation?.isSubmitting} className="grid gap-2 sm:grid-cols-2">
+        {puedeRevisar ? (
+          <SelectField
+            aria-label="Resultado de la sustentación"
+            options={REVISION_OPTIONS}
+            value={resultado}
+            onChange={(e) => setResultado(e.target.value as ResultadoRevisionReto)}
+          />
+        ) : (
+          <Input aria-label="Enlace de la evidencia" placeholder="Enlace de la evidencia (https://...)" value={evidencia} onChange={(e) => setEvidencia(e.target.value)} />
+        )}
+        <Input
+          aria-label={puedeRevisar ? "Observaciones de la revisión" : "Descripción del avance"}
+          placeholder={puedeRevisar ? "Observaciones (obligatorias para ajustes)" : "Descripción del avance o ajuste"}
+          value={observacion}
+          onChange={(e) => setObservacion(e.target.value)}
+        />
+      </fieldset>
+      {mutation && <MutationAlert feedback={mutation} />}
+      <Button type="submit" size="sm" variant="outline" disabled={mutation?.isSubmitting || Boolean(mutation?.pendingBackend)}>
+        {puedeRevisar ? "Registrar revisión" : row.estado === "requiere_ajustes" ? "Entregar ajustes" : "Registrar avance"}
+      </Button>
+    </form>
+  );
+}
+
+function ComplianceList({
+  rows,
+  avance,
+  revisar,
+  onDone,
+}: {
+  rows: ChallengeCompliance[];
+  avance?: MutationHandle<RegistrarAvanceRetoInput>;
+  revisar?: MutationHandle<RevisarRetoInput>;
+  onDone: () => void;
+}) {
   return (
     <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
       {rows.map((row) => (
@@ -63,11 +145,12 @@ function ComplianceList({ rows }: { rows: ChallengeCompliance[] }) {
           {row.observacion && <p className="text-slate-600">Observación: {row.observacion}</p>}
           {row.sustentaciones.map((s) => (
             <p key={s.id} className="text-xs text-slate-500">
-              Sustentación {s.fecha ? formatDateOnly(s.fecha.slice(0, 10)) : ""}: {s.resultado ?? "sin resultado"}
+              Sustentación {s.fecha ? formatDateOnly(localDateKey(s.fecha)) : ""}: {s.resultado ?? "sin resultado"}
               {s.orientador && ` · ${s.orientador}`}
               {s.observacion && ` · ${s.observacion}`}
             </p>
           ))}
+          <ComplianceActions row={row} avance={avance} revisar={revisar} onDone={onDone} />
         </li>
       ))}
     </ul>
@@ -168,7 +251,7 @@ function AssignProjectForm({
   );
 }
 
-function ChallengeDetailBody({ challenge, estadoMutation, assignMutation, onChanged }: Omit<ChallengeDetailModalProps, "onClose"> & { challenge: Challenge }) {
+function ChallengeDetailBody({ challenge, estadoMutation, assignMutation, avanceMutation, revisarMutation, onChanged }: Omit<ChallengeDetailModalProps, "onClose"> & { challenge: Challenge }) {
   const compliance = useChallengeCompliance(challenge.id);
   const rows = useMemo(() => compliance.data ?? [], [compliance.data]);
   const assigned = useMemo(() => new Set(rows.flatMap((row) => (row.proyectoId ? [row.proyectoId] : []))), [rows]);
@@ -196,7 +279,15 @@ function ChallengeDetailBody({ challenge, estadoMutation, assignMutation, onChan
         ) : rows.length === 0 ? (
           <EmptyState message="Este reto no tiene proyectos relacionados visibles para tu usuario." />
         ) : (
-          <ComplianceList rows={rows} />
+          <ComplianceList
+            rows={rows}
+            avance={avanceMutation}
+            revisar={revisarMutation}
+            onDone={() => {
+              compliance.reload();
+              onChanged();
+            }}
+          />
         )}
       </section>
 

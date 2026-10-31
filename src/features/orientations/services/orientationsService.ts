@@ -5,16 +5,21 @@ import { supabase } from "@/lib/supabase";
 import { CLOSED_JORNADA_ESTADO, DEFAULT_JORNADA_ESTADO } from "../constants/jornada";
 
 import {
+  ASISTENCIA_METRICA_COLUMNS,
+  INSCRIPCION_METRICA_COLUMNS,
   ORIENTACION_COLUMNS,
   ORIENTACION_DETAIL_COLUMNS,
+  asistenciaMetricaRowSchema,
+  inscripcionMetricaRowSchema,
   orientacionDetailRowSchema,
   orientacionRowSchema,
 } from "../schemas/orientationSchema";
-import { toOrientacion, toOrientacionDetalle } from "../utils/orientationUtils";
+import { countJornadaMetricas, toOrientacion, toOrientacionDetalle } from "../utils/orientationUtils";
 
 import type {
   JornadaChanges,
   JornadaInsert,
+  JornadaMetricas,
   Orientacion,
   OrientacionDetalle,
 } from "../types/orientations";
@@ -74,6 +79,27 @@ export async function getOrientationById(id: string): Promise<OrientacionDetalle
   }
 
   return toOrientacionDetalle(parsed.data);
+}
+
+export async function getJornadaMetricas(ids: readonly string[]): Promise<Map<string, JornadaMetricas>> {
+  if (ids.length === 0) return new Map();
+
+  const [inscripciones, asistencias] = await Promise.all([
+    supabase.from("orientacion_inscripciones").select(INSCRIPCION_METRICA_COLUMNS).in("id_orientacion_fk", ids).is("deleted_at", null),
+    supabase.from("asistencias").select(ASISTENCIA_METRICA_COLUMNS).in("id_orientacion_fk", ids).is("deleted_at", null),
+  ]);
+
+  if (inscripciones.error) throw new Error(inscripciones.error.message);
+  if (asistencias.error) throw new Error(asistencias.error.message);
+
+  const inscripcionesParsed = z.array(inscripcionMetricaRowSchema).safeParse(inscripciones.data);
+  const asistenciasParsed = z.array(asistenciaMetricaRowSchema).safeParse(asistencias.data);
+
+  if (!inscripcionesParsed.success || !asistenciasParsed.success) {
+    throw new Error("Las métricas de las jornadas no tienen el formato esperado.");
+  }
+
+  return countJornadaMetricas(ids, inscripcionesParsed.data, asistenciasParsed.data);
 }
 
 export async function createJornada(payload: JornadaInsert): Promise<string> {

@@ -15,8 +15,8 @@ export function TemplateDownloadCard({ onDownload }: TemplateDownloadCardProps) 
           Usa nuestra plantilla para organizar correctamente la información.
         </p>
         <p className="text-[11px] text-slate-500">
-          <b className="text-slate-900 font-semibold">Columnas requeridas:</b> tipo de documento,
-          número de documento, nombres, apellidos, correo y teléfono.
+          <b className="text-slate-900 font-semibold">Columnas obligatorias (*):</b> nombres, apellidos, tipo y
+          número de identificación. El correo es opcional, pero solo quienes lo tengan recibirán la invitación a la ruta.
         </p>
       </div>
 

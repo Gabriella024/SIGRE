@@ -9,10 +9,10 @@ import { useAdminMutation } from '@/hooks/useAdminMutation';
 import { formatDateOnly, formatTime, normalizeText } from '@/lib/format';
 
 import { registrarCargaAsistentes, validarArchivoAsistentes } from '../services/massOrientationService';
-import { aplicarResultadoCarga, contarPorEstado, EstructuraArchivoError } from '../utils/orientacionMasivaUtils';
+import { aplicarResultadoCarga, contarPorEstado, EstructuraArchivoError, filasRechazadas } from '../utils/orientacionMasivaUtils';
 
 import type { Orientacion } from '@/features/orientations/types/orientations';
-import type { EstadoValidacion, FilaRegistro, InfoOrientacion } from '../types/cargaMasiva';
+import type { EstadoValidacion, FilaRegistro, InfoOrientacion, ResumenCarga } from '../types/cargaMasiva';
 
 type Paso = 1 | 2 | 3;
 
@@ -35,6 +35,7 @@ export function useAsistentesCarga() {
   const [filtroTab, setFiltroTab] = useState<EstadoValidacion | 'todas'>('todas');
   const [isProcessing, setIsProcessing] = useState(false);
   const [archivoError, setArchivoError] = useState<string | null>(null);
+  const [resumenCarga, setResumenCarga] = useState<ResumenCarga | null>(null);
 
   const registro = useAdminMutation(registrarCargaAsistentes, {
     allowed: canRegister,
@@ -100,10 +101,16 @@ export function useAsistentesCarga() {
     const asistentes = filasValidacion.flatMap((fila) => (fila.estado === 'valida' && fila.asistente ? [fila.asistente] : []));
     if (asistentes.length === 0) return;
 
-    const result = await registro.run({ orientacionId: jornada.id, nombreArchivo: archivo.name, asistentes });
+    const result = await registro.run({
+      orientacionId: jornada.id,
+      nombreArchivo: archivo.name,
+      asistentes,
+      rechazados: filasRechazadas(filasValidacion),
+    });
     if (!result.success) return;
 
     setFilasValidacion((filas) => aplicarResultadoCarga(filas, result.data));
+    setResumenCarga(result.data.resumen);
     setPasoActual(3);
   };
 
@@ -115,6 +122,7 @@ export function useAsistentesCarga() {
     setInfoOrientacion(null);
     setFiltroTab('todas');
     setArchivoError(null);
+    setResumenCarga(null);
     resetRegistro();
   }, [resetRegistro]);
 
@@ -136,6 +144,7 @@ export function useAsistentesCarga() {
     filtroTab,
     setFiltroTab,
     resumenCounts,
+    resumenCarga,
     isProcessing,
     canRegister,
     registro,

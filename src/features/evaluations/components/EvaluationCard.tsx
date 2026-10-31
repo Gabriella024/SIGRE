@@ -2,6 +2,7 @@ import { ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { StatusBadge } from '@/components/ui/status-badge'
+import { pitchEstadoLabel } from '@/features/pitch/utils/pitchUtils'
 import type { Evaluacion } from '@/features/evaluations/types/evaluacion'
 
 const borderColor: Record<Evaluacion['estado'], string> = {
@@ -32,7 +33,7 @@ export function EvaluationCard({ evaluacion, onGrade }: EvaluationCardProps) {
     >
       <div className="flex items-center gap-4">
         <div className="w-28 shrink-0">
-          <StatusBadge value={evaluacion.estadoPitch} />
+          <StatusBadge value={evaluacion.estadoPitch} label={pitchEstadoLabel(evaluacion.estadoPitch)} />
         </div>
         <div>
           <p className="font-semibold text-slate-900">{evaluacion.proyecto ?? 'Proyecto no disponible'}</p>

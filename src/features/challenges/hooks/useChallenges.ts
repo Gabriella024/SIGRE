@@ -11,6 +11,8 @@ import {
   getChallengeCompliance,
   getChallenges,
   guardarRetoAdmin,
+  registrarAvanceReto,
+  revisarReto,
 } from "../services/challengesService";
 
 import type { ChallengeCapabilities, ChallengeCompliance } from "../types/Challenge";
@@ -60,5 +62,19 @@ export function useChallengeMutations(access: ChallengeCapabilities) {
     backend: { name: "sigre_admin_asignar_reto_proyecto", operation: "Asignar reto a proyecto" },
   });
 
-  return { guardar, cambiarEstado, asignarProyecto };
+  const registrarAvance = useAdminMutation(registrarAvanceReto, {
+    allowed: true,
+    deniedMessage: "No tienes autorización para registrar avances.",
+    fallbackMessage: "No fue posible registrar el avance.",
+    backend: { name: "sigre_registrar_avance_reto", operation: "Registrar avance del reto" },
+  });
+
+  const revisar = useAdminMutation(revisarReto, {
+    allowed: access.canEdit,
+    deniedMessage: "No tienes autorización para revisar retos.",
+    fallbackMessage: "No fue posible registrar la revisión.",
+    backend: { name: "sigre_revisar_reto", operation: "Revisar sustentación del reto" },
+  });
+
+  return { guardar, cambiarEstado, asignarProyecto, registrarAvance, revisar };
 }

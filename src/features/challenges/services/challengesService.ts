@@ -14,6 +14,8 @@ import type {
   Challenge,
   ChallengeCompliance,
   GuardarRetoInput,
+  RegistrarAvanceRetoInput,
+  RevisarRetoInput,
 } from "../types/Challenge";
 
 const RETO_ERROR_COPY = {
@@ -90,6 +92,48 @@ export async function cambiarEstadoRetoAdmin(input: CambiarEstadoRetoInput): Pro
   return parseOperationId(data, operation);
 }
 
+export async function registrarAvanceReto(input: RegistrarAvanceRetoInput): Promise<string> {
+  const operation = "Registrar avance del reto";
+  assertBackendAvailable({ name: "sigre_registrar_avance_reto", operation });
+
+  const { data, error } = await supabase.rpc("sigre_registrar_avance_reto", {
+    p_id_cumplimiento: input.idCumplimiento,
+    p_archivo_evidencia: input.evidencia,
+    p_observacion: input.observacion,
+  });
+
+  if (error) {
+    throw toAdminOperationError(error, {
+      ...RETO_ERROR_COPY,
+      operation,
+      denied: "Solo el emprendedor del proyecto o su orientador pueden registrar avances.",
+      invalid: "Registra la evidencia o la descripción del avance. El reto debe estar asignado o con ajustes solicitados.",
+    });
+  }
+  return parseOperationId(data, operation);
+}
+
+export async function revisarReto(input: RevisarRetoInput): Promise<string> {
+  const operation = "Revisar sustentación del reto";
+  assertBackendAvailable({ name: "sigre_revisar_reto", operation });
+
+  const { data, error } = await supabase.rpc("sigre_revisar_reto", {
+    p_id_cumplimiento: input.idCumplimiento,
+    p_resultado: input.resultado,
+    p_observacion: input.observacion,
+  });
+
+  if (error) {
+    throw toAdminOperationError(error, {
+      ...RETO_ERROR_COPY,
+      operation,
+      denied: "Solo el orientador del emprendedor o un administrador pueden revisar el reto.",
+      invalid: "Solo se revisan retos entregados; los ajustes y la no aprobación requieren observaciones.",
+    });
+  }
+  return parseOperationId(data, operation);
+}
+
 export async function asignarRetoProyectoAdmin(input: AsignarRetoProyectoInput): Promise<string> {
   const operation = "Asignar reto a proyecto";
   assertBackendAvailable({ name: "sigre_admin_asignar_reto_proyecto", operation });
@@ -105,6 +149,7 @@ export async function asignarRetoProyectoAdmin(input: AsignarRetoProyectoInput):
       ...RETO_ERROR_COPY,
       operation,
       duplicate: "El proyecto ya tiene asignado este reto.",
+      invalid: "El proyecto debe aprobar primero los retos anteriores, o el reto está finalizado o cancelado.",
       reference: "El reto o el proyecto seleccionado no existe.",
     });
   }

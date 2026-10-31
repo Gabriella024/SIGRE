@@ -7,7 +7,7 @@ import { formatDateOnly, formatStatusLabel } from "@/lib/format"
 import { MAX_EVALUADORES_POR_PITCH, MIN_EVALUADORES_POR_PITCH } from "@/features/evaluators/utils/evaluatorUtils"
 
 import type { Pitch, PitchPreparation } from "./types/pitch"
-import { formatDateTime } from "./utils/pitchUtils"
+import { formatDateTime, pitchEstadoLabel } from "./utils/pitchUtils"
 
 const iconButton =
   "rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
@@ -45,7 +45,7 @@ export function buildPitchColumns({ onDetail, onEdit }: PitchColumnOptions): Col
         </span>
       ),
     },
-    { key: "estado", label: "ESTADO", sortable: true, render: (row) => <StatusBadge value={row.estado} /> },
+    { key: "estado", label: "ESTADO", sortable: true, render: (row) => <StatusBadge value={row.estado} label={pitchEstadoLabel(row.estado)} /> },
     {
       key: "acciones",
       label: "ACCIONES",

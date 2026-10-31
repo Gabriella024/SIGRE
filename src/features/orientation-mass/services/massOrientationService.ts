@@ -48,6 +48,7 @@ export async function registrarCargaAsistentes(input: RegistrarCargaInput): Prom
     p_id_orientacion: input.orientacionId,
     p_nombre_archivo: input.nombreArchivo,
     p_asistentes: input.asistentes,
+    p_rechazados: input.rechazados,
   });
 
   if (error) {
@@ -61,5 +62,5 @@ export async function registrarCargaAsistentes(input: RegistrarCargaInput): Prom
   }
 
   const parsed = parseOperationResult(data, resultadoCargaSchema, operation);
-  return { idCarga: parsed.id_carga, resultados: parsed.resultados };
+  return { idCarga: parsed.id_carga, resultados: parsed.resultados, resumen: parsed.resumen ?? null };
 }

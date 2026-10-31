@@ -1,4 +1,7 @@
 import { formatTime, matchesOption, matchesSearch, normalizeText } from "@/lib/format";
+import { personName } from "@/lib/personName";
+
+import { isActiveEnrollment } from "./enrollmentStatus";
 
 import {
   CLOSED_JORNADA_ESTADO,
@@ -15,6 +18,8 @@ import type {
 } from "../schemas/entrepreneurHistorySchema";
 import {
   JORNADA_WRITABLE_FIELDS,
+  type AsistenciaMetricaRow,
+  type InscripcionMetricaRow,
   type JornadaFormValues,
   type OrientacionDetailRow,
   type OrientacionRow,
@@ -24,6 +29,7 @@ import type {
   InscritoAsistencia,
   JornadaChanges,
   JornadaInsert,
+  JornadaMetricas,
   JornadaWritableField,
   Orientacion,
   OrientacionDetalle,
@@ -80,8 +86,28 @@ export function toOrientacionDetalle(row: OrientacionDetailRow): OrientacionDeta
     fuente: row.fuente,
     idCentroSena: row.id_centro_sena_fk,
     centroNombre: row.centro?.nombre ?? null,
+    orientadorNombre: personName(row.orientador),
     observaciones: row.observaciones,
   };
+}
+
+export function countJornadaMetricas(
+  ids: readonly string[],
+  inscripciones: readonly InscripcionMetricaRow[],
+  asistencias: readonly AsistenciaMetricaRow[]
+): Map<string, JornadaMetricas> {
+  const metricas = new Map<string, JornadaMetricas>(ids.map((id) => [id, { inscritos: 0, asistieron: 0, noAsistieron: 0 }]));
+  for (const row of inscripciones) {
+    const item = metricas.get(row.id_orientacion_fk);
+    if (item && isActiveEnrollment(row.estado)) item.inscritos += 1;
+  }
+  for (const row of asistencias) {
+    const item = metricas.get(row.id_orientacion_fk);
+    if (!item) continue;
+    if (row.estado_asistencia === "asistio") item.asistieron += 1;
+    if (row.estado_asistencia === "no_asistio") item.noAsistieron += 1;
+  }
+  return metricas;
 }
 
 export function toInscritoAsistencia(row: InscritoAsistenciaRow): InscritoAsistencia {
@@ -236,11 +262,6 @@ export function getAttendanceBlocker(
     return "La asistencia se habilita cuando inicie la jornada (hora de Bogotá).";
   }
   return null;
-}
-
-export function isActiveEnrollment(estado: string | null): boolean {
-  const value = normalizeText(estado);
-  return value !== "cancelada" && value !== "anulada";
 }
 
 export function getEnrollmentBlocker(

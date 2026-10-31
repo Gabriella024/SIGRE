@@ -9,10 +9,10 @@ export function HeaderConfirmado({ fechaConfirmacion }: HeaderConfirmadoProps) {
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
       <div>
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Resultado de validación
+          Resultado de la carga
         </h1>
         <p className="text-sm text-slate-500 mt-1">
-          Revisa los registros encontrados antes de confirmar la carga.
+          La carga quedó registrada con su trazabilidad. Los prospectos con correo recibirán una invitación voluntaria.
         </p>
       </div>
 
@@ -23,7 +23,7 @@ export function HeaderConfirmado({ fechaConfirmacion }: HeaderConfirmadoProps) {
         <div className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
           <Check className="w-2.5 h-2.5 stroke-[3]" />
         </div>
-        <span>Carga demostrativa · {fechaConfirmacion}</span>
+        <span>Carga registrada · {fechaConfirmacion}</span>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { inscribirEnJornadaResultSchema } from "../schemas/enrollmentSchema";
 
 import type { InscribirEmprendedorInput } from "../types/orientations";
+import { inscripcionRpcParams } from "../utils/enrollmentParams";
 
 type DbError = { code?: string; message: string };
 
@@ -22,10 +23,7 @@ function toEnrollmentError(error: DbError): Error {
 }
 
 export async function inscribirEmprendedor(input: InscribirEmprendedorInput): Promise<string> {
-  const { data, error } = await supabase.rpc("sigre_inscribir_en_jornada", {
-    p_orientacion_id: input.orientacionId,
-    p_emprendedor_id: input.emprendedorId,
-  });
+  const { data, error } = await supabase.rpc("sigre_inscribir_en_jornada", inscripcionRpcParams(input));
 
   if (error) throw toEnrollmentError(error);
 

@@ -13,7 +13,7 @@ import type { Challenge } from '@/features/challenges/types/Challenge'
 export function ChallengesPage() {
   const { data, error, isLoading, reload } = useChallenges()
   const access = useChallengeAccess()
-  const { guardar, cambiarEstado, asignarProyecto } = useChallengeMutations(access)
+  const { guardar, cambiarEstado, asignarProyecto, registrarAvance, revisar } = useChallengeMutations(access)
   const [filters, setFilters] = useState(INITIAL_CHALLENGE_FILTERS)
   const [detailId, setDetailId] = useState<string | null>(null)
   const [form, setForm] = useState<{ open: boolean; challenge: Challenge | null }>({ open: false, challenge: null })
@@ -43,11 +43,15 @@ export function ChallengesPage() {
   const openDetail = useCallback((challenge: Challenge) => setDetailId(challenge.id), [])
   const { reset: resetEstado } = cambiarEstado
   const { reset: resetAsignar } = asignarProyecto
+  const { reset: resetAvance } = registrarAvance
+  const { reset: resetRevisar } = revisar
   const closeDetail = useCallback(() => {
     resetEstado()
     resetAsignar()
+    resetAvance()
+    resetRevisar()
     setDetailId(null)
-  }, [resetEstado, resetAsignar])
+  }, [resetEstado, resetAsignar, resetAvance, resetRevisar])
 
   return (
     <div className="p-6 space-y-6">
@@ -85,6 +89,8 @@ export function ChallengesPage() {
         challenge={detail}
         estadoMutation={access.canEdit ? cambiarEstado : undefined}
         assignMutation={access.canEdit ? asignarProyecto : undefined}
+        avanceMutation={registrarAvance}
+        revisarMutation={access.canEdit ? revisar : undefined}
         onClose={closeDetail}
         onChanged={reload}
       />

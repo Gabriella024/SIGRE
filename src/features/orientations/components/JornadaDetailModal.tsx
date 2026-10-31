@@ -96,7 +96,7 @@ function JornadaDetail({
             <NullableText value={jornada.centroNombre ?? (jornada.idCentroSena ? "Centro no disponible" : null)} />
           </Field>
           <Field label="Orientador responsable">
-            {jornada.idOrientador ? "Asignado" : <span className="text-slate-500">Sin asignar</span>}
+            {jornada.idOrientador ? (jornada.orientadorNombre ?? "Asignado") : <span className="text-slate-500">Sin asignar</span>}
           </Field>
           <div className="sm:col-span-2">
             <Field label="Observaciones"><NullableText value={jornada.observaciones} /></Field>

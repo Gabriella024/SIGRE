@@ -86,7 +86,7 @@ function EnrollmentForm({ initialJornadaId, jornadas, onEnrolled, onClose }: Enr
     }
 
     setValidationError(null);
-    const ok = await enrollment.inscribir(parsed.data, selected.nombre);
+    const ok = await enrollment.inscribir({ modo: "manual", ...parsed.data }, selected.nombre);
     if (ok) setEmprendedorId("");
   };
 

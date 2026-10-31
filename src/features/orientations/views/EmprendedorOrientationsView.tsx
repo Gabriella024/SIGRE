@@ -12,10 +12,10 @@ import { REPROGRAMACION_EMAIL } from "../constants/jornada";
 import { useEntrepreneurOrientationHistory } from "../hooks/useEntrepreneurOrientationHistory";
 import { useJornadaEnrollment } from "../hooks/useJornadaEnrollment";
 import { buildAvailableColumns } from "../jornadaColumns";
+import { inscripcionesPorJornada } from "../utils/enrollmentStatus";
 import {
   filterAvailableJornadas,
   getEnrollmentBlocker,
-  isActiveEnrollment,
   nowInJornadaTimeZone,
   todayKey,
 } from "../utils/orientationUtils";
@@ -52,15 +52,7 @@ function OwnOrientations({
   const enrollment = useJornadaEnrollment(handleEnrolled);
   const active = isActiveEntrepreneur(entrepreneur);
 
-  const enrolledIds = useMemo(
-    () =>
-      new Set(
-        (history.data ?? [])
-          .filter((item) => item.inscripcion && isActiveEnrollment(item.inscripcion.estado))
-          .map((item) => item.orientacionId)
-      ),
-    [history.data]
-  );
+  const inscripciones = useMemo(() => inscripcionesPorJornada(history.data ?? []), [history.data]);
 
   const available = useMemo(() => filterAvailableJornadas(query.data, todayKey()), [query.data]);
   const { inscribir, isSubmitting } = enrollment;
@@ -70,17 +62,28 @@ function OwnOrientations({
     async (jornada: Orientacion) => {
       if (getEnrollmentBlocker(jornada, nowInJornadaTimeZone())) return;
       setPendingId(jornada.id);
-      await inscribir({ orientacionId: jornada.id, emprendedorId: entrepreneur.id }, entrepreneur.nombre);
+      await inscribir({ modo: "autoinscripcion", orientacionId: jornada.id }, entrepreneur.nombre);
       setPendingId(null);
     },
-    [inscribir, entrepreneur.id, entrepreneur.nombre]
+    [inscribir, entrepreneur.nombre]
   );
 
   const columns = useMemo(
     () =>
       buildAvailableColumns({
         enrollCell: (row) => {
-          const enrolled = enrolledIds.has(row.id);
+          const estado = inscripciones.get(row.id);
+          if (estado === "cancelado") {
+            return (
+              <span
+                className="text-xs font-medium text-slate-500"
+                title="Tu inscripción en esta jornada fue cancelada. Si necesitas reinscribirte, contacta al administrador."
+              >
+                Inscripción cancelada
+              </span>
+            );
+          }
+          const enrolled = estado === "inscrito";
           const reason = !active
             ? "Tu registro de emprendedor no está activo."
             : !historyReady
@@ -103,7 +106,7 @@ function OwnOrientations({
           );
         },
       }),
-    [enrolledIds, active, historyReady, isSubmitting, pendingId, enroll]
+    [inscripciones, active, historyReady, isSubmitting, pendingId, enroll]
   );
 
   return (

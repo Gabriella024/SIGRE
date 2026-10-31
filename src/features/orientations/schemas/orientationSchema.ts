@@ -1,10 +1,15 @@
 import { z } from "zod";
 
+import { PERSONA_COLUMNS, embeddedOne, personaRowSchema } from "@/lib/personName";
+
 export const ORIENTACION_COLUMNS =
   "id, tema, fecha, hora_inicio, hora_fin, modalidad, lugar_link, audiencia_esperada, estado, id_orientador_fk, cupo";
 
-export const ORIENTACION_DETAIL_COLUMNS =
-  "id, tema, descripcion, fecha, hora_inicio, hora_fin, modalidad, lugar_link, fuente, audiencia_esperada, estado, id_orientador_fk, cupo, id_centro_sena_fk, observaciones, centro:sena_centros(nombre)";
+export const ORIENTACION_DETAIL_COLUMNS = `id, tema, descripcion, fecha, hora_inicio, hora_fin, modalidad, lugar_link, fuente, audiencia_esperada, estado, id_orientador_fk, cupo, id_centro_sena_fk, observaciones, centro:sena_centros(nombre), orientador:usuarios!id_orientador_fk(${PERSONA_COLUMNS})`;
+
+export const INSCRIPCION_METRICA_COLUMNS = "id_orientacion_fk, estado";
+
+export const ASISTENCIA_METRICA_COLUMNS = "id_orientacion_fk, estado_asistencia";
 
 export const JORNADA_WRITABLE_FIELDS = [
   "tema",
@@ -38,10 +43,23 @@ export const orientacionDetailRowSchema = orientacionRowSchema.extend({
   id_centro_sena_fk: z.string().nullable(),
   observaciones: z.string().nullable(),
   centro: z.object({ nombre: z.string() }).nullable(),
+  orientador: embeddedOne(personaRowSchema),
+});
+
+export const inscripcionMetricaRowSchema = z.object({
+  id_orientacion_fk: z.string(),
+  estado: z.string(),
+});
+
+export const asistenciaMetricaRowSchema = z.object({
+  id_orientacion_fk: z.string(),
+  estado_asistencia: z.string().nullable(),
 });
 
 export type OrientacionRow = z.infer<typeof orientacionRowSchema>;
 export type OrientacionDetailRow = z.infer<typeof orientacionDetailRowSchema>;
+export type InscripcionMetricaRow = z.infer<typeof inscripcionMetricaRowSchema>;
+export type AsistenciaMetricaRow = z.infer<typeof asistenciaMetricaRowSchema>;
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;

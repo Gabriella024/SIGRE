@@ -23,7 +23,14 @@ export interface OrientacionDetalle extends Orientacion {
   fuente: string | null;
   idCentroSena: string | null;
   centroNombre: string | null;
+  orientadorNombre: string | null;
   observaciones: string | null;
+}
+
+export interface JornadaMetricas {
+  inscritos: number;
+  asistieron: number;
+  noAsistieron: number;
 }
 
 export interface EntrepreneurOrientationHistoryItem {
@@ -87,10 +94,9 @@ export interface RegistrarAsistenciaInput {
   observacion: string | null;
 }
 
-export interface InscribirEmprendedorInput {
-  orientacionId: string;
-  emprendedorId: string;
-}
+export type InscribirEmprendedorInput =
+  | { modo: "autoinscripcion"; orientacionId: string }
+  | { modo: "manual"; orientacionId: string; emprendedorId: string };
 
 export type JornadaWritableField = (typeof JORNADA_WRITABLE_FIELDS)[number];
 

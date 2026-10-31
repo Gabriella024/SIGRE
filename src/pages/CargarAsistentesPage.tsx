@@ -17,7 +17,7 @@ import { TablaResultadosReadOnly } from '../features/orientation-mass/components
 
 import { useAsistentesCarga } from '@/features/orientation-mass/hooks/useOrientationUpload';
 import { descargarPlantillaAsistentes } from '@/features/orientation-mass/services/massOrientationService';
-import { CatalogSelect, CatalogStatus } from '@/features/entrepreneurs/components/EntrepreneurProfileFields';
+import { CatalogSelect } from '@/features/entrepreneurs/components/EntrepreneurProfileFields';
 import { MutationAlert } from '@/components/ui/mutation-alert';
 import { Label } from '@/components/ui/label';
 import { formatDateOnly, formatTime } from '@/lib/format';
@@ -40,6 +40,7 @@ export default function CargarAsistentesPage() {
     filtroTab,
     setFiltroTab,
     resumenCounts,
+    resumenCarga,
     isProcessing,
     canRegister,
     registro,
@@ -105,13 +106,22 @@ export default function CargarAsistentesPage() {
                     </option>
                   ))}
                 </CatalogSelect>
-                <CatalogStatus
-                  query={jornadasQuery}
-                  loadingMessage="Cargando jornadas..."
-                  isEmpty={jornadas.length === 0}
-                  empty={<p className="text-xs text-slate-500">No tienes jornadas visibles para asociar asistentes.</p>}
-                  description="Los asistentes del archivo se asociarán a esta jornada."
-                />
+                {jornadasQuery.isLoading ? (
+                  <p className="text-xs text-slate-500">Cargando jornadas...</p>
+                ) : jornadasQuery.error ? (
+                  <div role="alert" className="flex flex-wrap items-center gap-2 text-sm text-rose-700">
+                    <span>{jornadasQuery.error}</span>
+                    <button type="button" onClick={jornadasQuery.reload} className="rounded border border-slate-300 px-2 py-0.5 text-xs">
+                      Reintentar
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-500">
+                    {jornadas.length === 0
+                      ? 'No tienes jornadas visibles para asociar asistentes.'
+                      : 'Los asistentes del archivo se asociarán a esta jornada.'}
+                  </p>
+                )}
               </div>
 
               {!archivo ? (
@@ -167,6 +177,25 @@ export default function CargarAsistentesPage() {
           <div className="space-y-6">
             <InfoOrientacionCard {...infoOrientacion} />
 
+            {resumenCarga && (
+              <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {[
+                  ['Registrados nuevos', resumenCarga.validas],
+                  ['Existentes', resumenCarga.existentes],
+                  ['Inscritos en la jornada', resumenCarga.inscritos],
+                  ['Prospectos orientados', resumenCarga.prospectos],
+                  ['Invitaciones en cola', resumenCarga.invitaciones],
+                  ['Errores', resumenCarga.errores],
+                  ['Duplicados', resumenCarga.duplicadas],
+                ].map(([etiqueta, valor]) => (
+                  <div key={etiqueta} className="rounded-xl border border-slate-200 bg-white p-3">
+                    <dt className="text-xs text-slate-500">{etiqueta}</dt>
+                    <dd className="text-lg font-semibold text-slate-900">{valor}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+
             <ValidationSummaryCards
               filasTotales={filasValidacion.length}
               filtroActivo={filtroTab}
@@ -220,6 +249,25 @@ export default function CargarAsistentesPage() {
         {pasoActual === 3 && infoOrientacion && (
           <div className="space-y-6">
             <InfoOrientacionCard {...infoOrientacion} />
+
+            {resumenCarga && (
+              <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {[
+                  ['Registrados nuevos', resumenCarga.validas],
+                  ['Existentes', resumenCarga.existentes],
+                  ['Inscritos en la jornada', resumenCarga.inscritos],
+                  ['Prospectos orientados', resumenCarga.prospectos],
+                  ['Invitaciones en cola', resumenCarga.invitaciones],
+                  ['Errores', resumenCarga.errores],
+                  ['Duplicados', resumenCarga.duplicadas],
+                ].map(([etiqueta, valor]) => (
+                  <div key={etiqueta} className="rounded-xl border border-slate-200 bg-white p-3">
+                    <dt className="text-xs text-slate-500">{etiqueta}</dt>
+                    <dd className="text-lg font-semibold text-slate-900">{valor}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
 
             <TablaResultadosReadOnly filas={filasValidacion} resumenCounts={resumenCounts} />
 

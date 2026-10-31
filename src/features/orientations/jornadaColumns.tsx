@@ -9,7 +9,7 @@ import { formatDateOnly, formatTime } from "@/lib/format";
 import { AttendanceButton, EnrollButton, LugarLink, PendingValue } from "./components/JornadaCells";
 import { modalidadLabel } from "./utils/orientationUtils";
 
-import type { Orientacion } from "./types/orientations";
+import type { JornadaMetricas, Orientacion } from "./types/orientations";
 
 const iconButton =
   "rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent";
@@ -71,11 +71,18 @@ const cupoColumn: Column<Orientacion> = {
   render: (row) => <NullableText value={row.cupo === null ? null : String(row.cupo)} />,
 };
 
-const pendingColumn = (key: string, label: string): Column<Orientacion> => ({
+const metricaColumn = (
+  key: keyof JornadaMetricas,
+  label: string,
+  metricas: ReadonlyMap<string, JornadaMetricas> | null
+): Column<Orientacion> => ({
   key,
   label,
   align: "center",
-  render: () => <PendingValue />,
+  render: (row) => {
+    const valor = metricas?.get(row.id)?.[key];
+    return valor === undefined ? <PendingValue label="Métrica no disponible" /> : valor;
+  },
 });
 
 type DetailHandler = (row: Orientacion) => void;
@@ -153,10 +160,12 @@ export function buildOrientadorColumns({
   onDetail,
   onAttendance,
   onEnroll,
+  metricas,
 }: {
   onDetail: DetailHandler;
   onAttendance?: DetailHandler;
   onEnroll?: DetailHandler;
+  metricas: ReadonlyMap<string, JornadaMetricas> | null;
 }): Column<Orientacion>[] {
   return [
     temaColumn,
@@ -164,9 +173,9 @@ export function buildOrientadorColumns({
     modalidadColumn,
     lugarColumn,
     cupoColumn,
-    pendingColumn("inscritos", "INSCRITOS"),
-    pendingColumn("asistentes", "ASISTENTES"),
-    pendingColumn("noAsistentes", "NO ASISTENTES"),
+    metricaColumn("inscritos", "INSCRITOS", metricas),
+    metricaColumn("asistieron", "ASISTENTES", metricas),
+    metricaColumn("noAsistieron", "NO ASISTENTES", metricas),
     {
       key: "acciones",
       label: "ACCIONES",

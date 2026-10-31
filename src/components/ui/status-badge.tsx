@@ -16,9 +16,11 @@ const FALLBACK_TONE = "bg-slate-100 text-slate-700";
 
 export function StatusBadge({
   value,
+  label,
   emptyLabel = "Sin estado",
 }: {
   value: string | null;
+  label?: string | null;
   emptyLabel?: string;
 }) {
   if (!value?.trim()) {
@@ -31,7 +33,7 @@ export function StatusBadge({
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${tone}`}
     >
-      {formatStatusLabel(value)}
+      {label ?? formatStatusLabel(value)}
     </span>
   );
 }

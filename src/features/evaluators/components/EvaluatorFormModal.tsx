@@ -73,7 +73,10 @@ function EvaluatorForm({ evaluator, registeredUserIds, feedback, onSubmit, onClo
       entidad: nullableTrim(parsed.data.entidad),
       experiencia: nullableTrim(parsed.data.experiencia),
     });
-    if (result.success) onClose();
+    if (result.success) {
+      onReload();
+      onClose();
+    }
   };
 
   return (

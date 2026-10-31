@@ -11,7 +11,7 @@ const AVATAR_COLORS = ["bg-blue-500", "bg-red-400", "bg-teal-500"];
 export const INITIAL_RESULT_FILTERS: ResultFiltersValue = { search: "", resultado: "", fechaPitch: "" };
 
 export function toEvaluacion(row: MiAsignacionRow): Evaluacion {
-  const calificacion = row.calificaciones_pitch?.[0] ?? null;
+  const calificacion = row.calificaciones_pitch;
   return {
     id: row.id,
     pitchId: row.pitch?.id ?? null,
@@ -38,9 +38,9 @@ function countVotes(resultados: readonly (string | null)[], value: string): numb
 
 export function toEvaluationResult(row: ResultadoPitchRow): EvaluationResults {
   const activas = (row.asignacion_evaluadores ?? []).filter((item) => item.deleted_at === null);
-  const calificaciones = activas.flatMap((item) => (item.calificaciones_pitch ?? []).slice(0, 1));
+  const calificaciones = activas.flatMap((item) => (item.calificaciones_pitch ? [item.calificaciones_pitch] : []));
   const puntajes = calificaciones.flatMap((item) => (item.puntaje === null ? [] : [item.puntaje]));
-  const calificados = activas.filter((item) => (item.calificaciones_pitch ?? []).length > 0).length;
+  const calificados = calificaciones.length;
   const resultados = calificaciones.map((item) => item.resultado);
 
   return {
@@ -55,7 +55,7 @@ export function toEvaluationResult(row: ResultadoPitchRow): EvaluationResults {
         nombre,
         iniciales: initials(nombre),
         color: AVATAR_COLORS[index % AVATAR_COLORS.length],
-        calificado: (item.calificaciones_pitch ?? []).length > 0,
+        calificado: item.calificaciones_pitch !== null,
       };
     }),
     asignados: activas.length,

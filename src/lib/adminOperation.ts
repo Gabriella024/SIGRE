@@ -44,6 +44,7 @@ export function toAdminOperationError(error: DbError, copy: AdminErrorCopy): Adm
     case "P0002":
       return new AdminOperationError(copy.notFound ?? copy.fallback, { conflict: true });
     case "40001":
+    case "PT409":
       return new AdminOperationError(CONFLICT_MESSAGE, { conflict: true });
     case "22023":
     case "23514":

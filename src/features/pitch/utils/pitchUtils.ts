@@ -5,7 +5,7 @@ import {
   MIN_EVALUADORES_POR_PITCH,
 } from "@/features/evaluators/utils/evaluatorUtils";
 
-import { PITCH_ESTADOS_REQUIEREN_EVALUADORES, type AsignacionRow, type PitchRow, type PreparacionRow } from "../schemas/pitchSchema";
+import { PITCH_ESTADOS, PITCH_ESTADOS_REQUIEREN_EVALUADORES, type AsignacionRow, type PitchRow, type PreparacionRow } from "../schemas/pitchSchema";
 import type { Pitch, PitchAssignment, PitchFilters, PitchPreparation } from "../types/pitch";
 
 export const INITIAL_PITCH_FILTERS: PitchFilters = { search: "", estado: "", modalidad: "", fecha: "" };
@@ -67,6 +67,16 @@ export function toDateTimeLocal(value: string | null): string {
   if (Number.isNaN(date.getTime())) return "";
   const offset = date.getTimezoneOffset() * 60000;
   return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
+const PITCH_ESTADOS_SIN_CAMBIO_EVALUADORES: readonly string[] = ["en_evaluacion", "cerrado", "cancelado"];
+
+export function pitchEstadoLabel(estado: string | null): string | null {
+  return PITCH_ESTADOS.find((item) => item.value === estado)?.label ?? null;
+}
+
+export function canRemoveEvaluators(pitch: Pick<Pitch, "estado">): boolean {
+  return !PITCH_ESTADOS_SIN_CAMBIO_EVALUADORES.includes(pitch.estado ?? "");
 }
 
 export function canAssignMoreEvaluators(pitch: Pick<Pitch, "totalEvaluadores">): boolean {

@@ -23,6 +23,7 @@ import InformesPage from "./pages/ReportPage";
 import ConfiguracionPage from "./pages/SettingsPage";
 import AccessControlPage from "./pages/AccessControlPage";
 import CargarAsistentesPage from "./pages/CargarAsistentesPage";
+import InvitacionRutaPage from "./pages/InvitacionRutaPage";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/invitacion/:token" element={<InvitacionRutaPage />} />
           <Route path="/" element={<HomeRedirect />} />
 
           <Route
