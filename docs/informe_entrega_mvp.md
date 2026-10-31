@@ -20,7 +20,7 @@ despliegue en PRODUCCIÓN (ver §5).
 | 8 | Evaluadores | 100 % | Registro desde usuarios con rol Evaluador, edición, activación/inactivación, conteo de asignaciones. | — |
 | 9 | Evaluaciones | 95 % | El Evaluador ve y califica solo sus asignaciones (con miniperfil del proyecto); consolidado de votos y promedio. | Regla de aprobación final del pitch: **pendiente de definición institucional**. |
 | 10 | Informes | 95 % | Seis informes con filtros y exportación a Excel (emprendedores, proyectos, orientaciones, retos, pitch, evaluaciones). | El resultado final del pitch se muestra como «Pendiente de confirmación de regla». |
-| 11 | Usuarios (A5) | 85 % | Listado, edición, cambio de estado, invitación A5. | Activación de cuentas reales (§4). |
+| 11 | Usuarios (A5) | 85 % | Listado, edición, cambio de estado, invitación A5 (versión original desplegada). | Desplegar y probar la A5 del repositorio; activación de cuentas reales (§4). |
 | 12 | Control de accesos | 95 % | Matriz de permisos por rol y pantalla, asignación de roles. | — |
 | 13 | Configuración | 90 % | Municipios, centros SENA y pantallas. | Sin prueba de extremo a extremo en este cierre. |
 
@@ -71,9 +71,19 @@ usuario, y el enlace ya no admite una segunda respuesta.
    Sin aplicar.
 3. **Migración A5-11: aplicada en STAGING el 2026-10-30,** con autorización independiente.
    - Postflight 10/10, pruebas de duplicados 7/7 revertidas, y usuarios, roles, invitaciones y Auth sin cambios.
-   - Pendiente opcional: probar de extremo a extremo la Edge Function A5 con una sesión de administrador en
-     `http://localhost:5173`, que es el único origen permitido.
    - Detalle en `supabase/proposals/a5_11_aplicacion_staging_pendiente.md`.
+4. **Falta desplegar y probar la versión nueva de la Edge Function A5.** Verificado en solo lectura en el Dashboard
+   de STAGING el 2026-10-30:
+   - la función desplegada es la **versión original**: idéntica a
+     `supabase/backups/sigre-admin-invitar-usuario/index.original.ts` (SHA-256 `18d0d37f…`, 360 líneas);
+   - esa versión **no usa** `sigre_invitaciones` ni `numero_documento` (A5-11). Solo busca correo y documento
+     duplicados en `usuarios` y responde 409 antes de invitar;
+   - la versión del repositorio (`supabase/functions/sigre-admin-invitar-usuario/index.ts`) es la que usa A5-11 y
+     **nunca se ha desplegado**. Hasta entonces, A5-11 no tiene efecto en las invitaciones;
+   - el despliegue (`supabase functions deploy sigre-admin-invitar-usuario`) requiere autorización expresa.
+     Después hay que probar con una sesión de administrador en `http://localhost:5173`, que es el único origen
+     permitido: con un correo DEMO existente, 409 sin invitar; y una invitación real solo con un correo controlado,
+     después de resolver el pendiente 2.
 
 ## 5. Reconstrucción desde el repositorio
 

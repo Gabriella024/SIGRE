@@ -19,7 +19,10 @@ momentos:
   responde error y A5 devuelve 500: «No se pudieron verificar duplicados».
 - **Al registrar el seguimiento**, inserta `numero_documento`.
 
-Por eso, una invitación A5 en STAGING fallaba antes de crear la cuenta. No crea usuarios a medias.
+Con esa versión, una invitación habría fallado antes de crear la cuenta. **Corrección (2026-10-30):** en STAGING
+está desplegada la versión original (`supabase/backups/sigre-admin-invitar-usuario/index.original.ts`, SHA-256
+`18d0d37f…`), que no usa `sigre_invitaciones`. Por eso la falta de A5-11 no afectaba a las invitaciones de STAGING,
+y A5-11 no tendrá efecto hasta que se despliegue la versión del repositorio, lo que requiere autorización.
 `sigre_invitaciones` tiene 0 filas.
 
 ## Qué hace la migración
@@ -74,5 +77,6 @@ reconstrucción local incluye A5-11.
 - **Sin verificar de extremo a extremo:** la llamada a la Edge Function A5. Solo admite el origen
   `http://localhost:5173` (`SIGRE_ALLOWED_ORIGINS`) y requiere una sesión de administrador en ese origen. La prueba
   segura es invitar un correo que ya existe en `usuarios` (por ejemplo, un evaluador DEMO): A5 responde 409 antes
-  de invitar, tanto en la versión del repositorio como en la original. Sin enviar invitaciones ni crear cuentas.
+  de invitar, tanto en la versión del repositorio como en la original (la desplegada). Sin enviar invitaciones ni
+  crear cuentas. Para ejercitar A5-11 hay que desplegar antes la versión del repositorio.
 - **Registro para la CLI:** `supabase migration repair --status applied 20261026120000`.
