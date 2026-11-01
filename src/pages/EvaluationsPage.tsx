@@ -17,6 +17,8 @@ import { APPROVAL_RULE_PENDING_MESSAGE, INITIAL_RESULT_FILTERS, filterResults } 
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/query-state'
 import { PendingIntegrationNotice } from '@/components/ui/pending-integration'
 import { FeedbackMessage } from '@/components/ui/feedback-message'
+import { PageHeader } from '@/components/ui/page-header'
+import { ENTREPRENEUR_RESULT_COLUMNS } from '@/features/evaluations/resultadosColumns'
 import type { Evaluacion } from '@/features/evaluations/types/evaluacion'
 import type { EvaluationResults } from '@/features/evaluations/types/resultado'
 
@@ -95,6 +97,21 @@ function AdminAssignments({ rows, onAssign }: { rows: EvaluationResults[]; onAss
   )
 }
 
+function EntrepreneurResults({ rows }: { rows: EvaluationResults[] }) {
+  return (
+    <div className="space-y-4">
+      <PendingIntegrationNotice title="Resultado final en definición">{APPROVAL_RULE_PENDING_MESSAGE}</PendingIntegrationNotice>
+      <ResultTable data={rows} columns={ENTREPRENEUR_RESULT_COLUMNS} />
+    </div>
+  )
+}
+
+const PAGE_COPY = {
+  evaluador: { title: 'Mis evaluaciones', description: 'Pitch asignados para tu calificación.' },
+  emprendedor: { title: 'Evaluación de mi pitch', description: 'Calificaciones registradas por el panel evaluador de tu pitch.' },
+  gestion: { title: 'Gestión de Evaluaciones', description: 'Asignaciones y resultados consolidados de las calificaciones.' },
+}
+
 export function EvaluationsPage() {
   const access = useEvaluationAccess()
   const navigate = useNavigate()
@@ -104,14 +121,15 @@ export function EvaluationsPage() {
   const rows = useMemo(() => results.data ?? [], [results.data])
   const filtered = useMemo(() => filterResults(rows, filters), [rows, filters])
   const tab = access.canViewResults ? activeTab : 'asignaciones'
+  const copy = access.evaluatorScoped ? PAGE_COPY.evaluador : access.entrepreneurScoped ? PAGE_COPY.emprendedor : PAGE_COPY.gestion
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-900">
-        {access.evaluatorScoped ? 'Mis evaluaciones' : 'Gestión de Evaluaciones'}
-      </h1>
+    <div className="space-y-6">
+      <PageHeader title={copy.title} description={copy.description} />
 
-      <EvaluationTabs activeTab={tab} onTabChange={setActiveTab} showResults={access.canViewResults} />
+      {!access.entrepreneurScoped && (
+        <EvaluationTabs activeTab={tab} onTabChange={setActiveTab} showResults={access.canViewResults} />
+      )}
 
       {access.evaluatorScoped ? (
         <EvaluatorAssignments />
@@ -122,7 +140,9 @@ export function EvaluationsPage() {
       ) : results.error ? (
         <ErrorState message="No fue posible cargar las evaluaciones." detail={results.error} onRetry={results.reload} />
       ) : rows.length === 0 ? (
-        <EmptyState message="No hay pitch registrados o visibles para tu usuario." />
+        <EmptyState message={access.entrepreneurScoped ? 'Tu pitch aún no tiene calificaciones registradas.' : 'No hay pitch registrados o visibles para tu usuario.'} />
+      ) : access.entrepreneurScoped ? (
+        <EntrepreneurResults rows={rows} />
       ) : tab === 'asignaciones' ? (
         <AdminAssignments rows={rows} onAssign={access.canManageAssignments ? () => navigate('/pitch') : undefined} />
       ) : (

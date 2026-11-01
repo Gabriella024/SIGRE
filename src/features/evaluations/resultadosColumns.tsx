@@ -57,3 +57,9 @@ export const RESULT_COLUMNS: Column<EvaluationResults>[] = [
     render: (row) => <ResultBadge estado={row.resultado} />,
   },
 ]
+
+const ENTREPRENEUR_HIDDEN_COLUMNS = new Set(["emprendedor", "evaluadores"])
+
+export const ENTREPRENEUR_RESULT_COLUMNS: Column<EvaluationResults>[] = RESULT_COLUMNS.filter(
+  (column) => !ENTREPRENEUR_HIDDEN_COLUMNS.has(column.key)
+)

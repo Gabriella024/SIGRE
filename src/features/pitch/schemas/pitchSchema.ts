@@ -5,11 +5,12 @@ import { PERSONA_COLUMNS, embeddedOne, personaRowSchema } from "@/lib/personName
 const proyectoEmbedSchema = embeddedOne(
   z.object({
     titulo: z.string(),
+    deleted_at: z.string().nullable().optional(),
     emprendedor: embeddedOne(z.object({ nombre_completo: z.string() })),
   })
 );
 
-const PROYECTO_EMBED = "proyecto:proyectos(titulo, emprendedor:emprendedores(nombre_completo))";
+const PROYECTO_EMBED = "proyecto:proyectos(titulo, deleted_at, emprendedor:emprendedores(nombre_completo))";
 
 export const ASIGNACION_COLUMNS = `id, estado, fecha_asignacion, updated_at, deleted_at, id_evaluador_fk, evaluador:evaluadores(especialidad, id_usuario_fk, usuario:usuarios(${PERSONA_COLUMNS}))`;
 

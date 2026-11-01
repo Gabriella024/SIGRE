@@ -38,6 +38,7 @@ export function toPitch(row: PitchRow): Pitch {
     updatedAt: row.updated_at,
     evaluadores,
     totalEvaluadores: evaluadores.length,
+    proyectoArchivado: Boolean(row.proyecto?.deleted_at),
   };
 }
 

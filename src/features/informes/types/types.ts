@@ -61,6 +61,7 @@ export interface ComplianceReportRow {
   sustentaciones: number;
   ultimaSustentacion: string | null;
   ultimoResultado: string | null;
+  archivado: boolean;
 }
 
 export interface PitchReportRow extends Pitch {
@@ -81,6 +82,7 @@ export interface EvaluationReportRow {
   puntaje: number | null;
   estado: string;
   miResultado: string | null;
+  proyectoArchivado: boolean;
 }
 
 export interface ReportRowMap {

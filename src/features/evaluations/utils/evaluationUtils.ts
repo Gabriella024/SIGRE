@@ -6,7 +6,13 @@ import type { MiAsignacionRow, ResultadoPitchRow } from "../schemas/evaluationsS
 import type { Evaluacion } from "../types/evaluacion";
 import type { ConsolidatedResult, EvaluationResults, ResultFiltersValue } from "../types/resultado";
 
-const AVATAR_COLORS = ["bg-blue-500", "bg-red-400", "bg-teal-500"];
+const AVATAR_COLORS = ["bg-brand-700", "bg-slate-600", "bg-sky-700"];
+
+const ENTREPRENEUR_EXCLUDED_ROLES = ["administrador", "coordinador", "orientador", "evaluador"];
+
+export function isEntrepreneurScoped(roles: readonly string[]): boolean {
+  return roles.includes("emprendedor") && !roles.some((role) => ENTREPRENEUR_EXCLUDED_ROLES.includes(role));
+}
 
 export const INITIAL_RESULT_FILTERS: ResultFiltersValue = { search: "", resultado: "", fechaPitch: "" };
 
@@ -22,6 +28,7 @@ export function toEvaluacion(row: MiAsignacionRow): Evaluacion {
     modalidad: row.pitch?.modalidad ?? null,
     estado: calificacion ? "Completado" : "Pendiente",
     calificacion,
+    proyectoArchivado: Boolean(row.pitch?.proyecto?.deleted_at),
   };
 }
 
@@ -64,6 +71,7 @@ export function toEvaluationResult(row: ResultadoPitchRow): EvaluationResults {
     votosNoAprobado: countVotes(resultados, "no_aprobado"),
     puntajePromedio: puntajes.length ? Math.round(puntajes.reduce((sum, value) => sum + value, 0) / puntajes.length) : null,
     resultado: consolidate(activas.length, calificados),
+    proyectoArchivado: Boolean(row.proyecto?.deleted_at),
   };
 }
 

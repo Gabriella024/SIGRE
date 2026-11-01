@@ -24,6 +24,7 @@ export interface Pitch {
   updatedAt: string | null
   evaluadores: PitchAssignment[]
   totalEvaluadores: number
+  proyectoArchivado: boolean
 }
 
 export interface PitchPreparation {

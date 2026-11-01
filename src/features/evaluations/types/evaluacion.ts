@@ -17,6 +17,7 @@ export interface Evaluacion {
     modalidad: string | null
     estado: EstadoEvaluacion
     calificacion: Calificacion | null
+    proyectoArchivado: boolean
 }
 
 export interface RegistrarCalificacionInput {
@@ -28,6 +29,7 @@ export interface RegistrarCalificacionInput {
 
 export interface EvaluationCapabilities {
     evaluatorScoped: boolean
+    entrepreneurScoped: boolean
     canGrade: boolean
     canViewResults: boolean
     canManageAssignments: boolean

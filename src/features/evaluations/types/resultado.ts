@@ -20,6 +20,7 @@ export interface EvaluationResults {
     votosNoAprobado: number
     puntajePromedio: number | null
     resultado: ConsolidatedResult
+    proyectoArchivado: boolean
 }
 
 export interface ResultFiltersValue {

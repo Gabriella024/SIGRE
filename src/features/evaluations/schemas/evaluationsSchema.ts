@@ -2,11 +2,12 @@ import { z } from "zod";
 
 import { PERSONA_COLUMNS, embeddedOne, numericSchema, personaRowSchema } from "@/lib/personName";
 
-const PROYECTO_EMBED = "proyecto:proyectos(titulo, emprendedor:emprendedores(nombre_completo))";
+const PROYECTO_EMBED = "proyecto:proyectos(titulo, deleted_at, emprendedor:emprendedores(nombre_completo))";
 
 const proyectoEmbedSchema = embeddedOne(
   z.object({
     titulo: z.string(),
+    deleted_at: z.string().nullable().optional(),
     emprendedor: embeddedOne(z.object({ nombre_completo: z.string() })),
   })
 );

@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import MinimalTable from "@/components/ui/table/MinimalTable";
+import type { Column } from "@/components/ui/table/types";
 import type { EvaluationResults } from "@/features/evaluations/types/resultado";
 import { RESULT_COLUMNS } from "@/features/evaluations/resultadosColumns";
 
 export interface EvaluationResultsTableProps {
   data: EvaluationResults[];
+  columns?: Column<EvaluationResults>[];
   onEdit?: (evaluationResult: EvaluationResults) => void;
   onDelete?: (evaluationResult: EvaluationResults) => void;
 }
 
-export function ResultTable({ data, onEdit, onDelete }: EvaluationResultsTableProps) {
+export function ResultTable({ data, columns = RESULT_COLUMNS, onEdit, onDelete }: EvaluationResultsTableProps) {
   const [dynamicPageSize, setDynamicPageSize] = useState(8);
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export function ResultTable({ data, onEdit, onDelete }: EvaluationResultsTablePr
   return (
     <MinimalTable<EvaluationResults>
       data={data}
-      columns={RESULT_COLUMNS}
+      columns={columns}
       pageSize={dynamicPageSize}
       onEdit={onEdit}
       onDelete={onDelete}

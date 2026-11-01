@@ -3,6 +3,7 @@ import { personName } from "@/lib/personName";
 import { challengeLevel } from "@/features/challenges/utils/challengeUtils";
 import { MIN_EVALUADORES_POR_PITCH } from "@/features/evaluators/utils/evaluatorUtils";
 import { ESTADO_ASISTENCIA_OPTIONS } from "@/features/orientations/constants/jornada";
+import { isActiveEnrollment } from "@/features/orientations/utils/enrollmentStatus";
 import type { SigreRole } from "@/features/access-control/types/types";
 import type { EntrepreneurScope } from "@/features/entrepreneurs/types/entrepreneur";
 import type { EntrepreneurOrientationHistoryItem } from "@/features/orientations/types/orientations";
@@ -93,7 +94,7 @@ export function toOrientationReportRow(row: OrientacionReportRow): OrientationRe
     estado: row.estado,
     orientador: personName(row.orientador),
     cupo: row.cupo,
-    inscritos: countActive(row.orientacion_inscripciones),
+    inscritos: countActive(row.orientacion_inscripciones, (item) => isActiveEnrollment(item.estado)),
     asistieron: countActive(row.asistencias, (item) => item.estado_asistencia === "asistio"),
     noAsistieron: countActive(row.asistencias, (item) => item.estado_asistencia === "no_asistio"),
     miInscripcion: null,
@@ -138,6 +139,7 @@ export function toComplianceReportRow(row: CumplimientoReportRow): ComplianceRep
     sustentaciones: sustentaciones.length,
     ultimaSustentacion: ultima?.fecha_sustentacion ?? null,
     ultimoResultado: ultima?.resultado ?? null,
+    archivado: Boolean(row.proyecto?.deleted_at || row.reto?.deleted_at),
   };
 }
 
@@ -164,6 +166,7 @@ export function fromConsolidatedResult(row: EvaluationResults): EvaluationReport
     puntaje: row.puntajePromedio,
     estado: row.resultado,
     miResultado: null,
+    proyectoArchivado: row.proyectoArchivado,
   };
 }
 
@@ -181,6 +184,7 @@ export function fromMyEvaluation(row: Evaluacion): EvaluationReportRow {
     puntaje: row.calificacion?.puntaje ?? null,
     estado: row.estado,
     miResultado: labelOf(row.calificacion?.resultado ?? null),
+    proyectoArchivado: row.proyectoArchivado,
   };
 }
 

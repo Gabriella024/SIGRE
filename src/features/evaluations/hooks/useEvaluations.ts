@@ -8,6 +8,7 @@ import { useAdminMutation } from "@/hooks/useAdminMutation";
 import { useUserScopedQuery } from "@/hooks/useUserScopedQuery";
 
 import { getConsolidatedResults, getMyEvaluations, registrarCalificacion } from "../service/evaluationsService";
+import { isEntrepreneurScoped } from "../utils/evaluationUtils";
 
 import type { Evaluacion, EvaluationCapabilities } from "../types/evaluacion";
 import type { EvaluationResults } from "../types/resultado";
@@ -18,6 +19,7 @@ export function useEvaluationAccess(): EvaluationCapabilities {
     const evaluatorScoped = isEvaluatorScoped(roles);
     return {
       evaluatorScoped,
+      entrepreneurScoped: !evaluatorScoped && isEntrepreneurScoped(roles),
       canGrade: evaluatorScoped && (can("evaluaciones", "crear", SCREEN_CODES.evaluaciones) || can("evaluaciones", "editar", SCREEN_CODES.evaluaciones)),
       canViewResults: !evaluatorScoped && can("evaluaciones", "ver", SCREEN_CODES.evaluaciones),
       canManageAssignments: !evaluatorScoped && can("pitch", "editar", SCREEN_CODES.pitch),
