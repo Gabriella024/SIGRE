@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { AdminOperationError, type MutationResult } from "@/lib/adminOperation";
 import { pendingBackendMessage, type BackendRequirement } from "@/lib/backendContract";
 

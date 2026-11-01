@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getAllEntrepreneurs } from "@/features/entrepreneurs/services/entrepreneursService";
 import type { EntrepreneurScope } from "@/features/entrepreneurs/types/entrepreneur";
 import { useUserScopedQuery } from "@/hooks/useUserScopedQuery";

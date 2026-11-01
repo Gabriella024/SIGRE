@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 
 import { LoginForm } from "@/features/auth/components/LoginForm";
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export function LoginPage() {
   const { user, isLoading } = useAuth()

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
 import { z } from "zod";
 
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 import {
   DEFAULT_ENTREPRENEUR_SORT,

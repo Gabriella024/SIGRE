@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useAccessControl } from '@/features/access-control/hooks/useAccessControl';
 import { SCREEN_CODES } from '@/features/access-control/constants/screens';
 import { useOrientationAccess } from '@/features/orientations/hooks/useOrientationAccess';

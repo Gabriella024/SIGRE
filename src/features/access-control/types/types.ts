@@ -20,6 +20,7 @@ export interface RolePermissionEntry {
   id: string;
   roleId: number;
   screenActionId: string;
+  enabled: boolean;
   level: string;
   status: string | null;
 }

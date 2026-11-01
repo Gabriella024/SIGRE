@@ -93,15 +93,15 @@ export function getRolePermissions(): Promise<RolePermissionEntry[]> {
   return fetchAllPagesWithRetry(getRolePermissionsPage);
 }
 
-export async function guardarPermisosRolAdmin(roleId: number, changes: PermissionChange[]): Promise<string> {
+export async function guardarPermisosRolAdmin(roleId: number, permissions: PermissionChange[]): Promise<string> {
   const operation = "Guardar permisos del rol";
   assertBackendAvailable({ name: "sigre_admin_guardar_permisos_rol", operation });
 
   const { data, error } = await supabase.rpc("sigre_admin_guardar_permisos_rol", {
     p_id_rol: roleId,
-    p_permisos: changes.map((change) => ({
-      id_pantalla_accion: change.screenActionId,
-      nivel_acceso: change.level,
+    p_permisos: permissions.map((permission) => ({
+      id_pantalla_accion: permission.screenActionId,
+      nivel_acceso: permission.level,
     })),
   });
 

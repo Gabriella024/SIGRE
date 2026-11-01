@@ -13,6 +13,7 @@ import {
   levelGrants,
   levelsForRole,
   toPermissionChanges,
+  toPermissionPayload,
 } from "../utils/accessControlUtils";
 
 import type { MutationFeedback } from "@/hooks/useAdminMutation";
@@ -33,7 +34,7 @@ interface PermisosSectionProps {
   ownPermissionsCount: number;
   ownRoles: readonly string[];
   feedback: MutationFeedback;
-  onSave?: (roleId: number, changes: PermissionChange[]) => Promise<MutationResult>;
+  onSave?: (roleId: number, permissions: PermissionChange[]) => Promise<MutationResult>;
   onSaved: (roleName: string) => void;
 }
 
@@ -41,7 +42,7 @@ const LEVEL_STYLES: Record<AccessLevel, string> = {
   SA: "bg-slate-100 text-slate-500",
   SL: "bg-sky-100 text-sky-800",
   LE: "bg-amber-100 text-amber-800",
-  AT: "bg-emerald-100 text-emerald-800",
+  AT: "bg-brand-100 text-brand-800",
 };
 
 const LEVEL_LABEL = Object.fromEntries(ACCESS_LEVELS.map((level) => [level.value, level.label])) as Record<
@@ -92,8 +93,9 @@ export default function PermisosSection({
   const levelOf = (screenActionId: string): AccessLevel => draft[screenActionId] ?? original[screenActionId] ?? "SA";
 
   const save = async () => {
-    if (!onSave || !role) return;
-    const result = await onSave(role.id, changes);
+    if (!onSave || !role || changes.length === 0) return;
+    const screenActionIds = new Set((screenActions.data ?? []).map((entry) => entry.id));
+    const result = await onSave(role.id, toPermissionPayload(original, draft, screenActionIds));
     if (result.success) {
       setDraft({});
       onSaved(role.name);
@@ -109,7 +111,7 @@ export default function PermisosSection({
     <section id="permisos" className="scroll-mt-6">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold text-[#0f2f4a]">
+          <h2 className="text-xl font-semibold text-slate-900">
             Permisos
             {!editable && <ReadOnlyBadge />}
           </h2>
@@ -133,7 +135,7 @@ export default function PermisosSection({
               type="button"
               onClick={() => void save()}
               disabled={feedback.isSubmitting || feedback.pendingBackend !== null}
-              className="inline-flex items-center gap-2 rounded-md bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00] disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-md bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60"
             >
               {feedback.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               Guardar cambios ({changes.length})
@@ -173,7 +175,7 @@ export default function PermisosSection({
               onChange={(event) => setSelectedRoleId(Number(event.target.value))}
               disabled={changes.length > 0 || feedback.isSubmitting}
               aria-label="Rol"
-              className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-700 outline-none focus:border-[#39a900] focus:ring-2 focus:ring-green-100 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-700 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {roles.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -231,7 +233,7 @@ export default function PermisosSection({
                               onChange={(event) =>
                                 setDraft((current) => ({ ...current, [entry.id]: event.target.value as AccessLevel }))
                               }
-                              className={`h-8 rounded-md border border-slate-200 px-1.5 font-mono text-xs font-semibold outline-none focus:ring-2 focus:ring-green-100 ${LEVEL_STYLES[level]}`}
+                              className={`h-8 rounded-md border border-slate-200 px-1.5 font-mono text-xs font-semibold outline-none focus:ring-2 focus:ring-brand-100 ${LEVEL_STYLES[level]}`}
                             >
                               {ACCESS_LEVELS.map((option) => (
                                 <option key={option.value} value={option.value}>

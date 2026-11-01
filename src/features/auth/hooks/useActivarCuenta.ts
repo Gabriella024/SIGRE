@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { redireccionAuthInicial } from "@/lib/supabase";
 
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "./useAuth";
 import { establecerContrasena } from "../services/authService";
 import type { ActivacionFormData } from "../schemas/activacionSchema";
 

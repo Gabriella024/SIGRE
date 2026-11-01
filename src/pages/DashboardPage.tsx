@@ -16,7 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
-import { useAuth } from '@/features/auth/context/AuthContext'
+import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useAccessControl } from '@/features/access-control/hooks/useAccessControl'
 import { MetricCard } from '@/components/ui/metric-card'
 import { PageHeader } from '@/components/ui/page-header'

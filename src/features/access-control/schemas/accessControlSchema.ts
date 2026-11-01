@@ -31,12 +31,13 @@ export const pantallaAccionRowSchema = z.object({
 
 export type PantallaAccionRow = z.infer<typeof pantallaAccionRowSchema>;
 
-export const ROL_PERMISO_COLUMNS = "id, id_rol_fk, id_pantalla_accion_fk, nivel_acceso, estado";
+export const ROL_PERMISO_COLUMNS = "id, id_rol_fk, id_pantalla_accion_fk, habilitado, nivel_acceso, estado";
 
 export const rolPermisoRowSchema = z.object({
   id: z.union([z.string(), z.number()]).transform(String),
   id_rol_fk: z.number().int(),
   id_pantalla_accion_fk: z.string(),
+  habilitado: z.boolean().nullable(),
   nivel_acceso: z.string(),
   estado: z.string().nullable(),
 });

@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -9,29 +7,19 @@ import {
 } from "react";
 
 import type { ReactNode } from "react";
-import type { Session, User } from "@supabase/supabase-js";
+import type { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/lib/supabase";
 import { getMyAccess } from "@/features/access-control/services/accessControlService";
+
+import { AuthContext } from "./authContextValue";
+import type { AuthContextType } from "./authContextValue";
 
 import type {
   PermissionDifference,
   SigrePermission,
   SigreRole,
 } from "@/features/access-control/types/types";
-
-type AuthContextType = {
-  user: User | null;
-  session: Session | null;
-  isLoading: boolean;
-  roles: SigreRole[];
-  permissions: SigrePermission[];
-  permissionDifferences: PermissionDifference[];
-  permissionsLoading: boolean;
-  permissionsError: string | null;
-  refreshPermissions: () => Promise<boolean>;
-  logout: () => Promise<void>;
-};
 
 type AccessState = {
   userId: string | null;
@@ -56,10 +44,6 @@ const RETRY_DELAY_MS = 800;
 
 const wait = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
-
-const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
 
 export function AuthProvider({
   children,
@@ -229,16 +213,4 @@ export function AuthProvider({
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error(
-      "useAuth debe usarse dentro de AuthProvider"
-    );
-  }
-
-  return context;
 }

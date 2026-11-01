@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DropdownMenu } from "radix-ui";
 import { Bell, ChevronDown, LogOut } from "lucide-react";
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
 import { entrepreneurSectionLabel, resolveEntrepreneurView } from "@/features/entrepreneurs/hooks/useEntrepreneurAccess";

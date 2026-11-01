@@ -39,9 +39,8 @@ const DENIED = "No tienes autorización para modificar el control de accesos.";
 export function useAccessAdminMutations() {
   const { canEdit } = useAccessAdminPermissions();
 
-  const savePermissions = useCallback(async (roleId: number, changes: PermissionChange[]) => {
-    if (changes.length === 0) throw new AdminOperationError("No hay cambios para guardar.");
-    return guardarPermisosRolAdmin(roleId, changes);
+  const savePermissions = useCallback(async (roleId: number, permissions: PermissionChange[]) => {
+    return guardarPermisosRolAdmin(roleId, permissions);
   }, []);
 
   const assignRoles = useCallback(async (idUsuario: string, updatedAt: string | null, idsRoles: number[]) => {

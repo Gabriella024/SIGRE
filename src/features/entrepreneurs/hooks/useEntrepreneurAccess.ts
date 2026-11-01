@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
 import type { SigreRole } from "@/features/access-control/types/types";
 

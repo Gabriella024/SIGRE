@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { MODULE_ROUTES } from "@/app/router/moduleRoutes";
 
 import type {

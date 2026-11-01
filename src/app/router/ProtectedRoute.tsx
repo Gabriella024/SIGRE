@@ -1,7 +1,7 @@
 
 import { Link, Navigate } from "react-router-dom";
 
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
 import { PermissionsErrorNotice } from "./PermissionsErrorNotice";
 

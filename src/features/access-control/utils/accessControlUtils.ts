@@ -41,6 +41,7 @@ export function toRolePermissionEntry(row: RolPermisoRow): RolePermissionEntry {
     id: row.id,
     roleId: row.id_rol_fk,
     screenActionId: row.id_pantalla_accion_fk,
+    enabled: row.habilitado === true,
     level: row.nivel_acceso,
     status: row.estado,
   };
@@ -125,11 +126,22 @@ export function groupByScreen(entries: readonly ScreenActionEntry[]): MatrixScre
   return [...screens.values()];
 }
 
+export function isEffectivePermission(
+  permission: RolePermissionEntry
+): permission is RolePermissionEntry & { level: AccessLevel } {
+  return (
+    permission.enabled &&
+    permission.status === "activo" &&
+    isAccessLevel(permission.level) &&
+    permission.level !== "SA"
+  );
+}
+
 export function levelsForRole(roleId: number, permissions: readonly RolePermissionEntry[]): Record<string, AccessLevel> {
   const levels: Record<string, AccessLevel> = {};
 
   for (const permission of permissions) {
-    if (permission.roleId === roleId && isActive(permission.status) && isAccessLevel(permission.level)) {
+    if (permission.roleId === roleId && isEffectivePermission(permission)) {
       levels[permission.screenActionId] = permission.level;
     }
   }
@@ -144,4 +156,15 @@ export function toPermissionChanges(
   return Object.entries(draft)
     .filter(([screenActionId, level]) => (original[screenActionId] ?? "SA") !== level)
     .map(([screenActionId, level]) => ({ screenActionId, level }));
+}
+
+export function toPermissionPayload(
+  original: Record<string, AccessLevel>,
+  draft: Record<string, AccessLevel>,
+  screenActionIds: ReadonlySet<string>
+): PermissionChange[] {
+  return Object.entries({ ...original, ...draft })
+    .filter(([screenActionId, level]) => level !== "SA" && screenActionIds.has(screenActionId))
+    .map(([screenActionId, level]) => ({ screenActionId, level }))
+    .sort((a, b) => a.screenActionId.localeCompare(b.screenActionId));
 }

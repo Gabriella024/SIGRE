@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 import { getEntrepreneurById } from "../services/entrepreneursService";
 import { isValidEntrepreneurId } from "../utils/entrepreneurUtils";

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { checkPermission } from "@/features/access-control/services/accessControlService";
 
 import { getProjectsForExport } from "../services/proyectsService";
