@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { useCallback, useMemo, useState } from "react"
 import { PitchPreparationTable, PitchTable } from "@/features/pitch/components/PitchTable"
 import { PitchFilters } from "@/features/pitch/components/PitchFilters"
@@ -63,11 +64,11 @@ export function PitchPage() {
   const current = tab === "R6" ? pitches : preparations
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900">
-        {access.evaluatorScoped ? "Mis pitch asignados" : "Gestión de Preparación y Pitch"}
-        {readOnly && <ReadOnlyBadge />}
-      </h1>
+    <div className="space-y-6">
+      <PageHeader
+        title={<>{access.evaluatorScoped ? "Mis pitch asignados" : "Gestión de Preparación y Pitch"}{readOnly && <ReadOnlyBadge />}</>}
+        description="Preparación del pitch, programación y panel de evaluadores (mínimo 2, máximo 3)."
+      />
 
       {!readOnly && guardar.pendingBackend && (
         <PendingIntegrationNotice title="Gestión de pitch pendiente de backend">

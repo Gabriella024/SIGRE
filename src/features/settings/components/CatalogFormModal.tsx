@@ -90,7 +90,7 @@ function CatalogForm<K extends string>({
         <Button type="button" variant="outline" onClick={onClose} disabled={feedback.isSubmitting}>
           Cancelar
         </Button>
-        <Button type="submit" className="gap-2 bg-[#39a900] hover:bg-[#2f8f00]" disabled={feedback.isSubmitting || blocked}>
+        <Button type="submit" className="gap-2 bg-brand-700 hover:bg-brand-800" disabled={feedback.isSubmitting || blocked}>
           {feedback.isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
           {feedback.isSubmitting ? "Guardando..." : "Guardar"}
         </Button>

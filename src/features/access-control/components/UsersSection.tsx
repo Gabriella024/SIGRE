@@ -40,7 +40,7 @@ export default function UsuariosSection({ users, isLoading, error, onRetry, onEd
   return (
     <section id="usuarios" className="scroll-mt-6">
       <div className="mb-4">
-        <h2 className="text-xl font-semibold text-[#0f2f4a]">
+        <h2 className="text-xl font-semibold text-slate-900">
           Usuarios y roles
           {!onEditRoles && <ReadOnlyBadge />}
         </h2>
@@ -67,7 +67,7 @@ export default function UsuariosSection({ users, isLoading, error, onRetry, onEd
                     setPage(1);
                   }}
                   placeholder="Buscar usuario, correo o rol"
-                  className="h-10 w-full rounded-md border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none transition focus:border-[#39a900] focus:ring-2 focus:ring-green-100"
+                  className="h-10 w-full rounded-md border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
                 />
               </div>
 
@@ -79,7 +79,7 @@ export default function UsuariosSection({ users, isLoading, error, onRetry, onEd
                     setStatus(event.target.value as typeof status);
                     setPage(1);
                   }}
-                  className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm font-normal text-slate-700 outline-none focus:border-[#39a900]"
+                  className="h-10 rounded-md border border-slate-300 bg-white px-3 text-sm font-normal text-slate-700 outline-none focus:border-brand-500"
                 >
                   <option value="all">Todos</option>
                   <option value="activo">Activos</option>

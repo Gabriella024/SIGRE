@@ -22,7 +22,7 @@ interface AttendancePanelProps {
 }
 
 const BADGE_TONES: Record<EstadoAsistencia, string> = {
-  asistio: "bg-emerald-100 text-emerald-700",
+  asistio: "bg-brand-100 text-brand-800",
   no_asistio: "bg-rose-100 text-rose-800",
 };
 

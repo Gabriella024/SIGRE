@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { useCallback, useMemo, useState } from 'react'
 import { ChallengesTable } from '@/features/challenges/components/ChallengesTable'
 import { ChallengesFilters } from '@/features/challenges/components/ChallengesFilters'
@@ -54,11 +55,11 @@ export function ChallengesPage() {
   }, [resetEstado, resetAsignar, resetAvance, resetRevisar])
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900">
-        Gestión de Retos
-        {readOnly && <ReadOnlyBadge />}
-      </h1>
+    <div className="space-y-6">
+      <PageHeader
+        title={<>Gestión de Retos{readOnly && <ReadOnlyBadge />}</>}
+        description="Retos de la ruta, su asignación a proyectos y la revisión de entregas."
+      />
 
       {!readOnly && guardar.pendingBackend && (
         <PendingIntegrationNotice title="Escritura de retos pendiente de backend">

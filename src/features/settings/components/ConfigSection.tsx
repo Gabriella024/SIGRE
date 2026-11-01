@@ -29,7 +29,7 @@ export default function ConfigSection({
         <div>
           <h2
             id={`${id}-title`}
-            className="text-xl font-semibold text-[#0f2f4a]"
+            className="text-xl font-semibold text-slate-900"
           >
             {title}
             {readOnly && <ReadOnlyBadge />}

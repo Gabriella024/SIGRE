@@ -8,12 +8,12 @@ interface ReportCardProps {
 
 const TONE_STYLES: Record<ReportTone, { icon: string; link: string }> = {
   slate: { icon: "bg-slate-100 text-slate-500", link: "text-slate-900" },
-  violet: { icon: "bg-violet-100 text-violet-600", link: "text-violet-700" },
-  fuchsia: { icon: "bg-fuchsia-100 text-fuchsia-600", link: "text-fuchsia-800" },
-  green: { icon: "bg-green-100 text-green-700", link: "text-green-900" },
-  orange: { icon: "bg-orange-100 text-orange-500", link: "text-slate-900" },
-  teal: { icon: "bg-teal-100 text-teal-700", link: "text-teal-900" },
-  red: { icon: "bg-red-100 text-red-600", link: "text-red-800" },
+  violet: { icon: "bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-100", link: "text-sky-800" },
+  fuchsia: { icon: "bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200", link: "text-slate-900" },
+  green: { icon: "bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-100", link: "text-brand-800" },
+  orange: { icon: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-100", link: "text-slate-900" },
+  teal: { icon: "bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-100", link: "text-brand-800" },
+  red: { icon: "bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-100", link: "text-slate-900" },
 };
 
 export function ReportCard({ report, onOpen }: ReportCardProps) {
@@ -47,7 +47,7 @@ export function ReportCard({ report, onOpen }: ReportCardProps) {
 
   if (!onOpen) {
     return (
-      <div className="flex h-full w-full flex-col justify-between gap-6 rounded-xl bg-white p-5 text-left shadow-sm ring-1 ring-slate-100">
+      <div className="flex h-full w-full flex-col justify-between gap-6 rounded-2xl border border-slate-200/70 bg-surface p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         {content}
       </div>
     );
@@ -57,7 +57,7 @@ export function ReportCard({ report, onOpen }: ReportCardProps) {
     <button
       type="button"
       onClick={() => onOpen(report.id)}
-      className="group flex h-full w-full flex-col justify-between gap-6 rounded-xl bg-white p-5 text-left shadow-sm ring-1 ring-slate-100 transition-all hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+      className="group flex h-full w-full flex-col justify-between gap-6 rounded-2xl border border-slate-200/70 bg-surface p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
     >
       {content}
     </button>

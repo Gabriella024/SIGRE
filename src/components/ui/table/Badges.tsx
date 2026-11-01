@@ -23,7 +23,7 @@ const badgeBase =
   "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium";
 
 const STATUS_STYLES: Record<UserStatus, string> = {
-  Activo: "bg-emerald-100 text-emerald-800",
+  Activo: "bg-brand-100 text-brand-800",
   Inactivo: "bg-rose-100 text-rose-800",
   Pendiente: "bg-amber-100 text-amber-800",
 };

@@ -20,10 +20,10 @@ const ESTILOS_ESTADO: Record<
   { bg: string; border: string; text: string; iconBg: string; icon: React.ReactNode }
 > = {
   valida: {
-    bg: 'bg-emerald-50/60 hover:bg-emerald-50',
-    border: 'border-emerald-200',
-    text: 'text-emerald-900',
-    iconBg: 'bg-emerald-100 text-emerald-700',
+    bg: 'bg-brand-50/60 hover:bg-brand-50',
+    border: 'border-brand-200',
+    text: 'text-brand-900',
+    iconBg: 'bg-brand-100 text-brand-800',
     icon: <Check className="w-4 h-4 stroke-[2.5]" />,
   },
   error: {

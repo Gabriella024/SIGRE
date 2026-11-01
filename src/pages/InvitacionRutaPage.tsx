@@ -89,7 +89,7 @@ export default function InvitacionRutaPage() {
                 </div>
               </>
             ) : (
-              <p role="status" className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800">
+              <p role="status" className="rounded-lg bg-brand-50 p-3 text-sm text-brand-800">
                 {invitacion.estado === 'aceptada'
                   ? 'Registramos tu interés. Un orientador te contactará para continuar con el registro formal.'
                   : invitacion.estado === 'rechazada'

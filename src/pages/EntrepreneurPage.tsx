@@ -64,8 +64,8 @@ export function EntrepreneursPage() {
   if (!access.scope) return <LoadingState message="Verificando tu sesión..." />
   if (access.scope.kind === "own") {
     return (
-      <div className="space-y-4 p-4 sm:p-6">
-        <h1 className="text-2xl font-bold text-slate-800">{access.label}</h1>
+      <div className="space-y-6">
+        <PageHeader title={access.label} />
         <OwnEntrepreneurRedirect scope={access.scope} />
       </div>
     )
@@ -74,6 +74,7 @@ export function EntrepreneursPage() {
   return <EntrepreneursListView access={access} scope={access.scope} />
 }
 
+import { PageHeader } from "@/components/ui/page-header";
 function EntrepreneursListView({ access, scope }: { access: EntrepreneurAccess; scope: EntrepreneurScope }) {
   const isOrientadorView = access.view === "orientador"
   const { data, error, isLoading, reload } = useEntrepreneurs(scope)
@@ -155,10 +156,11 @@ function EntrepreneursListView({ access, scope }: { access: EntrepreneurAccess; 
   }
 
   return (
-    <div className="space-y-4 p-4 sm:p-6">
-      <h1 className="text-2xl font-bold text-slate-800">
-        {isOrientadorView ? access.label : "Gestión de Emprendedores"}
-      </h1>
+    <div className="space-y-6">
+      <PageHeader
+        title={isOrientadorView ? access.label : "Gestión de Emprendedores"}
+        description="Fichas de emprendedores, su centro de formación y su orientador."
+      />
 
       <EntrepreneurMetrics metrics={metrics} />
 

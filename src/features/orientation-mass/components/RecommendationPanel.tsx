@@ -22,7 +22,7 @@ export function RecommendationPanel() {
   return (
     <aside className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
       <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 grid place-items-center shrink-0">
+        <div className="w-7 h-7 rounded-full bg-brand-100 text-brand-800 grid place-items-center shrink-0">
           <Info className="w-4 h-4" />
         </div>
         <h3 className="font-semibold text-sm text-slate-900">
@@ -37,7 +37,7 @@ export function RecommendationPanel() {
       <div className="space-y-3 divide-y divide-slate-100">
         {recommendations.map((rec) => (
           <div key={rec.num} className="flex gap-3 pt-3 first:pt-0">
-            <span className="grid place-items-center w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[11px] shrink-0">
+            <span className="grid place-items-center w-5 h-5 rounded-full bg-brand-100 text-brand-800 font-bold text-[11px] shrink-0">
               {rec.num}
             </span>
             <div className="text-xs space-y-0.5">

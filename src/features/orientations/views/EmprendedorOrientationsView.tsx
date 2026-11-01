@@ -31,7 +31,7 @@ interface EmprendedorOrientationsViewProps {
 }
 
 const enrollButton =
-  "inline-flex items-center gap-1.5 rounded-lg border border-lime-600 px-2.5 py-1 text-xs font-medium text-lime-700 hover:bg-lime-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-500 disabled:opacity-60";
+  "inline-flex items-center gap-1.5 rounded-lg border border-brand-700 px-2.5 py-1 text-xs font-medium text-brand-700 hover:bg-brand-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-500 disabled:opacity-60";
 
 function OwnOrientations({
   entrepreneur,

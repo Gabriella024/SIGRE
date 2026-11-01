@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { useCallback, useMemo, useState } from 'react'
 
 import { UsersTable } from '@/features/users/components/UsersTable'
@@ -68,10 +69,8 @@ export function UsersPage() {
   const statusTarget = changingStatus ? toStatusTarget(changingStatus) : null
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Gestión de Usuarios</h1>
-      </div>
+    <div className="space-y-6">
+      <PageHeader title="Gestión de Usuarios" description="Cuentas de acceso a SIGRE, sus roles y su estado." />
 
       <UsersFilters
         filters={filters}

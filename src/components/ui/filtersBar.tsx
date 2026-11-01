@@ -35,10 +35,10 @@ type FiltersBarProps = {
 }
 
 const selectClass =
-  'w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-lime-500'
+  'w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500'
 
 const dateInputClass =
-  'w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 [color-scheme:light] focus:bg-white focus:outline-none focus:ring-2 focus:ring-lime-500/20 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:hue-rotate-[100deg]'
+  'w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm text-slate-900 [color-scheme:light] focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:hue-rotate-[100deg]'
 
 const isFilterActive = (filter: FilterConfig) => filter.value.trim() !== ''
 
@@ -79,7 +79,7 @@ export function FiltersBar({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={searchPlaceholder}
-          className="w-full rounded-lg border-slate-200 bg-slate-50 pl-9"
+          className="w-full rounded-xl border-slate-200 bg-white pl-9"
         />
       </div>
 
@@ -96,7 +96,7 @@ export function FiltersBar({
               <SlidersHorizontal className="h-4 w-4" />
               Filtros
               {activeCount > 0 && (
-                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-lime-500 px-1.5 text-xs font-semibold text-white">
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-700 px-1.5 text-xs font-semibold text-white">
                   {activeCount}
                 </span>
               )}
@@ -111,7 +111,7 @@ export function FiltersBar({
                 />
                 <div
                   role="dialog"
-                  className="fixed left-1/2 top-1/2 z-50 max-h-[80vh] w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 space-y-3 overflow-y-auto rounded-xl border bg-white p-4 shadow-lg md:absolute md:left-auto md:right-0 md:top-full md:mt-2 md:max-h-none md:w-80 md:max-w-none md:translate-x-0 md:translate-y-0 md:overflow-visible"
+                  className="fixed left-1/2 top-1/2 z-50 max-h-[80vh] w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 space-y-3 overflow-y-auto rounded-2xl border border-slate-200/70 bg-white p-4 shadow-lg md:absolute md:left-auto md:right-0 md:top-full md:mt-2 md:max-h-none md:w-80 md:max-w-none md:translate-x-0 md:translate-y-0 md:overflow-visible"
                 >
                   {filters.map((filter) => (
                     <div key={filter.key} className="w-full min-w-0 space-y-1">

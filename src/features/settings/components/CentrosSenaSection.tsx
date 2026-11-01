@@ -72,7 +72,7 @@ export default function CentrosSenaSection() {
           <button
             type="button"
             onClick={() => open(null)}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2f8f00]"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800"
           >
             <Plus className="h-4 w-4" />
             Nuevo centro
@@ -149,7 +149,7 @@ export default function CentrosSenaSection() {
                                 (item.updatedAt ? (active ? "Desactivar" : "Activar") : "Sin versión registrada: no puede cambiarse")
                               }
                               className={`rounded-md p-2 disabled:opacity-40 ${
-                                active ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"
+                                active ? "text-red-500 hover:bg-red-50" : "text-brand-700 hover:bg-brand-50"
                               }`}
                             >
                               {togglingId === item.id ? (

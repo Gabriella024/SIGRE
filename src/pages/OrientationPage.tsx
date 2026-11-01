@@ -13,6 +13,7 @@ import { OrientadorOrientationsView } from "@/features/orientations/views/Orient
 import { EmprendedorOrientationsView } from "@/features/orientations/views/EmprendedorOrientationsView";
 import { ReadOnlyBadge } from "@/components/ui/pending-integration";
 import type { Orientacion } from "@/features/orientations/types/orientations";
+import { PageHeader } from "@/components/ui/page-header";
 
 const NOTICE_TIMEOUT_MS = 4000;
 
@@ -90,16 +91,16 @@ export function OrientationPage() {
   const readOnly = access.view === "coordinador";
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-        {TITLES[access.view]}
-        {readOnly && <ReadOnlyBadge />}
-      </h1>
+    <div className="space-y-6">
+      <PageHeader
+        title={<>{TITLES[access.view]}{readOnly && <ReadOnlyBadge />}</>}
+        description="Jornadas de orientación, inscripciones y registro de asistencia."
+      />
 
       {notice && (
         <div
           role="status"
-          className="flex items-center justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+          className="flex items-center justify-between gap-3 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-800"
         >
           <span className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4" />
@@ -109,7 +110,7 @@ export function OrientationPage() {
             type="button"
             onClick={() => setNotice(null)}
             aria-label="Cerrar aviso"
-            className="rounded-md p-1 text-emerald-700 hover:bg-emerald-100"
+            className="rounded-md p-1 text-brand-800 hover:bg-brand-100"
           >
             <X className="h-4 w-4" />
           </button>

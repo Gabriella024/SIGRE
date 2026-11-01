@@ -18,7 +18,7 @@ export default function InformesPage() {
   const active = selected && available.includes(selected) ? selected : null;
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-6 py-8">
+    <section className="w-full">
       <InformesHeader />
       {isLoading ? (
         <LoadingState message="Verificando permisos..." />

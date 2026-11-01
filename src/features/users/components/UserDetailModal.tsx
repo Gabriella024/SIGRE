@@ -74,7 +74,7 @@ export function UserDetailModal({ user, onClose, onEdit, onToggleStatus }: UserD
                 </Button>
               )}
               {onEdit && (
-                <Button type="button" className="gap-2 bg-lime-500 hover:bg-lime-600" onClick={() => onEdit(user)}>
+                <Button type="button" className="gap-2 bg-brand-700 hover:bg-brand-800" onClick={() => onEdit(user)}>
                   <Pencil className="h-4 w-4" />
                   Editar
                 </Button>

@@ -55,7 +55,7 @@ export function Dropzone({ onSelectFile }: DropzoneProps) {
         onDragOver={handleDragOver}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
-        className={`border-2 border-dashed ${isDragging ? 'border-emerald-500 bg-emerald-50/40' : 'border-slate-300 bg-white'} hover:border-emerald-500 rounded-xl p-6 md:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors`}
+        className={`border-2 border-dashed ${isDragging ? 'border-brand-500 bg-brand-50/40' : 'border-slate-300 bg-white'} hover:border-brand-500 rounded-xl p-6 md:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors`}
       >
         <input
           ref={inputRef}
@@ -66,7 +66,7 @@ export function Dropzone({ onSelectFile }: DropzoneProps) {
         />
 
         <div className="flex items-center gap-4 text-center sm:text-left">
-          <div className="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-700 grid place-items-center shrink-0">
+          <div className="w-11 h-11 rounded-lg bg-brand-50 text-brand-800 grid place-items-center shrink-0">
             <FileSpreadsheet className="w-6 h-6" />
           </div>
           <div>
@@ -75,7 +75,7 @@ export function Dropzone({ onSelectFile }: DropzoneProps) {
               <button
                 type="button"
                 onClick={openPicker}
-                className="text-emerald-700 underline cursor-pointer hover:text-emerald-800 font-semibold inline"
+                className="text-brand-800 underline cursor-pointer hover:text-brand-800 font-semibold inline"
               >
                 haz clic para seleccionarlo
               </button>

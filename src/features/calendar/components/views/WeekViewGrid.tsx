@@ -113,9 +113,9 @@ export default function WeekViewGrid({
                 </span>
                 <span
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${isToday
-                    ? "bg-lime-900 text-white"
+                    ? "bg-brand-800 text-white"
                     : isSelected
-                      ? "text-lime-900 ring-1 ring-lime-300"
+                      ? "text-brand-900 ring-1 ring-brand-300"
                       : "text-olive-700"
                     }`}
                 >

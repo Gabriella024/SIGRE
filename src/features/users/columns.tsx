@@ -89,7 +89,7 @@ export function createUserColumns({ onView, onEdit, onToggleStatus }: UserRowAct
               onClick={() => onToggleStatus(row)}
               aria-label={`${isActiveUser(row) ? "Desactivar" : "Activar"} ${row.nombre}`}
               title={isActiveUser(row) ? "Desactivar" : "Activar"}
-              className={`rounded-md p-2 ${isActiveUser(row) ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}
+              className={`rounded-md p-2 ${isActiveUser(row) ? "text-red-500 hover:bg-red-50" : "text-brand-700 hover:bg-brand-50"}`}
             >
               <Power className="h-4 w-4" />
             </button>

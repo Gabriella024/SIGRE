@@ -24,7 +24,7 @@
 //             id="view-select"
 //             value={viewMode}
 //             onChange={(e) => setViewMode(e.target.value as 'list' | 'calendar')}
-//             className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-lg p-2 focus:ring-emerald-500 focus:border-emerald-500"
+//             className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white text-sm rounded-lg p-2 focus:ring-brand-500 focus:border-brand-500"
 //           >
 //             <option value="calendar">📅 Calendario</option>
 //             <option value="list">📋 Listado</option>

@@ -24,7 +24,8 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: light;
+  accent-color: var(--brand-700);
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -35,6 +36,20 @@
   @media (max-width: 1024px) {
     font-size: 16px;
   }
+
+  /* SIGRE · verdes institucionales SENA. 500 = #39A900 (acentos, indicadores, gráficos).
+     Texto blanco solo sobre 700 o más oscuro (AA ≥ 4.5:1); texto verde sobre 50/100 con 800. */
+  --brand-50: #f2f9ec;
+  --brand-100: #e2f2d3;
+  --brand-200: #c4e6a7;
+  --brand-300: #9dd36e;
+  --brand-500: #39a900;
+  --brand-600: #2f8f00;
+  --brand-700: #2b7d00;
+  --brand-800: #1f5c00;
+  --brand-900: #174a00;
+  --surface: #ffffff;
+  --surface-muted: #f6f8f5;
 
   --background: oklch(1 0 0);
 
@@ -48,7 +63,7 @@
 
   --popover-foreground: oklch(0.145 0 0);
 
-  --primary: oklch(0.205 0 0);
+  --primary: var(--brand-700);
 
   --primary-foreground: oklch(0.985 0 0);
 
@@ -66,7 +81,7 @@
 
   --input: oklch(0.922 0 0);
 
-  --ring: oklch(0.708 0 0);
+  --ring: var(--brand-500);
 
   --chart-1: oklch(0.87 0 0);
 
@@ -95,26 +110,6 @@
   --sidebar-border: oklch(0.922 0 0);
 
   --sidebar-ring: oklch(0.708 0 0)
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
 }
 
 #root {
@@ -147,6 +142,17 @@ code {
 }
 
 @theme inline {
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --font-heading: var(--font-sans);
   --font-sans: 'Inter Variable', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);

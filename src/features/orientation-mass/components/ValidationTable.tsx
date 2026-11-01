@@ -21,8 +21,8 @@ interface ValidationTableProps {
 const BADGES: Record<EstadoValidacion, { label: string; className: string; msgClass: string }> = {
   valida: {
     label: 'Válida',
-    className: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    msgClass: 'text-emerald-700',
+    className: 'bg-brand-100 text-brand-800 border-brand-200',
+    msgClass: 'text-brand-800',
   },
   error: {
     label: 'Con error',

@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import type { ConsolidatedResult } from '@/features/evaluations/types/resultado'
 
 const barColor: Record<ConsolidatedResult, string> = {
-  'Calificación completa': 'bg-sky-500',
+  'Calificación completa': 'bg-brand-500',
   'En revisión': 'bg-slate-300',
 }
 

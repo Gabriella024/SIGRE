@@ -18,9 +18,9 @@ export function HeaderConfirmado({ fechaConfirmacion }: HeaderConfirmadoProps) {
 
       <div
         role="status"
-        className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-xs self-start sm:self-auto"
+        className="inline-flex items-center gap-2 bg-brand-50 text-brand-800 border border-brand-200 rounded-full px-3.5 py-1.5 text-xs font-semibold shadow-xs self-start sm:self-auto"
       >
-        <div className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+        <div className="w-4 h-4 rounded-full bg-brand-700 text-white flex items-center justify-center shrink-0">
           <Check className="w-2.5 h-2.5 stroke-[3]" />
         </div>
         <span>Carga registrada · {fechaConfirmacion}</span>

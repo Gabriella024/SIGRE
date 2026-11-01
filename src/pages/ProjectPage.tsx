@@ -23,6 +23,7 @@ import type {
   ProjectFilters,
 } from "@/features/projects/types/proyect";
 import type { ProjectFormValues } from "@/features/projects/schemas/proyectSchema";
+import { PageHeader } from "@/components/ui/page-header";
 
 function ExportFeedback({ outcome }: { outcome: ProjectExportOutcome }) {
   switch (outcome.status) {
@@ -232,17 +233,16 @@ export function ProjectsPage() {
     : undefined;
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-800">
-        {isAdmin ? "Gestión de Proyectos" : "Proyectos"}
-        {!isAdmin && <ReadOnlyBadge />}
-      </h1>
+    <div className="space-y-6">
+      <PageHeader
+        title={<>{isAdmin ? "Gestión de Proyectos" : "Proyectos"}{!isAdmin && <ReadOnlyBadge />}</>}
+        description="Proyectos de la ruta emprendedora, con su emprendedor, etapa y estado."
+      />
 
       {access.grantedWithoutBackend.length > 0 && (
-        <PendingIntegrationNotice title="Acciones pendientes de backend para tu rol">
-          Tu perfil tiene permiso para {access.grantedWithoutBackend.join(", ")} proyectos, pero las RPC existentes
-          (sigre_admin_crear_proyecto, sigre_admin_editar_proyecto, sigre_admin_eliminar_proyecto) son administrativas.
-          Estas acciones se habilitarán cuando el servidor autorice tu rol. No se envía ninguna solicitud.
+        <PendingIntegrationNotice title="Consulta de proyectos">
+          Puedes consultar la información de los proyectos. Para registrar o actualizar un proyecto, comunícate con
+          la administración del programa.
         </PendingIntegrationNotice>
       )}
 

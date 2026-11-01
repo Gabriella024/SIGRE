@@ -46,7 +46,7 @@ function SortableHeader({
 		<button
 			type="button"
 			onClick={onClick}
-			className={`inline-flex items-center gap-1.5 rounded transition-colors hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 ${active ? "text-slate-900" : ""
+			className={`inline-flex items-center gap-1.5 rounded transition-colors hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 ${active ? "text-slate-900" : ""
 				}`}
 		>
 			{label}
@@ -135,16 +135,16 @@ export default function MinimalTable<T extends { id: RowId }>({
 	const to = Math.min(startIndex + effectivePageSize, total);
 	const colSpan = columns.length + (hasActions ? 1 : 0) + (selectable ? 1 : 0);
 
-	const thBase = "px-4 py-3 text-xs font-semibold text-slate-500";
+	const thBase = "px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-slate-500";
 	const checkboxClass =
-		"h-4 w-4 cursor-pointer rounded border-slate-300 accent-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400";
+		"h-4 w-4 cursor-pointer rounded border-slate-300 accent-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40";
 
 	return (
-		<div className="w-full overflow-hidden rounded-xl border border-slate-200 bg-white">
+		<div className="w-full overflow-hidden rounded-2xl border border-slate-200/70 bg-surface shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
 			<div className="overflow-x-auto">
 				<table className="w-full border-collapse text-sm">
 					<thead>
-						<tr className="border-b border-slate-200 bg-white">
+						<tr className="border-b border-slate-200/70 bg-surface-muted">
 							{selectable && (
 								<th scope="col" className="w-12 px-4 py-3">
 									<input
@@ -199,7 +199,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 							<tr>
 								<td
 									colSpan={colSpan}
-									className="px-4 py-12 text-center text-slate-400"
+									className="px-4 py-12 text-center text-slate-500"
 								>
 									No hay registros para mostrar.
 								</td>
@@ -210,7 +210,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 								return (
 									<tr
 										key={item.id}
-										className={`border-b border-slate-100 transition-colors last:border-b-0 hover:bg-slate-50 ${isSelected ? "bg-slate-50" : "bg-white"
+										className={`border-b border-slate-100 transition-colors last:border-b-0 hover:bg-surface-muted ${isSelected ? "bg-slate-50" : "bg-white"
 											}`}
 									>
 										{selectable && (
@@ -228,7 +228,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 										{columns.map((col) => (
 											<td
 												key={col.key}
-												className={`px-4 py-3 text-slate-600 ${ALIGN_TEXT[col.align ?? "left"]}${col.className ? ` ${col.className}` : ""}`}
+												className={`px-4 py-3.5 text-slate-700 ${ALIGN_TEXT[col.align ?? "left"]}${col.className ? ` ${col.className}` : ""}`}
 											>
 												{col.render
 													? col.render(item)
@@ -245,7 +245,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 															onClick={() => onEdit(item)}
 															aria-label="Editar"
 															title="Editar"
-															className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+															className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40"
 														>
 															<Pencil className="h-4 w-4" />
 														</button>
@@ -256,7 +256,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 															onClick={() => onDelete(item)}
 															aria-label="Eliminar"
 															title="Eliminar"
-															className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+															className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
 														>
 															<Trash2 className="h-4 w-4" />
 														</button>
@@ -273,8 +273,8 @@ export default function MinimalTable<T extends { id: RowId }>({
 			</div>
 
 			{paginated && (
-				<div className="flex flex-col gap-3 border-t border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-					<p className="text-sm italic text-slate-500">
+				<div className="flex flex-col gap-3 border-t border-slate-100 bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+					<p className="text-sm text-slate-500">
 						Mostrando {from} a {to} de {total} registros en total
 					</p>
 	
@@ -287,7 +287,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 							onClick={() => setPage(Math.max(1, currentPage - 1))}
 							disabled={currentPage === 1}
 							aria-label="Página anterior"
-							className="rounded-md border border-slate-200 p-1.5 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
+							className="rounded-lg border border-slate-200 p-1.5 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
 						>
 							<ChevronLeft className="h-4 w-4" />
 						</button>
@@ -296,7 +296,7 @@ export default function MinimalTable<T extends { id: RowId }>({
 							onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
 							disabled={currentPage === totalPages}
 							aria-label="Página siguiente"
-							className="rounded-md border border-slate-200 p-1.5 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
+							className="rounded-lg border border-slate-200 p-1.5 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
 						>
 							<ChevronRight className="h-4 w-4" />
 						</button>

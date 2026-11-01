@@ -46,6 +46,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table no admite React Compiler (no habilitado en el proyecto); `table` no se pasa a componentes memoizados.
   const table = useReactTable({
     data,
     columns,
@@ -66,13 +67,13 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-3">
-      <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200/70 bg-surface shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-slate-50">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="text-xs uppercase text-slate-400">
+                  <TableHead key={header.id} className="text-[0.6875rem] uppercase tracking-[0.06em] text-slate-500">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -87,7 +88,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-slate-50 data-[state=selected]:bg-violet-50"
+                  className="hover:bg-surface-muted data-[state=selected]:bg-brand-50"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

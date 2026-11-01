@@ -19,7 +19,7 @@ import type { Orientacion } from "../types/orientations";
 const MAX_RESULTS = 50;
 
 const selectClass =
-  "h-8 w-full min-w-0 rounded-2xl border border-transparent bg-input/50 px-2.5 text-base outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
+  "h-9 w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 text-base shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
 
 interface EnrollmentModalProps {
   open: boolean;
@@ -158,7 +158,7 @@ function EnrollmentForm({ initialJornadaId, jornadas, onEnrolled, onClose }: Enr
                 <li key={row.id}>
                   <label
                     className={`flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 ${
-                      row.id === emprendedorId ? "bg-lime-50" : ""
+                      row.id === emprendedorId ? "bg-brand-50" : ""
                     }`}
                   >
                     <input
@@ -211,7 +211,7 @@ function EnrollmentForm({ initialJornadaId, jornadas, onEnrolled, onClose }: Enr
         </Button>
         <Button
           type="submit"
-          className="bg-lime-500 hover:bg-lime-600"
+          className="bg-brand-700 hover:bg-brand-800"
           disabled={enrollment.isSubmitting || !jornada || !selected || blocker !== null}
         >
           {enrollment.isSubmitting && <Loader2 className="animate-spin" />}

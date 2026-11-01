@@ -11,15 +11,15 @@ export default function ConfiguracionPage({
   code = "CPS-01",
 }: ConfiguracionProps) {
   return (
-    <div className="mx-auto w-full max-w-7xl px-6 py-8">
+    <div className="w-full">
 
       <header className="mb-10 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-[#0f2f4a]">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.75rem]">
             Configuración
           </h1>
 
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-[0.9375rem] text-slate-600">
             Parámetros generales del sistema
           </p>
         </div>

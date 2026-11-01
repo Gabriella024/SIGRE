@@ -10,8 +10,8 @@ interface FilePreviewProps {
 export function FilePreview({ fileName, fileSize, rows = [], onRemove }: FilePreviewProps) {
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3.5 border border-emerald-500 bg-emerald-50/40 rounded-xl p-3 md:p-4">
-        <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-800 grid place-items-center shrink-0">
+      <div className="flex items-center gap-3.5 border border-brand-500 bg-brand-50/40 rounded-xl p-3 md:p-4">
+        <div className="w-10 h-10 rounded-lg bg-brand-100 text-brand-800 grid place-items-center shrink-0">
           <FileSpreadsheet className="w-5 h-5" />
         </div>
 
@@ -23,7 +23,7 @@ export function FilePreview({ fileName, fileSize, rows = [], onRemove }: FilePre
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 font-semibold text-xs px-2.5 py-1 rounded-full">
+          <span className="inline-flex items-center gap-1 bg-brand-100 text-brand-800 font-semibold text-xs px-2.5 py-1 rounded-full">
             <Check className="w-3.5 h-3.5" />
             Seleccionado
           </span>

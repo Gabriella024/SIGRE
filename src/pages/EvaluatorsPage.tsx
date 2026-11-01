@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 import { useCallback, useMemo, useState } from 'react'
 import { EvaluatorsTable } from '@/features/evaluators/components/EvaluatorsTable'
 import { EvaluatorsFilters } from '@/features/evaluators/components/EvaluatorsFilters'
@@ -54,11 +55,11 @@ export function EvaluatorPage() {
   )
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold text-slate-800">
-        {access.ownOnly ? 'Mi perfil de evaluador' : 'Gestión de Evaluadores'}
-        {readOnly && <ReadOnlyBadge />}
-      </h1>
+    <div className="space-y-6">
+      <PageHeader
+        title={<>{access.ownOnly ? 'Mi perfil de evaluador' : 'Gestión de Evaluadores'}{readOnly && <ReadOnlyBadge />}</>}
+        description="Panel de expertos que califica los pitch de la ruta."
+      />
 
       {!readOnly && guardar.pendingBackend && (
         <PendingIntegrationNotice title="Gestión de evaluadores pendiente de backend">

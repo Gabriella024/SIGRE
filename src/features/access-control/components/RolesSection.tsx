@@ -31,7 +31,7 @@ export default function RolesSection({ roles, users, isLoading, error, onRetry }
   return (
     <section id="roles" className="scroll-mt-6">
       <div className="mb-4">
-        <h2 className="text-xl font-semibold text-[#0f2f4a]">
+        <h2 className="text-xl font-semibold text-slate-900">
           Roles
           <ReadOnlyBadge />
         </h2>

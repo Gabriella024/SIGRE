@@ -25,7 +25,7 @@ import type { ProjectEntrepreneurScope, ProjectFixedEntrepreneur } from "../type
 const SEARCH_THRESHOLD = 8;
 
 const selectClass =
-  "h-8 w-full min-w-0 rounded-2xl border border-transparent bg-input/50 px-2.5 text-base outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive md:text-sm";
+  "h-9 w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 text-base shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive md:text-sm";
 
 const EMPTY_MESSAGES: Record<Exclude<ProjectEntrepreneurScope, "own">, string> = {
   all: "No hay emprendedores activos disponibles para asociar.",

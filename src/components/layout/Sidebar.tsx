@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -49,17 +49,36 @@ function NavItem({ to, label, icon: Icon }: NavItemProps) {
       to={to}
       className={({ isActive }) =>
         cn(
-          'flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs transition-all duration-150',
-          'lg:[@media(min-height:800px)]:gap-3.5 lg:[@media(min-height:800px)]:px-3.5 lg:[@media(min-height:800px)]:py-2.5 lg:[@media(min-height:800px)]:text-sm',
+          'group relative flex items-center gap-3 rounded-xl px-3 py-2 text-[0.8125rem] font-medium transition-colors duration-150',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40',
           isActive
-            ? 'bg-[#084166] text-white font-semibold border-l-4 border-[#78c800] shadow-sm'
-            : 'text-slate-300/80 hover:bg-[#073859] hover:text-white'
+            ? 'bg-brand-50 text-brand-800 before:absolute before:inset-y-2 before:-left-3 before:w-[3px] before:rounded-r-full before:bg-brand-500'
+            : 'text-slate-600 hover:bg-slate-100/70 hover:text-slate-900'
         )
       }
     >
-      <Icon className="h-4 w-4 shrink-0 lg:[@media(min-height:800px)]:h-5 lg:[@media(min-height:800px)]:w-5" />
-      <span className="truncate">{label}</span>
+      {({ isActive }) => (
+        <>
+          <Icon
+            className={cn(
+              'h-[18px] w-[18px] shrink-0 stroke-[1.75] transition-colors',
+              isActive ? 'text-brand-600' : 'text-slate-400 group-hover:text-slate-600'
+            )}
+            aria-hidden="true"
+          />
+          <span className="truncate">{label}</span>
+        </>
+      )}
     </NavLink>
+  );
+}
+
+function NavSection({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="space-y-0.5">
+      <p className="px-3 pb-1.5 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-slate-500">{title}</p>
+      {children}
+    </div>
   );
 }
 
@@ -91,72 +110,78 @@ export function Sidebar() {
         aria-label="Abrir menú"
         aria-expanded={open}
         className={cn(
-          'fixed top-3 left-3 z-40 flex h-10 w-10 items-center justify-center rounded-lg bg-[#032b43] text-white shadow-md lg:hidden',
+          'fixed top-3 left-3 z-40 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-50 lg:hidden',
           open && 'hidden'
         )}
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="h-5 w-5 stroke-[1.75]" />
       </button>
 
       <div
         onClick={() => setOpen(false)}
         className={cn(
-          'fixed inset-0 z-40 bg-black/50 transition-opacity duration-200 lg:hidden',
+          'fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-[2px] transition-opacity duration-200 lg:hidden',
           open ? 'opacity-100' : 'pointer-events-none opacity-0'
         )}
       />
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-shrink-0 flex-col border-r border-slate-800 bg-[#032b43] text-white shadow-xl transition-transform duration-200',
+          'fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-shrink-0 flex-col border-r border-slate-200/80 bg-surface shadow-xl transition-transform duration-200',
           'lg:static lg:z-auto lg:translate-x-0 lg:shadow-none',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="relative border-b border-[#084166] px-4 py-3 lg:[@media(min-height:800px)]:px-5 lg:[@media(min-height:800px)]:py-6">
+        <div className="relative px-5 pt-5 pb-4">
           <button
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Cerrar menú"
-            className="absolute top-3 right-3 rounded-md p-1 text-slate-300 hover:bg-[#073859] hover:text-white lg:hidden"
+            className="absolute top-4 right-3 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 lg:hidden"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5 stroke-[1.75]" />
           </button>
 
           <div className="flex items-center gap-3">
-            <img
-              src="/logoSenaNaranja.png"
-              alt="SENA Logo"
-              className="h-6 w-auto object-contain lg:[@media(min-height:800px)]:h-8"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-            <span className="text-lg font-bold tracking-wide text-white lg:[@media(min-height:800px)]:text-xl">SIGRE</span>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 ring-1 ring-inset ring-brand-100">
+              <img
+                src="/logoSenaNaranja.png"
+                alt="SENA"
+                className="h-6 w-auto object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="text-base font-semibold tracking-tight text-slate-900">SIGRE</p>
+              <p className="truncate text-xs text-slate-600">Ruta emprendedora · SENA</p>
+            </div>
           </div>
 
-          <p className="mt-1 text-[11px] font-medium text-slate-300/80 lg:[@media(min-height:800px)]:mt-1.5 lg:[@media(min-height:800px)]:text-xs">
-            Ruta emprendedora · SENA
-          </p>
-
-          <span className="mt-2 inline-block rounded-md bg-[#6bb800] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white lg:[@media(min-height:800px)]:mt-3 lg:[@media(min-height:800px)]:px-2.5 lg:[@media(min-height:800px)]:py-1 lg:[@media(min-height:800px)]:text-[11px]">
-            REG. ATLÁNTICO
+          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[0.6875rem] font-semibold text-brand-800 ring-1 ring-inset ring-brand-100">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden="true" />
+            Regional Atlántico
           </span>
         </div>
 
-        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2 lg:[@media(min-height:800px)]:space-y-1 lg:[@media(min-height:800px)]:py-4">
-          {visibleMainNav.map(({ moduleCode, to, label, icon }) => (
-            <NavItem key={moduleCode} to={to} label={label} icon={icon} />
-          ))}
-        </nav>
-
-        {visibleAdminNav.length > 0 && (
-          <div className="space-y-0.5 border-t border-[#084166] px-3 py-2 lg:[@media(min-height:800px)]:space-y-1 lg:[@media(min-height:800px)]:py-4">
-            {visibleAdminNav.map(({ moduleCode, to, label, icon }) => (
+        <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-2 [scrollbar-color:theme(colors.slate.200)_transparent] [scrollbar-width:thin]">
+          <NavSection title="Ruta emprendedora">
+            {visibleMainNav.map(({ moduleCode, to, label, icon }) => (
               <NavItem key={moduleCode} to={to} label={label} icon={icon} />
             ))}
-          </div>
-        )}
+          </NavSection>
+
+          {visibleAdminNav.length > 0 && (
+            <NavSection title="Administración">
+              {visibleAdminNav.map(({ moduleCode, to, label, icon }) => (
+                <NavItem key={moduleCode} to={to} label={label} icon={icon} />
+              ))}
+            </NavSection>
+          )}
+        </nav>
+
+        <p className="border-t border-slate-100 px-5 py-3 text-[0.6875rem] text-slate-400">SIGRE · MVP</p>
       </aside>
     </>
   );

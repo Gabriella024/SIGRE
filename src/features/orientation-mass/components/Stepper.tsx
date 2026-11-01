@@ -24,14 +24,14 @@ export function Stepper({ currentStep = 1, onSelectStep }: StepperProps) {
               type="button"
               disabled={!isDone && !isCurrent}
               onClick={() => isDone && onSelectStep?.(step.number)}
-              className={`flex items-center gap-2.5 font-medium text-sm transition-colors ${isDone ? 'cursor-pointer hover:text-emerald-700' : 'cursor-default'
+              className={`flex items-center gap-2.5 font-medium text-sm transition-colors ${isDone ? 'cursor-pointer hover:text-brand-800' : 'cursor-default'
                 } ${isCurrent ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}
             >
               <span
                 className={`grid place-items-center w-6 h-6 text-xs rounded-full border transition-colors ${isCurrent
-                  ? 'bg-emerald-600 border-emerald-600 text-white font-bold'
+                  ? 'bg-brand-700 border-brand-700 text-white font-bold'
                   : isDone
-                    ? 'bg-emerald-600 border-emerald-600 text-white font-semibold'
+                    ? 'bg-brand-700 border-brand-700 text-white font-semibold'
                     : 'bg-white border-slate-300 text-slate-600'
                   }`}
               >
@@ -42,7 +42,7 @@ export function Stepper({ currentStep = 1, onSelectStep }: StepperProps) {
 
             {idx < steps.length - 1 && (
               <span
-                className={`flex-1 h-px min-w-[20px] transition-colors ${isDone ? 'bg-emerald-600' : 'bg-slate-200'
+                className={`flex-1 h-px min-w-[20px] transition-colors ${isDone ? 'bg-brand-700' : 'bg-slate-200'
                   }`}
               />
             )}

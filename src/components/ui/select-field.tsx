@@ -16,7 +16,7 @@ export function SelectField({ options, placeholder, className, ...props }: Selec
   return (
     <select
       className={cn(
-        "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-lime-500 disabled:opacity-60",
+        "h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-brand-500/40 disabled:opacity-60",
         className
       )}
       {...props}

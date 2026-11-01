@@ -98,7 +98,7 @@ export default function ModulosPantallasSection() {
               type="button"
               onClick={() => void save()}
               disabled={mutation.isSubmitting || mutation.pendingBackend !== null}
-              className="inline-flex items-center gap-2 rounded-lg bg-[#39a900] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2f8f00] disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60"
             >
               {mutation.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               Guardar cambios ({dirtyIds.length})
@@ -174,7 +174,7 @@ export default function ModulosPantallasSection() {
                           aria-label={`Orden de ${screen.name} en el menú`}
                           disabled={!canEdit || mutation.isSubmitting}
                           onChange={(event) => update(screen, { orden: event.target.value })}
-                          className="h-10 w-16 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-[#39a900] focus:ring-2 focus:ring-[#39a900]/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
+                          className="h-10 w-16 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
                         />
                       </td>
                       <td className="px-4 py-4">

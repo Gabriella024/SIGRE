@@ -92,7 +92,7 @@ export default function MiniCalendarSidebar({
                 aria-label={formatLongDate(day)}
                 aria-pressed={selected}
                 className={`relative mx-auto flex h-8 w-8 items-center justify-center rounded-full text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-olive-400 ${selected
-                    ? "bg-lime-900 font-semibold text-white"
+                    ? "bg-brand-800 font-semibold text-white"
                     : isToday
                       ? "font-semibold text-slate-900 ring-1 ring-slate-300 hover:bg-slate-100"
                       : inMonth
@@ -103,7 +103,7 @@ export default function MiniCalendarSidebar({
                 {day.getDate()}
                 {hasSessions && (
                   <span
-                    className={`absolute bottom-0.5 h-1 w-1 rounded-full ${selected ? "bg-white" : "bg-emerald-400"
+                    className={`absolute bottom-0.5 h-1 w-1 rounded-full ${selected ? "bg-white" : "bg-brand-300"
                       }`}
                   />
                 )}

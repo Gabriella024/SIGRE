@@ -204,7 +204,7 @@ export function EntrepreneurDetailPage() {
   }
 
   return (
-    <div className="space-y-4 p-4 sm:p-6" aria-busy={isLoading}>
+    <div className="space-y-6" aria-busy={isLoading}>
       {access.view !== "emprendedor" && (
         <Button asChild variant="outline" className="gap-2">
           <Link to="/emprendedores" state={RESTORE_ENTREPRENEUR_LIST}>
@@ -265,7 +265,7 @@ export function EntrepreneurDetailPage() {
                       className={`gap-2 ${
                         statusTarget.estadoNuevo === "inactivo"
                           ? "border-rose-200 text-rose-700 hover:bg-rose-50"
-                          : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                          : "border-brand-200 text-brand-800 hover:bg-brand-50"
                       }`}
                       onClick={openStatusChange}
                       disabled={isChangingStatus}

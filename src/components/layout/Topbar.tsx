@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DropdownMenu } from "radix-ui";
-import { Bell, LogOut } from "lucide-react";
+import { Bell, ChevronDown, LogOut } from "lucide-react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAccessControl } from "@/features/access-control/hooks/useAccessControl";
@@ -64,6 +64,9 @@ export function Topbar() {
   const initials =
     user?.email?.slice(0, 2).toUpperCase() ?? "??";
 
+  const rawName = user?.email?.split("@")[0] ?? "";
+  const displayName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
   const roleLabel = roles
     .map(
       (role) =>
@@ -76,40 +79,40 @@ export function Topbar() {
     : roleLabel || "Sin rol asignado";
 
   return (
-    <header className="flex h-16 w-full items-center justify-between border-b border-slate-200/70 bg-white pl-16 pr-4 sm:pr-6 lg:px-8 transition-all">
-      <div className="flex min-w-0 items-center text-sm font-semibold text-slate-800">
-        <span>SIGRE</span>
-        <span className="mx-2 text-slate-300 font-normal">
-          /
-        </span>
-        <span className="truncate text-slate-500 font-normal">
-          {breadcrumb}
-        </span>
+    <header className="flex h-16 w-full shrink-0 items-center justify-between gap-4 border-b border-slate-200/70 bg-white/90 pl-16 pr-4 backdrop-blur supports-[backdrop-filter]:bg-white/75 sm:pr-6 lg:px-8">
+      <div className="min-w-0">
+        <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-slate-500">SIGRE</p>
+        <p className="truncate text-[0.95rem] font-semibold text-slate-900">{breadcrumb}</p>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-3">
         <button
           type="button"
           disabled
           aria-label="Notificaciones (disponible próximamente)"
           title="Notificaciones disponibles próximamente"
-          className="rounded-full p-2 text-slate-400 disabled:cursor-not-allowed"
+          className="rounded-xl p-2 text-slate-400 disabled:cursor-not-allowed"
         >
-          <Bell className="h-5 w-5 stroke-[1.8]" />
+          <Bell className="h-5 w-5 stroke-[1.75]" />
         </button>
 
-        <span className="hidden sm:inline-block rounded-full bg-[#dcfce7] px-3.5 py-1 text-xs font-semibold text-[#15803d]">
-          {roleText}
-        </span>
+        <span className="hidden h-6 w-px bg-slate-200 sm:block" aria-hidden="true" />
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button
               type="button"
               aria-label="Menú de usuario"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#032b43] text-xs font-bold text-white shadow-xs transition-shadow hover:ring-2 hover:ring-[#78c800]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#78c800] data-[state=open]:ring-2 data-[state=open]:ring-[#78c800]"
+              className="flex items-center gap-3 rounded-xl p-1 pr-1 text-left transition-colors hover:bg-slate-100/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 data-[state=open]:bg-slate-100/70 sm:pr-3"
             >
-              {initials}
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-700 text-xs font-semibold text-white">
+                {initials}
+              </span>
+              <span className="hidden min-w-0 sm:block">
+                <span className="block max-w-[11rem] truncate text-sm font-medium text-slate-900">{displayName}</span>
+                <span className="block max-w-[11rem] truncate text-xs text-brand-700">{roleText}</span>
+              </span>
+              <ChevronDown className="hidden h-4 w-4 stroke-[1.75] text-slate-400 sm:block" aria-hidden="true" />
             </button>
           </DropdownMenu.Trigger>
 
@@ -117,7 +120,7 @@ export function Topbar() {
             <DropdownMenu.Content
               align="end"
               sideOffset={8}
-              className="z-50 w-60 rounded-lg border border-slate-200 bg-white p-1 shadow-lg"
+              className="z-50 w-64 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg"
             >
               <div className="px-3 py-2">
                 <p className="truncate text-sm font-medium text-slate-800">
@@ -136,9 +139,9 @@ export function Topbar() {
                   event.preventDefault();
                   void handleLogout();
                 }}
-                className="flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-600 outline-none transition-colors data-[highlighted]:bg-rose-50 data-[highlighted]:text-rose-600 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-60"
+                className="flex cursor-pointer select-none items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-600 outline-none transition-colors data-[highlighted]:bg-rose-50 data-[highlighted]:text-rose-600 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-60"
               >
-                <LogOut className="h-4 w-4 stroke-[1.8]" />
+                <LogOut className="h-4 w-4 stroke-[1.75]" />
                 {isLoggingOut ? "Saliendo..." : "Cerrar sesión"}
               </DropdownMenu.Item>
 

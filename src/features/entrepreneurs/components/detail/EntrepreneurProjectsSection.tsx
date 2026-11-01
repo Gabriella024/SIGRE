@@ -100,7 +100,7 @@ export function EntrepreneurProjectsSection({ entrepreneur }: { entrepreneur: Se
             <div className="flex justify-end">
               <Button
                 type="button"
-                className="gap-2 bg-lime-500 hover:bg-lime-600"
+                className="gap-2 bg-brand-700 hover:bg-brand-800"
                 onClick={openCreate}
                 disabled={isCreating}
                 aria-busy={isCreating}

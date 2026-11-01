@@ -14,7 +14,7 @@ export const ViewToggle: React.FC<ViewToggleProps> = ({ viewMode, onViewChange }
         <select
           value={viewMode}
           onChange={(e) => onViewChange(e.target.value as ViewMode)}
-          className="w-full appearance-none bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm font-medium rounded-lg px-3 py-2 pr-8 shadow-sm focus:outline-none   cursor-pointer transition-colors"
+          className="w-full appearance-none bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm font-medium rounded-xl px-3 py-2 pr-8 shadow-sm focus:outline-none   cursor-pointer transition-colors"
         >
           <option value="list" hidden={viewMode === "list"}>📋 Listado</option>
           <option value="calendar" hidden={viewMode === "calendar"}>📅 Calendario</option>

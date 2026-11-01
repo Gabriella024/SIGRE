@@ -59,7 +59,7 @@ export function UsersFilters({ filters, onChange, estadoOptions, rolOptions, onC
       onClearFilters={() => onChange({ ...INITIAL_USER_FILTERS, search: filters.search })}
       actions={
         onCreate && (
-          <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600">
+          <Button onClick={onCreate} className="gap-2 bg-brand-700 hover:bg-brand-800">
             <UserPlus className="h-4 w-4" />
             Invitar usuario
           </Button>

@@ -23,7 +23,7 @@ import { jornadaFormSchema, type JornadaFormValues } from "../schemas/orientatio
 import type { OrientationEditorMode } from "../types/orientations";
 
 const selectClass =
-  "h-8 w-full min-w-0 rounded-2xl border border-transparent bg-input/50 px-2.5 text-base outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive md:text-sm";
+  "h-9 w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 text-base shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive md:text-sm";
 
 interface JornadaFormProps {
   mode: OrientationEditorMode;
@@ -253,7 +253,7 @@ export function JornadaForm({
           <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
             Cancelar
           </Button>
-          <Button type="submit" className="gap-2 bg-lime-500 hover:bg-lime-600" disabled={isSubmitting}>
+          <Button type="submit" className="gap-2 bg-brand-700 hover:bg-brand-800" disabled={isSubmitting}>
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {isSubmitting ? "Guardando..." : mode === "create" ? "Crear jornada" : "Guardar cambios"}
           </Button>

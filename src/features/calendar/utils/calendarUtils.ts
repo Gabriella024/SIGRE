@@ -2,10 +2,10 @@ import type { CalendarSession, SessionCategory, SessionModality } from "../types
 
 export const CATEGORY_STYLES: Record<SessionCategory, { bg: string; text: string; border: string; dot: string }> = {
   orientacion: {
-    bg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-    text: 'text-emerald-700 dark:text-emerald-300',
-    border: 'border-emerald-500/30',
-    dot: 'bg-emerald-500'
+    bg: 'bg-brand-500/10 dark:bg-brand-500/20',
+    text: 'text-brand-800 dark:text-brand-300',
+    border: 'border-brand-500/30',
+    dot: 'bg-brand-500'
   },
   pitch: {
     bg: 'bg-amber-500/10 dark:bg-amber-500/20',

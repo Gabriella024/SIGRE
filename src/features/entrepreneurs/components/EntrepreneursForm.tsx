@@ -150,7 +150,7 @@ export function EntrepreneursForm({
           <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
             Cancelar
           </Button>
-          <Button type="submit" className="gap-2 bg-lime-500 hover:bg-lime-600" disabled={!canSave}>
+          <Button type="submit" className="gap-2 bg-brand-700 hover:bg-brand-800" disabled={!canSave}>
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {isSubmitting ? "Guardando..." : "Registrar emprendedor"}
           </Button>

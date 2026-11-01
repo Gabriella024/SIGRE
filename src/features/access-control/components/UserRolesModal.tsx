@@ -58,7 +58,7 @@ function UserRolesForm({ user, roles, feedback, onSubmit, onClose, onReload }: U
               type="checkbox"
               checked={selected.has(role.id)}
               onChange={() => toggle(role.id)}
-              className="h-4 w-4 accent-[#39a900]"
+              className="h-4 w-4 accent-brand-700"
             />
             {formatStatusLabel(role.name)}
           </label>
@@ -81,7 +81,7 @@ function UserRolesForm({ user, roles, feedback, onSubmit, onClose, onReload }: U
         </Button>
         <Button
           type="button"
-          className="gap-2 bg-[#39a900] hover:bg-[#2f8f00]"
+          className="gap-2 bg-brand-700 hover:bg-brand-800"
           onClick={() => void submit()}
           disabled={blocked || feedback.pendingBackend !== null || !dirty || selected.size === 0}
         >

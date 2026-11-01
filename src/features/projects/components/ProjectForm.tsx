@@ -234,7 +234,7 @@ export function ProjectForm({
           {submission ? (
             <Button
               type="submit"
-              className="bg-lime-500 hover:bg-lime-600"
+              className="bg-brand-700 hover:bg-brand-800"
               disabled={!submission.canSubmit || isSubmitting}
             >
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -244,7 +244,7 @@ export function ProjectForm({
             </Button>
           ) : (
             <span title="No tienes autorización para guardar proyectos">
-              <Button type="submit" className="w-full bg-lime-500 hover:bg-lime-600" disabled>
+              <Button type="submit" className="w-full bg-brand-700 hover:bg-brand-800" disabled>
                 {mode === "create" ? "Crear proyecto" : "Guardar cambios"}
               </Button>
             </span>

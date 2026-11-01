@@ -16,9 +16,9 @@ export function PaginationBar({ page, totalPages, from, to, total, onPageChange 
   return (
     <nav
       aria-label="Paginación"
-      className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+      className="flex flex-col gap-3 rounded-2xl border border-slate-200/70 bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
     >
-      <p className="text-sm italic text-slate-500">
+      <p className="text-sm text-slate-500">
         Mostrando {from} a {to} de {total} registros en total
       </p>
       <div className="flex items-center gap-2">

@@ -48,7 +48,7 @@ export function ChallengesFilters({ value, onChange, niveles, estadoOptions, onC
         onClearFilters={() => onChange({ ...INITIAL_CHALLENGE_FILTERS, nivel: value.nivel })}
         actions={
           onCreate && (
-            <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
+            <Button onClick={onCreate} className="gap-2 bg-brand-700 hover:bg-brand-800 text-white font-medium">
               <Plus className="h-4 w-4" />
               Nuevo Reto
             </Button>

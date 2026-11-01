@@ -38,7 +38,7 @@ const COPY = {
     title: "Activar usuario",
     action: "Activar",
     consequence: "El usuario podrá volver a ingresar a SIGRE con los roles que tenga asignados.",
-    buttonClass: "bg-lime-500 hover:bg-lime-600",
+    buttonClass: "bg-brand-700 hover:bg-brand-800",
   },
 } as const;
 

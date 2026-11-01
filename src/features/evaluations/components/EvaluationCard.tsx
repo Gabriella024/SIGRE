@@ -12,7 +12,7 @@ const borderColor: Record<Evaluacion['estado'], string> = {
 
 const badgeStyles: Record<Evaluacion['estado'], string> = {
   Pendiente: 'bg-orange-100 text-orange-600',
-  Completado: 'bg-green-100 text-green-700',
+  Completado: 'bg-brand-100 text-brand-800',
 }
 
 type EvaluationCardProps = {
@@ -55,7 +55,7 @@ export function EvaluationCard({ evaluacion, onGrade }: EvaluationCardProps) {
         {evaluacion.calificacion ? (
           <span className="font-semibold text-slate-900">{evaluacion.calificacion.puntaje ?? '—'}/100</span>
         ) : onGrade && (
-          <Button size="sm" onClick={() => onGrade(evaluacion)} className="gap-1 bg-lime-500 hover:bg-lime-600">
+          <Button size="sm" onClick={() => onGrade(evaluacion)} className="gap-1 bg-brand-700 hover:bg-brand-800">
             Calificación
             <ChevronRight className="h-4 w-4" />
           </Button>

@@ -60,15 +60,15 @@ export default function CargarAsistentesPage() {
 
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-800 font-sans antialiased pb-12">
-      <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-6">
+      <div className="space-y-6">
 
         {pasoActual !== 3 ? (
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+              <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.75rem]">
                 {pasoActual === 1 ? 'Cargar archivo de asistentes' : 'Resultado de validación'}
               </h1>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <p className="mt-1 text-[0.9375rem] text-slate-600">
                 {pasoActual === 1
                   ? 'Sube un Excel con los aprendices que asistieron a la orientación.'
                   : 'Revisa los registros encontrados antes de confirmar la carga.'}
@@ -84,7 +84,7 @@ export default function CargarAsistentesPage() {
         {pasoActual === 1 && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <div className="space-y-1.5 rounded-xl border border-slate-200 bg-white p-4">
+              <div className="space-y-1.5 rounded-2xl border border-slate-200/70 bg-surface p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
                 <Label htmlFor="carga-jornada">Jornada de orientación</Label>
                 <CatalogSelect
                   id="carga-jornada"
@@ -159,7 +159,7 @@ export default function CargarAsistentesPage() {
                     type="button"
                     disabled={isProcessing || orientacionId === ''}
                     onClick={() => void handleProcesarArchivo()}
-                    className="px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
+                    className="px-5 py-2 text-xs font-semibold text-white bg-brand-700 hover:bg-brand-800 rounded-lg disabled:opacity-50"
                   >
                     {isProcessing ? 'Validando...' : 'Validar archivo'}
                   </button>
@@ -233,7 +233,7 @@ export default function CargarAsistentesPage() {
                   type="button"
                   disabled={registro.isSubmitting || registro.pendingBackend !== null || resumenCounts.valida === 0}
                   onClick={() => void handleConfirmar()}
-                  className="px-5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-50"
+                  className="px-5 py-2 text-xs font-semibold text-white bg-brand-700 hover:bg-brand-800 rounded-lg disabled:opacity-50"
                 >
                   {registro.isSubmitting ? 'Registrando...' : `Confirmar registro (${resumenCounts.valida})`}
                 </button>

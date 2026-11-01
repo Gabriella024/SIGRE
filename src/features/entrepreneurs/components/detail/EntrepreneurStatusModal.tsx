@@ -52,7 +52,7 @@ const COPY = {
     action: "Activar",
     consequence:
       "El emprendedor volverá a estar disponible para asignación de orientador y creación de proyectos.",
-    buttonClass: "bg-lime-500 hover:bg-lime-600",
+    buttonClass: "bg-brand-700 hover:bg-brand-800",
   },
 } as const;
 

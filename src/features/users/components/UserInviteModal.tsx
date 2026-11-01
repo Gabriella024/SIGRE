@@ -165,7 +165,7 @@ function UserInviteForm({ roles, municipios, feedback, onSubmit, onClose }: Omit
           </Button>
           <Button
             type="submit"
-            className="gap-2 bg-lime-500 hover:bg-lime-600"
+            className="gap-2 bg-brand-700 hover:bg-brand-800"
             disabled={feedback.isSubmitting || feedback.pendingBackend !== null || !form.formState.isValid}
           >
             {feedback.isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}

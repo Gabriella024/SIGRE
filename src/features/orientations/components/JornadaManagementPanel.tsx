@@ -102,7 +102,7 @@ function AssignOrientadorForm({ jornada, onChanged }: ActionProps) {
         <Button
           type="button"
           size="sm"
-          className="gap-2 bg-lime-500 hover:bg-lime-600"
+          className="gap-2 bg-brand-700 hover:bg-brand-800"
           disabled={mutation.isSubmitting || unchanged || !validSelection}
           onClick={submit}
         >

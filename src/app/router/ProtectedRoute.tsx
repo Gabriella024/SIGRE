@@ -60,7 +60,7 @@ export function ProtectedRoute({
           <Link
             to={firstAllowedPath}
             replace
-            className="mt-4 inline-block text-sm font-semibold text-[#084166] underline"
+            className="mt-4 inline-block text-sm font-semibold text-brand-800 underline"
           >
             Ir a un módulo permitido
           </Link>

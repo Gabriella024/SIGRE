@@ -83,7 +83,7 @@ export function PitchFilters({
         onClearFilters={() => onChange(INITIAL_PITCH_FILTERS)}
         actions={
           onCreate && activeTab === 'R6' && (
-            <Button onClick={onCreate} className="gap-2 bg-lime-500 hover:bg-lime-600 text-slate-900 font-medium">
+            <Button onClick={onCreate} className="gap-2 bg-brand-700 hover:bg-brand-800 text-white font-medium">
               <Plus className="h-4 w-4" />
               Programar pitch
             </Button>

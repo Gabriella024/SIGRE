@@ -33,14 +33,14 @@ export function InfoOrientacionCard({
       </div>
 
       <div className="flex items-start gap-3">
-        <div className="p-2 bg-slate-100 rounded-lg text-emerald-600 shrink-0 mt-0.5">
+        <div className="p-2 bg-slate-100 rounded-lg text-brand-700 shrink-0 mt-0.5">
           <FileSpreadsheet className="w-5 h-5" />
         </div>
         <div className="space-y-0.5">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
             ARCHIVO
           </span>
-          <strong className="text-sm font-semibold text-emerald-800 block break-all">
+          <strong className="text-sm font-semibold text-brand-800 block break-all">
             {archivoNombre}
           </strong>
         </div>

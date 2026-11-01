@@ -18,7 +18,7 @@ export function FormActions({
       <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
         Cancelar
       </Button>
-      <Button type="submit" className="gap-2 bg-[#39a900] hover:bg-[#2f8f00]" disabled={isSubmitting || disabled}>
+      <Button type="submit" className="gap-2 bg-brand-700 hover:bg-brand-800" disabled={isSubmitting || disabled}>
         {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
         {isSubmitting ? "Guardando..." : submitLabel}
       </Button>

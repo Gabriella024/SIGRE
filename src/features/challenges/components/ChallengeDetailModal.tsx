@@ -135,7 +135,7 @@ function ComplianceList({
             {!row.evidencia ? (
               "sin archivo registrado"
             ) : isEvidenceUrl(row.evidencia) ? (
-              <a href={row.evidencia} target="_blank" rel="noopener noreferrer" className="font-medium text-lime-700 underline">
+              <a href={row.evidencia} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-700 underline">
                 Ver archivo
               </a>
             ) : (

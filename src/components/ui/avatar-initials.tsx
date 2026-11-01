@@ -1,10 +1,10 @@
 const palette = [
-  'bg-violet-500',
-  'bg-blue-500',
-  'bg-emerald-500',
-  'bg-amber-500',
-  'bg-pink-500',
-  'bg-slate-700',
+  'bg-brand-700',
+  'bg-slate-600',
+  'bg-sky-700',
+  'bg-teal-700',
+  'bg-amber-700',
+  'bg-slate-800',
 ]
 
 function hashString(str: string) {
