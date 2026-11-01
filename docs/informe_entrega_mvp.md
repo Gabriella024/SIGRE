@@ -125,7 +125,7 @@ Se usó una base PostgreSQL desechable en memoria (PGlite, PostgreSQL 16.4) que 
 
 | Comprobación | Resultado |
 |---|---|
-| Migraciones aplicadas en orden sobre una base vacía | 14/14 sin errores |
+| Migraciones aplicadas en orden sobre una base vacía | 14/14 sin errores (antes de agregar `20261031120000`) |
 | Objetos equivalentes a STAGING (desde el árbol del commit) | 921 de 923: 895 idénticos y 26 que solo cambian el fin de línea |
 | Funciones recompiladas con validación de cuerpos | 75/75 |
 
@@ -161,12 +161,14 @@ Las diferencias tienen explicación:
 6. **Sin historial de migraciones en STAGING:** todo se aplicó desde el SQL Editor. Para adoptar la CLI sin
    reejecutar nada:
    `supabase migration repair --status applied 20261001000000 20261001000100 20261025000000 20261028120000 20261028200000 20261028200100 20261029170000 20261029190000 20261029203000 20261030090000 20261030120000 20261030150000 20261030150100`.
-   Incluir también `20261026120000` (A5-11), aplicada el 2026-10-30.
+   Incluir también `20261026120000` (A5-11), aplicada el 2026-10-30, y `20261031120000` (Panel → Ver del
+   Evaluador), cuyo estado se fijó desde Control de accesos; confirmarlo antes con
+   `supabase/diagnostics/evaluador_panel_ver_estado.sql` (solo lectura).
 
 ### Orden de despliegue en un entorno nuevo (con autorización)
 
 1. Proyecto Supabase en PostgreSQL 17, con «Enable automatic RLS» activado.
-2. `supabase db push`, que aplica las 14 migraciones en orden.
+2. `supabase db push`, que aplica las 15 migraciones en orden.
 3. Datos institucionales.
 4. Edge Function A5 y sus variables.
 5. Configuración de Auth.
@@ -186,6 +188,7 @@ Las diferencias tienen explicación:
 | 20261030120000 | Ruta: retos, pitch, evaluadores, evaluaciones (12 RPC + RLS) |
 | 20261030150000 | Miniperfil del proyecto para el Evaluador asignado (solo SELECT) |
 | 20261030150100 | Permisos del rol Evaluador en Evaluación |
+| 20261031120000 | Rol Evaluador: Panel → Ver (SL). Reproduce el estado fijado en STAGING desde Control de accesos; no reejecutar allí |
 
 Las versiones son únicas y están en orden. No contienen UUID, credenciales ni datos de entorno. Los scripts DEMO
 (`proposals/*demo*.sql`) no son migraciones.
